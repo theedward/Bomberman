@@ -1,8 +1,9 @@
 package com.android.bomberman;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,8 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Button;
 
-public class InitialActivity extends ActionBarActivity {
+public class InitialActivity extends Activity {
+
+    Button newGameBtn = (Button) findViewById(R.id.newgamebtn);
+    Button multiplayerBtn = (Button) findViewById(R.id.multiplayerbtn);
+    Button aboutBtn = (Button) findViewById(R.id.aboutbtn);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,10 +26,12 @@ public class InitialActivity extends ActionBarActivity {
         setContentView(R.layout.activity_initial);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
+           /* getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+                    .commit();*/
         }
+
+
     }
 
 
@@ -49,17 +58,6 @@ public class InitialActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
 
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_initial, container, false);
-            return rootView;
-        }
-    }
 
 }

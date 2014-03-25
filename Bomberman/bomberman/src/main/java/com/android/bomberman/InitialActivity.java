@@ -15,10 +15,6 @@ import android.widget.Button;
 
 public class InitialActivity extends Activity {
 
-    Button newGameBtn = (Button) findViewById(R.id.newgamebtn);
-    Button multiplayerBtn = (Button) findViewById(R.id.multiplayerbtn);
-    Button aboutBtn = (Button) findViewById(R.id.aboutbtn);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

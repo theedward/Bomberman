@@ -34,6 +34,10 @@
             android:name="com.meic.cmov.bomberman.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
+        <activity
+            android:name="com.meic.cmov.bomberman.GameActivity"
+            android:label="@string/title_activity_game" >
+        </activity>
     </application>
 
 </manifest>

@@ -10,7 +10,12 @@
     <string name="title_activity_new_game">NewGameActivity</string>
     <string name="title_activity_multiplayer">MultiplayerActivity</string>
     <string name="title_activity_about">AboutActivity</string>
+    <string name="start">Start</string>
+    <string name="level">Level</string>
+
     <color name="silver">#C0C0C0</color>
     <color name="white">#FFFFFF</color>
+
+    <string name="title_activity_game">GameActivity</string>
 
 </resources>

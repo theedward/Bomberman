@@ -9,47 +9,48 @@
     android:background="@drawable/background"
     tools:context=".NewGameActivity" >
 
+    <TextView
+        android:id="@+id/level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/levelPicker"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/levelPicker"
+        android:layout_marginTop="66dp"
+        android:text="@string/level"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
     <NumberPicker
         android:id="@+id/levelPicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="42dp" />
-
-    <NumberPicker
-        android:id="@+id/diffPicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/levelPicker"
-        android:layout_marginRight="46dp" />
-
-    <TextView
-        android:id="@+id/difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/level"
-        android:layout_alignBottom="@+id/level"
-        android:layout_alignLeft="@+id/diffPicker"
-        android:text="Difficulty"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="25sp" 
-        android:textColor="@color/white"
+        android:layout_below="@+id/level"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="29dp"
         />
 
-    <TextView
-        android:id="@+id/level"
+    <ImageView
+        android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/levelPicker"
-        android:layout_alignLeft="@+id/levelPicker"
-        android:layout_alignRight="@+id/levelPicker"
-        android:layout_marginBottom="21dp"
-        android:text="Level"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="25sp" 
-        android:textColor="@color/white"
-        />
+        android:layout_alignTop="@id/level"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/level1" />
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/imageView1"
+        android:layout_marginTop="50dp"
+        android:layout_toRightOf="@+id/levelPicker"
+        android:alpha="1"
+        android:text="@string/start"
+        android:onClick="startGame"
+         />
 
 </RelativeLayout>

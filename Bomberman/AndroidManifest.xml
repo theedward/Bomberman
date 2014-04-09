@@ -24,6 +24,7 @@
         </activity>
         <activity
             android:name="com.meic.cmov.bomberman.NewGameActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:label="@string/title_activity_new_game" >
         </activity>
         <activity

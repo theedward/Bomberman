@@ -1,22 +1,44 @@
 package com.meic.cmov.bomberman;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 
 public class NewGameActivity extends Activity {
+
+	private static final int MAP_MIN_LEVEL = 1;
+	private static final int MAP_MAX_LEVEL = 5;
+	private static final int NUM_LEVELS = 5;
+	private static int[] mapPreviewId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_game);
+
+		mapPreviewId = new int[] {
+			R.drawable.level1,
+			R.drawable.suicide_bomber,
+			R.drawable.level1,
+			R.drawable.level1,
+			R.drawable.level1,
+		};
 		
 		final NumberPicker levelPicker = (NumberPicker) findViewById(R.id.levelPicker);
-		levelPicker.setMinValue(1);
-		levelPicker.setMaxValue(5);
+		levelPicker.setMinValue(MAP_MIN_LEVEL);
+		levelPicker.setMaxValue(MAP_MAX_LEVEL);
+		levelPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+			@Override
+			public void onValueChange(final NumberPicker numberPicker, final int oldVal, final int newVal) {
+				final ImageView mapPreview = (ImageView) findViewById(R.id.imageView1);
+				mapPreview.setImageDrawable(getResources().getDrawable(mapPreviewId[newVal-1]));
+			}
+		});
 	}
 
 	@Override

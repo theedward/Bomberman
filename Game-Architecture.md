@@ -83,9 +83,8 @@ Also, everytime a player presses a key, this information is sent to the server.
 		// tell each player who is the winner. (if there's any winner)
 		void onGameEnd(GameConfiguration finalConfig);
 
-		// This method will be called every round. This will update all the objects
-		// Optionally,
-		void onUpdate(char[][] map);
+		// This method will be called every round. This will update all the object's positions.
+		void onUpdate(Position[] objectsPositions);
 	}
 
 	// To support a player in the network, this class will serve as proxy in the

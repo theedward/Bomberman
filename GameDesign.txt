@@ -1,0 +1,115 @@
+// Every object that will be printed on the screen must implement this interface
+interface Drawable {
+	void draw(Canvas);
+}
+
+class Position {
+	int x, y;
+	public Position(int, int);
+}
+
+// All the state of the game should be in this class. It's this class that is
+// passed to the objects
+class State {
+	public int[][] map;
+	private List<Playable> objects;
+
+	// This method will call the method play of each player.
+	void playAll();
+}
+
+class Screen {
+	Canvas canvas;
+	List<Drawable> objects;
+
+	// Calls the method draw for all the objects
+	public void drawAll(Canvas);
+}
+
+class Player {
+	// Still need to think on this.
+}
+
+// This is where all the game will be processed.
+class GameLoop {
+	int playerId;
+	Map<Integer, Player> players;
+	State gameState;
+	Screen gameScreen;
+
+	private static int[][] readLevelFromFile(String filename);
+
+	int addPlayer(Player c);
+	void removePlayer(int playerId);
+
+	void start(int levelId);
+	void pause(int playerId);
+	void continue(int playerId);
+	void stop();
+	void restart();
+}
+
+// All objects that are updated during the game must implement this interface
+interface Playable {
+	// Maps actions names to actions
+	Map<String, Action> possibleActions();
+	void play(State);
+}
+
+/**
+	* This class allows to create algorithms or even to control any object that
+	* depends on this interface.
+	* Ex: Bomberman, Robot
+	*/
+interface Algorithm {
+	public String getNextActionName();
+}
+
+// This class enables a user to control something. Must provide a keymap.
+class Controllable implements Algorithm {
+	Map<Character, String> keymap;
+	Character lastKeyPressed;
+
+	public Controllable(Map<Character, String> keymap);
+
+	// Returns true if the key is valid, false otherwise
+	public boolean keyPressed(Character c);
+}
+
+// This class enables the control of a controller using the network
+class NetworkControllable implements Controllable {
+	Controllable controlledObject;
+	public NetworkControllable(Controllable c);
+}
+
+// A Character is an object (agent) that has an algorithm
+abstract class Character implements Drawable, Playable {
+	Position currentPos;
+	Algorithm algorithm;
+
+	public Character(Poisition, Algorithm);
+}
+
+class Bomberman extends Character {
+	public enum Actions {
+		MOVE_TOP, MOVE_BOTTOM, MOVE_LEFT, MOVE_RIGHT, PUT_BOMB
+	};
+
+	public Bomberman(Position, Algorithm, int bombSize);
+}
+
+class Robot extends Character {
+	public enum Actions {
+		MOVE_TOP, MOVE_BOTTOM, MOVE_LEFT, MOVE_RIGHT
+	};
+
+
+	public Robot(Position, Algorithm);
+}
+
+class Maze implements Drawable {
+}
+
+class Bomb implements Playable {
+
+}

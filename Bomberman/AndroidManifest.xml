@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.meic.cmov.bomberman.InitialActivity"
+            android:name="com.cmov.bomberman.controller.InitialActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,20 +23,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.meic.cmov.bomberman.NewGameActivity"
+            android:name="com.cmov.bomberman.controller.NewGameActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:label="@string/title_activity_new_game" >
         </activity>
         <activity
-            android:name="com.meic.cmov.bomberman.MultiplayerActivity"
+            android:name="com.cmov.bomberman.controller.MultiplayerActivity"
             android:label="@string/title_activity_multiplayer" >
         </activity>
         <activity
-            android:name="com.meic.cmov.bomberman.AboutActivity"
+            android:name="com.cmov.bomberman.controller.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
         <activity
-            android:name="com.meic.cmov.bomberman.GameActivity"
+            android:name="com.cmov.bomberman.controller.GameActivity"
             android:label="@string/title_activity_game" >
         </activity>
     </application>

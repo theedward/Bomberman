@@ -21,7 +21,7 @@ public class GameUtils {
 	}
 
 	public static char[][] readLevelFromFile(String filename) {
-		List<char[]> map = new LinkedList<>();
+		List<char[]> map = new LinkedList<char[]>();
 		try {
 			BufferedReader rd = new BufferedReader(new FileReader(filename));
 			String line;

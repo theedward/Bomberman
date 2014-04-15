@@ -44,19 +44,22 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 	// This class allows extensibility on the choice of player character.
 	// Ex: By using this class, a player can be any character (Bomberman, Robot,
-		// Bomb).
-		class GameConfiguration {
-			// Maps player ids into their initial position in the map.
-			Map<int, Position> initialPositions;
-			int level;
-			int numUpdatesPerSecond;
-			int numPlayers;
-			int timeLeft;
-		}
+	// Bomb).
+	class GameConfiguration {
+		// Maps player ids into their initial position in the map.
+		Map<int, Position> initialPositions;
+		int level;
+		int numUpdatesPerSecond;
+		int numPlayers;
+		int timeLeft;
+	}
 
 	// This class provides utility functions that can be used by other classes.
 	class GameUtils {
 		static char[][] readLevelFromFile(String filename);
+
+		// Used on Android
+		static Bitmap readBitmapFromResource(int resourceId);
 	}
 
 	// This class represents a player in the game. This is needed to support

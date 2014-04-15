@@ -100,6 +100,8 @@ Also, everytime a player presses a key, this information is sent to the server.
 		State gameState;
 		GameConfiguration currentConfig;
 
+		static void readConfigurationFile(String filename);
+
 		void addPlayer(Player p);
 		void removePlayer(Player p);
 

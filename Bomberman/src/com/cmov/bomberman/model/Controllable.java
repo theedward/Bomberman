@@ -6,38 +6,33 @@ import java.util.Map;
  * Created by JoãoEduardo on 15-04-2014.
  */
 public class Controllable implements Algorithm {
-    Map<Character, String> keymap;
-    Character lastKeyPressed;
+	final Map<Character, String> keymap;
+	char lastKeyPressed;
 
     public Controllable(Map<Character, String> keymap) {
         this.keymap = keymap;
     }
 
-    public Map<Character, String> getKeymap() {
-        return keymap;
-    }
+	/**
+	 * Changes the last key pressed when the character is in the keymap.
+	 *
+	 * @return if the character is in the keymap.
+	 */
+	public boolean keyPressed(char c) {
+		if (keymap.containsKey(c)) {
+			lastKeyPressed = c;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    public void setKeymap(Map<Character, String> keymap) {
-        this.keymap = keymap;
-    }
-
-    public Character getLastKeyPressed() {
-        return lastKeyPressed;
-    }
-
-    public void setLastKeyPressed(Character lastKeyPressed) {
-        this.lastKeyPressed = lastKeyPressed;
-    }
-
-    // Returns true if the key is valid, false otherwise
-    public boolean keyPressed(Character c){
-        //TODO:Implement this
-        return false;
-    }
-
-    @Override
+	/**
+	 * @return the action name mapped from the last key pressed or an empty string
+	 * if no valid key was pressed.
+	 */
+	@Override
     public String getNextActionName() {
-        //TODO:Implement this
-        return null;
-    }
+		return keymap.containsKey(lastKeyPressed) ? keymap.get(lastKeyPressed) : "";
+	}
 }

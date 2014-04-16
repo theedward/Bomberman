@@ -12,7 +12,7 @@ public class Screen {
 
 	public Screen(Canvas canvas) {
 		this.canvas = canvas;
-		objects = new LinkedList<>();
+		objects = new LinkedList<Drawable>();
 	}
 
 	public void addObject(Drawable object) {

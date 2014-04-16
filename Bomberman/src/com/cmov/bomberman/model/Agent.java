@@ -1,6 +1,6 @@
 package com.cmov.bomberman.model;
 
-public abstract class Agent {
+public abstract class Agent implements Drawable, Playable {
 	private Position currentPos;
 	private final Algorithm ai;
 

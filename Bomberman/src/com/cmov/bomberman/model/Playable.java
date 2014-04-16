@@ -5,4 +5,6 @@ package com.cmov.bomberman.model;
  */
 public interface Playable {
 	void play(State state);
+
+	boolean isDestroyed();
 }

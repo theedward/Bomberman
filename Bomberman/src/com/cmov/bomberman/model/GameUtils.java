@@ -40,7 +40,8 @@ public class GameUtils {
 	}
 
 	// Used on Android
-	public static Bitmap readBitmapFromResource(int resourceId) {
-		return BitmapFactory.decodeResource(resources, resourceId);
+	public static Bitmap readBitmapFromResource(int resId, int x, int y, int width, int height) {
+		Bitmap bm = BitmapFactory.decodeResource(resources, resId);
+		return Bitmap.createBitmap(bm, x, y, width, height);
 	}
 }

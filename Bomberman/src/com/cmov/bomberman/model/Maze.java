@@ -5,16 +5,24 @@ import android.graphics.Canvas;
 import com.meic.cmov.bomberman.R;
 
 public class Maze implements Drawable {
-	Bitmap backgroundImage;
+	// The bitmaps properties
+	private static final int IMAGE_X = 0;
+	private static final int IMAGE_Y = 0;
+	private static final int IMAGE_WIDTH = 240;
+	private static final int IMAGE_HEIGHT = 160;
+
+	Bitmap maze;
 
 	public Maze() {
-		backgroundImage = GameUtils.readBitmapFromResource(R.drawable.maze);
+		Bitmap bm = GameUtils.readBitmapFromResource(R.drawable.levels, IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
 	}
 
-	// TODO: verify that this image occupies exactly the all canvas.
 	@Override
 	public void draw(final Canvas canvas) {
-		// this image must occupy the all canvas
-		canvas.drawBitmap(backgroundImage, 0, 0, null);
+		// this bitmap is the same size of the canvas
+		if (maze.getWidth() != canvas.getWidth() || maze.getHeight() != canvas.getHeight()) {
+			maze = Bitmap.createScaledBitmap(maze, canvas.getWidth(), canvas.getHeight(), true);
+		}
+		canvas.drawBitmap(maze, 0, 0, null);
 	}
 }

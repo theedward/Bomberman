@@ -1,58 +1,129 @@
 package com.cmov.bomberman.model;
 
-import java.util.Map;
-
 /**
  * Created by JoãoEduardo on 15-04-2014.
  */
 public class GameConfiguration {
-    // Maps player ids into their initial position in the map.
-    Map<Integer, Position> initialPositions;
-    int level;
-    int numUpdatesPerSecond;
-    int numPlayers;
-    int timeLeft;
+	// Maps player usernames into their initial position in the map.
+	private Position[] bombermanInitialPositions;
+	private Position[] robotInitialPositions;
+	private int numUpdatesPerSecond;
+	private int maxNumPlayers;
+	private int timeLimit;
 
-     //TODO: Constructor
+	// Bomberman variables
+	private int bSpeed;
 
+	// Robot variables
+	private int rSpeed;
 
-    public Map<Integer, Position> getInitialPositions() {
-        return initialPositions;
-    }
+	// Bomb variables
+	private int timeToExplode;
+	private int explosionDuration;
+	private int explosionRange;
 
-    public void setInitialPositions(Map<Integer, Position> initialPositions) {
-        this.initialPositions = initialPositions;
-    }
+	// Points variables
+	private int pointRobot;
+	private int pointOpponent;
 
-    public int getLevel() {
-        return level;
-    }
+	public GameConfiguration() {
+	}
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
+	public Position[] getBombermanInitialPositions() {
+		return bombermanInitialPositions;
+	}
 
-    public int getNumUpdatesPerSecond() {
-        return numUpdatesPerSecond;
-    }
+	public void setBombermanInitialPositions(
+			final Position[] bombermanInitialPositions) {
+		this.bombermanInitialPositions = bombermanInitialPositions;
+	}
 
-    public void setNumUpdatesPerSecond(int numUpdatesPerSecond) {
-        this.numUpdatesPerSecond = numUpdatesPerSecond;
-    }
+	public Position[] getRobotInitialPositions() {
+		return robotInitialPositions;
+	}
 
-    public int getNumPlayers() {
-        return numPlayers;
-    }
+	public void setRobotInitialPositions(
+			final Position[] robotInitialPositions) {
+		this.robotInitialPositions = robotInitialPositions;
+	}
 
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
-    }
+	public int getNumUpdatesPerSecond() {
+		return numUpdatesPerSecond;
+	}
 
-    public int getTimeLeft() {
-        return timeLeft;
-    }
+	public void setNumUpdatesPerSecond(final int numUpdatesPerSecond) {
+		this.numUpdatesPerSecond = numUpdatesPerSecond;
+	}
 
-    public void setTimeLeft(int timeLeft) {
-        this.timeLeft = timeLeft;
-    }
+	public int getMaxNumPlayers() {
+		return maxNumPlayers;
+	}
+
+	public void setMaxNumPlayers(final int maxNumPlayers) {
+		this.maxNumPlayers = maxNumPlayers;
+	}
+
+	public int getTimeLimit() {
+		return timeLimit;
+	}
+
+	public void setTimeLimit(final int timeLimit) {
+		this.timeLimit = timeLimit;
+	}
+
+	public int getbSpeed() {
+		return bSpeed;
+	}
+
+	public void setbSpeed(final int bSpeed) {
+		this.bSpeed = bSpeed;
+	}
+
+	public int getrSpeed() {
+		return rSpeed;
+	}
+
+	public void setrSpeed(final int rSpeed) {
+		this.rSpeed = rSpeed;
+	}
+
+	public int getTimeToExplode() {
+		return timeToExplode;
+	}
+
+	public void setTimeToExplode(final int timeToExplode) {
+		this.timeToExplode = timeToExplode;
+	}
+
+	public int getExplosionDuration() {
+		return explosionDuration;
+	}
+
+	public void setExplosionDuration(final int explosionDuration) {
+		this.explosionDuration = explosionDuration;
+	}
+
+	public int getExplosionRange() {
+		return explosionRange;
+	}
+
+	public void setExplosionRange(final int explosionRange) {
+		this.explosionRange = explosionRange;
+	}
+
+	public int getPointRobot() {
+		return pointRobot;
+	}
+
+	public void setPointRobot(final int pointRobot) {
+		this.pointRobot = pointRobot;
+	}
+
+	public int getPointOpponent() {
+		return pointOpponent;
+	}
+
+	public void setPointOpponent(final int pointOpponent) {
+		this.pointOpponent = pointOpponent;
+	}
 }

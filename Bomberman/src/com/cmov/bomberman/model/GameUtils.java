@@ -55,19 +55,26 @@ public class GameUtils {
 	// Used on Android
 	public static Bitmap readLevelBitmap(int row, int col, int width, int height) {
 		Bitmap level = BitmapFactory.decodeResource(resources, R.drawable.levels);
-		level = Bitmap.createBitmap(level, row, col, width, height);
+		level = Bitmap.createBitmap(level, row * IMAGE_BLOCK_SIZE,
+									col * IMAGE_BLOCK_SIZE, width, height);
 		return Bitmap.createScaledBitmap(level, canvasWidth, canvasHeight, true);
 
 	}
 
 	public static Bitmap[] readCharacterSprite(int row, int col, int num) {
-		Bitmap characters = BitmapFactory.decodeResource(resources, R.drawable.characters);
+		Bitmap characters = BitmapFactory
+				.decodeResource(resources, R.drawable.characters);
 		Bitmap[] sprite = new Bitmap[num];
 		for (int i = 0; i < num; i++) {
-			sprite[i] = Bitmap.createBitmap(characters, row, col + i, IMAGE_BLOCK_SIZE, IMAGE_BLOCK_SIZE);
-			sprite[i] = Bitmap
-					.createScaledBitmap(sprite[i], canvasWidth / NUM_BLOCK_CANVAS, canvasHeight / NUM_BLOCK_CANVAS,
-										true);
+			sprite[i] = Bitmap.createBitmap(characters, row * IMAGE_BLOCK_SIZE,
+											(col + i) * IMAGE_BLOCK_SIZE,
+											IMAGE_BLOCK_SIZE,
+											IMAGE_BLOCK_SIZE);
+			sprite[i] = Bitmap.createScaledBitmap(sprite[i], canvasWidth /
+															 NUM_BLOCK_CANVAS,
+												  canvasHeight /
+												  NUM_BLOCK_CANVAS, true
+												 );
 		}
 		return sprite;
 	}

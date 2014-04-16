@@ -136,12 +136,12 @@ Also, everytime a player presses a key, this information is sent to the server.
 	// Must provide a keymap.
 	class Controllable implements Algorithm {
 		Map<Character, String> keymap;
-		Character lastKeyPressed;
+		char lastKeyPressed;
 
 		public Controllable(Map<Character, String> keymap);
 
 		// Returns true if the key is valid, false otherwise
-		public boolean keyPressed(Character c);
+		public boolean keyPressed(char c);
 	}
 
 	// With this class, it's possible to use a controller in the network. This
@@ -149,15 +149,15 @@ Also, everytime a player presses a key, this information is sent to the server.
 	class NetworkControllable extends Controllable {
 	}
 
-	// A Character is an object (agent) that has an algorithm.
-	abstract class Character implements Drawable, Playable {
+	// An Agent is an object that can play (has an algorithm) and can be printed on the screen.
+	abstract class Agent implements Drawable, Playable {
 		Position currentPos;
 		Algorithm algorithm;
 
 		public Character(Position, Algorithm);
 	}
 
-	class Bomberman extends Character {
+	class Bomberman extends Agent {
 		public enum Actions {
 			MOVE_TOP, MOVE_BOTTOM, MOVE_LEFT, MOVE_RIGHT, PUT_BOMB
 		};
@@ -167,7 +167,7 @@ Also, everytime a player presses a key, this information is sent to the server.
 		public Bomberman(Position, Algorithm, int bombSize);
 	}
 
-	class Robot extends Character {
+	class Robot extends Agent {
 		public enum Actions {
 			MOVE_TOP, MOVE_BOTTOM, MOVE_LEFT, MOVE_RIGHT
 		};
@@ -175,7 +175,7 @@ Also, everytime a player presses a key, this information is sent to the server.
 		public Robot(Position, Algorithm);
 	}
 
-	class Bomb implements Character {
+	class Bomb implements Agent {
 		int timeout;
 
 		public Bomb(Position, Algorithm);
@@ -184,4 +184,4 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 	class Wall implements Drawable {}
 
-	class Obstacle implements Character {}
+	class Obstacle implements Agent {}

@@ -19,7 +19,7 @@ public class Maze implements Drawable {
 
 	@Override
 	public void draw(final Canvas canvas) {
-		// this bitmap is the same size of the canvas
+		// the bitmap must be the same size of the canvas
 		if (maze.getWidth() != canvas.getWidth() || maze.getHeight() != canvas.getHeight()) {
 			maze = Bitmap.createScaledBitmap(maze, canvas.getWidth(), canvas.getHeight(), true);
 		}

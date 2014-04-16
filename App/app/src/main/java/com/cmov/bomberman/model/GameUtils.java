@@ -3,6 +3,7 @@ package com.cmov.bomberman.model;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import com.cmov.bomberman.R;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

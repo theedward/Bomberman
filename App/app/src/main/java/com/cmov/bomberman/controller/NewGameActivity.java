@@ -1,13 +1,13 @@
 package com.cmov.bomberman.controller;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
-import com.meic.cmov.bomberman.R;
+import com.cmov.bomberman.R;
 
 public class NewGameActivity extends Activity {
 

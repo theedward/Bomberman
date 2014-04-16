@@ -120,8 +120,6 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 	// All objects that are updated during the game must implement this interface
 	interface Playable {
-		// Maps actions names to actions
-		Map<String, Action> possibleActions();
 		void play(State);
 	}
 

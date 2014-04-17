@@ -113,7 +113,7 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 		// Calls onGameUpdate
 		void pause(String playerUsername);
-		void continue(String playerUsername);
+		void unpause(String playerUsername);
 		void stop();
 		void restart();
 	}

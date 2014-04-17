@@ -19,7 +19,7 @@ abstract class MovableAgent extends Agent {
         speed = sp;
     }
     // Returns type of potential collision or null if there s none
-    public Collision move(State currentState, MovableAgent.Move direction) {
+    public Collision move(State currentState, Move direction) {
         return null;
     }
 }

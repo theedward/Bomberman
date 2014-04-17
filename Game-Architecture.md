@@ -31,6 +31,9 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 		// This method will call the method play of each player.
 		void playAll();
+		
+		// This method will remove all the given objects from the state.
+		void removeAll(List<Playable> objects);
 	}
 
 	// This class is responsible to draw everything in the canvas.
@@ -68,7 +71,7 @@ Also, everytime a player presses a key, this information is sent to the server.
 		String username;
 		int currentScore;
 		Screen myScreen;
-		List<Playable> objects;
+		List<Agent> objects;
 
 		public Player(String username);
 
@@ -113,7 +116,7 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 		// Calls onGameUpdate
 		void pause(String playerUsername);
-		void continue(String playerUsername);
+		void unpause(String playerUsername);
 		void stop();
 		void restart();
 	}
@@ -151,10 +154,15 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 	// An Agent is an object that can play (has an algorithm) and can be printed on the screen.
 	abstract class Agent implements Drawable, Playable {
+		public enum Action {
+			MOVE_UP, MOVE_RIGHT, MOVE_DOWN, MOVE_LEFT
+		};
+		
 		Position currentPos;
 		Algorithm algorithm;
 
-		public Character(Position, Algorithm);
+		public Agent(Position, Algorithm);
+		public final void move(Agent.Action, int speed);  
 	}
 
 	class Bomberman extends Agent {

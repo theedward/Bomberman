@@ -35,8 +35,8 @@ public class Bomb extends Agent {
 
 
 
-    public Bomb(final Position startingPos, int bombRange, Algorithm ai){
-        super(startingPos, ai);
+    public Bomb(final Position startingPos, int bombRange){
+        super(startingPos, null);
 
         this.bombRange = bombRange;
 
@@ -60,10 +60,10 @@ public class Bomb extends Agent {
         if (bombStep > 0 && bombStep < BOMB_MAX_STEP) {
             bombStep++;
         } else if (explStep == EXPL_MAX_STEP) {
-            state.bombExplosion(bombRange, this);
             destroyed = true;
             return;
         } else if (bombStep == BOMB_MAX_STEP) {
+            state.bombExplosion(bombRange, this);
             timeout = 0;
             explStep++;
         }

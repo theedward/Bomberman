@@ -32,11 +32,21 @@ public class Bomberman extends MovableAgent {
         super(pos,ai,speed);
         explosionRange = range;
         // arguments must be changed
-        spriteTop = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-        spriteBottom = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-        spriteLeft = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-        spriteRight = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-        spriteDie = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_DIE_STEP);
+        if (spriteTop == null) {
+            spriteTop = GameUtils.readCharacterSprite(SPRITE_LINE+1, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
+        }
+        if (spriteBottom == null) {
+            spriteBottom = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
+        }
+        if (spriteLeft == null) {
+            spriteLeft = GameUtils.readCharacterSprite(SPRITE_LINE+1, SPRITE_COLUMN+MAX_MOVEMENT_STEP, MAX_MOVEMENT_STEP);
+        }
+        if (spriteRight == null) {
+            spriteRight = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN+MAX_MOVEMENT_STEP, MAX_MOVEMENT_STEP);
+        }
+        if (spriteDie == null) {
+            spriteDie = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN+MAX_DIE_STEP, MAX_DIE_STEP);
+        }
     }
 
     private boolean isDead(){
@@ -90,10 +100,8 @@ public class Bomberman extends MovableAgent {
                 step = 0;
                 isDead = true;
             }
-       }
-
-        if (nextAction.equals(Actions.PUT_BOMB.toString())) {
-            //state.addCharacter(new Bomb());
+        } else if (nextAction.equals(Actions.PUT_BOMB.toString())) {
+            state.addCharacter(new Bomb(this.getCurrentPos(),explosionRange, null));
         } else if (isDead()) {
             if (step > 0 && step < MAX_DIE_STEP) {
                 step = (step+1) % 6;    // when does it have do be removed from playable list in state

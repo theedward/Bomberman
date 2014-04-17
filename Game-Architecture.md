@@ -31,6 +31,9 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 		// This method will call the method play of each player.
 		void playAll();
+		
+		// This method will remove all the given objects from the state.
+		void removeAll(List<Playable> objects);
 	}
 
 	// This class is responsible to draw everything in the canvas.

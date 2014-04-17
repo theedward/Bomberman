@@ -1,6 +1,7 @@
 package com.cmov.bomberman.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by JoãoEduardo on 15-04-2014.
@@ -67,7 +68,7 @@ public class Player {
     }
 
     // This method will be called every round. This will update all the object's positions.
-    void onUpdate(Position[] objectsPositions){
+    void onUpdate(Map<String, Position[]> objectsPositions){
         //TODO: Implement this
     }
 

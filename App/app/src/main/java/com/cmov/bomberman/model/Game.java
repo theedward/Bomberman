@@ -1,9 +1,6 @@
 package com.cmov.bomberman.model;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 // This is where all the game will be processed.
 public final class Game {
@@ -62,6 +59,7 @@ public final class Game {
 	/**
 	 * Creates the game configuration and the game state.
 	 * Calls Player#onGameStart for every registered player.
+	 * Starts the game loop on a separate thread.
 	 */
 	public void start() {
 		gameConfiguration = GameUtils.readConfigurationFile(level);
@@ -69,26 +67,18 @@ public final class Game {
 		for (Player p : players.values()) {
 			p.onGameStart(gameConfiguration);
 		}
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				loop();
+			}
+		}).start();
 	}
 
 	public void end() {
 		for (Player p : players.values()) {
 			p.onGameEnd(gameConfiguration);
-		}
-	}
-
-	/**
-	 * Updates the state (new frame). Updates every player with all the characters positions
-	 */
-	public void update() {
-		// Update the state
-		gameState.playAll();
-
-		List<Position> characterPositions = new LinkedList<Position>();
-		for (Player p : players.values()) {
-			for (Agent a : p.getObjects()) {
-				characterPositions.add(a.getCurrentPos());
-			}
 		}
 	}
 
@@ -127,5 +117,55 @@ public final class Game {
 	public void restart() {
 		stop();
 		start();
+	}
+
+	/**
+	 * TODO: when does the game finish?
+	 * Verifies if the game has already finished.
+	 * @return true when?
+	 */
+	private boolean hasFinished() {
+		// TODO
+		return false;
+	}
+
+	/**
+	 * The game loop.
+	 * Performs the number of updates specified in the game configuration.
+	 */
+	private void loop() {
+		final int sleepTime = 1000 / gameConfiguration.getNumUpdatesPerSecond();
+		while (! hasFinished()) {
+			update();
+			try {
+				Thread.sleep(sleepTime);
+			}
+			catch (InterruptedException e) {
+				// TODO: improve comment
+				System.out.println("They don't let me sleep");
+			}
+		}
+	}
+
+	/**
+	 * Updates the state (new frame). Updates every player with all the characters positions
+	 */
+	private void update() {
+		// Update the state
+		gameState.playAll();
+
+		final Map<String, Position[]> characterPositions = new TreeMap<String, Position[]>();
+		for (Player p : players.values()) {
+			final Agent[] objects = (Agent[]) p.getObjects().toArray();
+			final Position[] positions = new Position[objects.length];
+			for (int i = 0; i < positions.length; i++) {
+				positions[i] = objects[i].getCurrentPos();
+			}
+			characterPositions.put(p.getUsername(), positions);
+		}
+
+		for (Player p : players.values()) {
+			p.onUpdate(characterPositions);
+		}
 	}
 }

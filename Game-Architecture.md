@@ -71,7 +71,7 @@ Also, everytime a player presses a key, this information is sent to the server.
 		String username;
 		int currentScore;
 		Screen myScreen;
-		List<Playable> objects;
+		List<Agent> objects;
 
 		public Player(String username);
 

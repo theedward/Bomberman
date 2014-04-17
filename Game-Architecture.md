@@ -125,6 +125,8 @@ Also, everytime a player presses a key, this information is sent to the server.
 	// All objects that are updated during the game must implement this interface
 	interface Playable {
 		void play(State);
+		boolean isDestroyed();
+		void destroy();
 	}
 
 	/**
@@ -155,15 +157,22 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 	// An Agent is an object that can play (has an algorithm) and can be printed on the screen.
 	abstract class Agent implements Drawable, Playable {
-		public enum Action {
-			MOVE_UP, MOVE_RIGHT, MOVE_DOWN, MOVE_LEFT
-		};
-		
 		Position currentPos;
 		Algorithm algorithm;
 
-		public Agent(Position, Algorithm);
-		public final void move(Agent.Action, int speed);  
+		public Agent(Position, Algorithm);  
+	}
+	
+	abstract class MovableAgent extends Agent {
+		public enum Move {
+			UP, RIGHT, DOWN, LEFT
+		};
+		
+		int speed;
+		
+		public MovableAgent(Position, Algorithm, int);
+		// Returns true if the agent moved successfully
+		public boolean move(State currentState, MovableAgent.Move direction);
 	}
 
 	class Bomberman extends Agent {

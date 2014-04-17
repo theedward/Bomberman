@@ -4,7 +4,6 @@ package com.cmov.bomberman.model;
  * Created by JoãoEduardo on 15-04-2014.
  */
 public class GameConfiguration {
-	// Maps player usernames into their initial position in the map.
 	private Position[] bombermanInitialPositions;
 	private Position[] robotInitialPositions;
 	private int numUpdatesPerSecond;

@@ -18,6 +18,8 @@ public class Wall implements Drawable{
     public Wall(Position position){
 
         this.position = position;
+
+        if(sprite == null)
         sprite = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, NUM_IMAGES);
     }
 

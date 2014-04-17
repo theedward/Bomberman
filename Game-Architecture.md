@@ -87,7 +87,8 @@ Also, everytime a player presses a key, this information is sent to the server.
 		void onGameEnd(GameConfiguration finalConfig);
 
 		// This method will be called every round. This will update all the object's positions.
-		void onUpdate(Position[] objectsPositions);
+		// It receives the objects positions for each player's username.
+		void onUpdate(Map<String, Position[]> objectsPositions);
 	}
 
 	// To support a player in the network, this class will serve as proxy in the

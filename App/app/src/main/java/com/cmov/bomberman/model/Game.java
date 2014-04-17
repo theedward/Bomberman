@@ -1,80 +1,131 @@
 package com.cmov.bomberman.model;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-/**
- * Created by JoãoEduardo on 15-04-2014.
- */
-public class Game {
+// This is where all the game will be processed.
+public final class Game {
+	private int level;
+	private Map<String, Player> players;
+	private Map<String, Player> playersOnPause;
+	private State gameState;
+	private GameConfiguration gameConfiguration;
 
-    Map<String, Player> players;
-    State gameState;
-    GameConfiguration currentConfig;
+	public Game() {
+		players = new HashMap<String, Player>();
+		playersOnPause = new HashMap<String, Player>();
+		gameState = new State();
+	}
 
-    public Map<String, Player> getPlayers() {
-        return players;
-    }
+	/**
+	 * Adds a new player to the game.
+	 * @param username the player username
+	 * @param p the player object
+	 * @return true if the username is unique, false otherwise.
+	 */
+	public boolean addPlayer(String username, Player p) {
+		if (players.containsKey(username)) {
+			return false;
+		} else {
+			players.put(username, p);
+			return true;
+		}
+	}
 
-    public void setPlayers(Map<String, Player> players) {
-        this.players = players;
-    }
+	/**
+	 * Removes the player from the game.
+	 * @param p the player object
+	 */
+	public void removePlayer(Player p) {
+		players.remove(p);
+		gameState.removeAll(p.getObjects());
+	}
 
-    public State getGameState() {
-        return gameState;
-    }
+	private void pausePlayer(String username) {
+		Player p = players.get(username);
+		playersOnPause.put(username, p);
+		removePlayer(p);
+	}
 
-    public void setGameState(State gameState) {
-        this.gameState = gameState;
-    }
+	private void unpausePlayer(String username) {
+		Player p = playersOnPause.get(username);
+		playersOnPause.remove(p);
+		addPlayer(username, p);
+	}
 
-    public GameConfiguration getCurrentConfig() {
-        return currentConfig;
-    }
+	public void setLevel(final int level) {
+		this.level = level;
+	}
 
-    public void setCurrentConfig(GameConfiguration currentConfig) {
-        this.currentConfig = currentConfig;
-    }
+	/**
+	 * Creates the game configuration and the game state.
+	 * Calls Player#onGameStart for every registered player.
+	 */
+	public void start() {
+		gameConfiguration = GameUtils.readConfigurationFile(level);
+		// TODO create the game state
+		for (Player p : players.values()) {
+			p.onGameStart(gameConfiguration);
+		}
+	}
 
-    static void readConfigurationFile(String filename){
-        //TODO:Implement this
-    }
+	public void end() {
+		for (Player p : players.values()) {
+			p.onGameEnd(gameConfiguration);
+		}
+	}
 
-    void addPlayer(Player p){
-        //TODO:Implement this
-    }
+	/**
+	 * Updates the state (new frame). Updates every player with all the characters positions
+	 */
+	public void update() {
+		// Update the state
+		gameState.playAll();
 
-    void removePlayer(Player p){
-        //TODO:Implement this
-    }
+		List<Position> characterPositions = new LinkedList<Position>();
+		for (Player p : players.values()) {
+			for (Agent a : p.getObjects()) {
+				characterPositions.add(a.getCurrentPos());
+			}
+		}
+	}
 
-    // Calls onGameStart on each player. Creates the first GameConfiguration.
-    void start(){
-        //TODO:Implement this
-    }
+	/**
+	 * Pauses the game for the player with the given username
+	 * @param username the player's username
+	 */
+	public void pause(String username) {
+		pausePlayer(username);
+		for (Player p : players.values()) {
+			p.onGameUpdate(gameConfiguration);
+		}
+	}
 
-    void end(){
-        //TODO:Implement this
-    }
+	/**
+	 * Unpauses the game for the player with the given username
+	 * @param username the player's username
+	 */
+	public void unpause(String username) {
+		unpausePlayer(username);
+		for (Player p : players.values()) {
+			p.onGameUpdate(gameConfiguration);
+		}
+	}
 
-    // Updates the state of the map. This is, moves players and detects collisions.
-    void update(){
-        //TODO:Implement this
-    }
+	/**
+	 * Stops the game. All the game state is deleted.
+	 */
+	public void stop() {
+		// TODO
+	}
 
-    // Calls onGameUpdate
-    void pause(String playerUsername){
-        //TODO:Implement this
-    }
-
-    void unpause (String playerUsername){
-        //TODO:Implement this
-    }
-
-    void stop(){
-        //TODO:Implement this
-    }
-
-    void restart(){
-        //TODO:Implement this
-    }
+	/**
+	 * Restarts the game. It's the same as Game#stop and Game#start.
+	 */
+	public void restart() {
+		stop();
+		start();
+	}
 }

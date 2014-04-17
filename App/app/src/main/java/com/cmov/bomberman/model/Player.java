@@ -10,7 +10,7 @@ public class Player {
     String username;
     int currentScore;
     Screen myScreen;
-    List<Playable> objects;
+    List<Agent> objects;
 
     public Player(String username){
         this.username = username;
@@ -40,11 +40,11 @@ public class Player {
         this.myScreen = myScreen;
     }
 
-    public List<Playable> getObjects() {
+    public List<Agent> getObjects() {
         return objects;
     }
 
-    public void setObjects(List<Playable> objects) {
+    public void setObjects(List<Agent> objects) {
         this.objects = objects;
     }
 

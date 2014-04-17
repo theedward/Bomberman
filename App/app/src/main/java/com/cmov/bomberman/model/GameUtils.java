@@ -29,13 +29,22 @@ public class GameUtils {
 	private static int canvasHeight;
 	private static Resources resources;
 
-	public static void init(Resources resources, int canvasWidth, int canvasHeight) {
+	public static void init(final Resources resources, final int canvasWidth, final int canvasHeight) {
 		GameUtils.resources = resources;
 		GameUtils.canvasWidth = canvasWidth;
 		GameUtils.canvasHeight = canvasHeight;
 	}
 
-	public static char[][] readLevelFromFile(String filename) {
+	/**
+	 * @param level the game level
+	 * @return the file name of this level.
+	 */
+	private static String levelFilename(final int level) {
+		return "level" + level;
+	}
+
+	public static char[][] readLevelFromFile(final int level) {
+		final String filename = GameUtils.levelFilename(level);
 		List<char[]> map = new LinkedList<char[]>();
 		try {
 			BufferedReader rd = new BufferedReader(new FileReader(filename));
@@ -54,8 +63,17 @@ public class GameUtils {
 		return (char[][]) map.toArray();
 	}
 
-	public static GameConfiguration readConfigurationFile(String filename) {
-		GameConfiguration config = new GameConfiguration();
+	/**
+	 * @param level the game level
+	 * @return the file name of the configuration file for this level.
+	 */
+	private static String configFilename(final int level) {
+		return "level" + level;
+	}
+
+	public static GameConfiguration readConfigurationFile(final int level) {
+		final String filename = configFilename(level);
+		final GameConfiguration config = new GameConfiguration();
 		try {
 			JsonReader rd = new JsonReader(new FileReader(filename));
 			rd.beginObject();

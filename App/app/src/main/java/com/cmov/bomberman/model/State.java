@@ -31,5 +31,5 @@ public class State {
     public void destroyCharacter(Agent object) {}
 
     //Given a certain explosion range, this method will clear all fields that are in the bomb's path
-    public void bombExplosion(int explosionRange){}
+    public void bombExplosion(int explosionRange, Bomb bomb){}
 }

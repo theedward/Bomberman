@@ -1,6 +1,7 @@
 package com.cmov.bomberman.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by JoãoEduardo on 15-04-2014.
@@ -10,7 +11,7 @@ public class Player {
     String username;
     int currentScore;
     Screen myScreen;
-    List<Playable> objects;
+    List<Agent> objects;
 
     public Player(String username){
         this.username = username;
@@ -40,11 +41,11 @@ public class Player {
         this.myScreen = myScreen;
     }
 
-    public List<Playable> getObjects() {
+    public List<Agent> getObjects() {
         return objects;
     }
 
-    public void setObjects(List<Playable> objects) {
+    public void setObjects(List<Agent> objects) {
         this.objects = objects;
     }
 
@@ -67,7 +68,7 @@ public class Player {
     }
 
     // This method will be called every round. This will update all the object's positions.
-    void onUpdate(Position[] objectsPositions){
+    void onUpdate(Map<String, Position[]> objectsPositions){
         //TODO: Implement this
     }
 

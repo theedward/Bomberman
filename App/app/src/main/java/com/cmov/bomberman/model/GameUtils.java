@@ -3,6 +3,7 @@ package com.cmov.bomberman.model;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.JsonReader;
 import com.cmov.bomberman.R;
 
 import java.io.BufferedReader;
@@ -28,13 +29,22 @@ public class GameUtils {
 	private static int canvasHeight;
 	private static Resources resources;
 
-	public static void init(Resources resources, int canvasWidth, int canvasHeight) {
+	public static void init(final Resources resources, final int canvasWidth, final int canvasHeight) {
 		GameUtils.resources = resources;
 		GameUtils.canvasWidth = canvasWidth;
 		GameUtils.canvasHeight = canvasHeight;
 	}
 
-	public static char[][] readLevelFromFile(String filename) {
+	/**
+	 * @param level the game level
+	 * @return the file name of this level.
+	 */
+	private static String levelFilename(final int level) {
+		return "level" + level;
+	}
+
+	public static char[][] readLevelFromFile(final int level) {
+		final String filename = GameUtils.levelFilename(level);
 		List<char[]> map = new LinkedList<char[]>();
 		try {
 			BufferedReader rd = new BufferedReader(new FileReader(filename));
@@ -51,6 +61,97 @@ public class GameUtils {
 		}
 
 		return (char[][]) map.toArray();
+	}
+
+	/**
+	 * @param level the game level
+	 * @return the file name of the configuration file for this level.
+	 */
+	private static String configFilename(final int level) {
+		return "level" + level;
+	}
+
+	public static GameConfiguration readConfigurationFile(final int level) {
+		final String filename = configFilename(level);
+		final GameConfiguration config = new GameConfiguration();
+		try {
+			JsonReader rd = new JsonReader(new FileReader(filename));
+			rd.beginObject();
+			while (rd.hasNext()) {
+				String msg = rd.nextName();
+				if (msg.equals("NumUpdatesPerSecond")) {
+					config.setNumUpdatesPerSecond(rd.nextInt());
+				} else if (msg.equals("MaxNumPlayers")) {
+					config.setMaxNumPlayers(rd.nextInt());
+				} else if (msg.equals("TimeLimit")) {
+					config.setTimeLimit(rd.nextInt());
+				} else if (msg.equals("BombermanSpeed")) {
+					config.setbSpeed(rd.nextInt());
+				} else if (msg.equals("RobotSpeed")) {
+					config.setrSpeed(rd.nextInt());
+				} else if (msg.equals("TimeToExplode")) {
+					config.setTimeToExplode(rd.nextInt());
+				} else if (msg.equals("ExplosionDuration")) {
+					config.setExplosionDuration(rd.nextInt());
+				} else if (msg.equals("ExplosionRange")) {
+					config.setExplosionRange(rd.nextInt());
+				} else if (msg.equals("NumUpdatesPerSecond")) {
+					config.setNumUpdatesPerSecond(rd.nextInt());
+				} else if (msg.equals("PointRobot")) {
+					config.setPointRobot(rd.nextInt());
+				} else if (msg.equals("PointOpponent")) {
+					config.setPointOpponent(rd.nextInt());
+				} else if (msg.equals("BombermanInitialPositions")) {
+					List<Position> bombermanPositions = new LinkedList<Position>();
+					// Read array of positions
+					rd.beginArray();
+					while (rd.hasNext()) {
+						Position p = new Position();
+						// Read position object
+						rd.beginObject();
+						msg = rd.nextName();
+						if (msg.equals("X")) {
+							p.setX((float) rd.nextDouble());
+						} else if (msg.equals("Y")) {
+							p.setY((float) rd.nextDouble());
+						}
+						rd.endObject();
+						bombermanPositions.add(p);
+					}
+					rd.endArray();
+					config.setBombermanInitialPositions((Position[]) bombermanPositions.toArray());
+				} else if (msg.equals("RobotInitialPositions")) {
+					List<Position> robotPositions = new LinkedList<Position>();
+					// Read array of positions
+					rd.beginArray();
+					while (rd.hasNext()) {
+						Position p = new Position();
+						// Read position object
+						rd.beginObject();
+						msg = rd.nextName();
+						if (msg.equals("X")) {
+							p.setX((float) rd.nextDouble());
+						} else if (msg.equals("Y")) {
+							p.setY((float) rd.nextDouble());
+						}
+						rd.endObject();
+						robotPositions.add(p);
+					}
+					rd.endArray();
+					config.setRobotInitialPositions((Position[]) robotPositions.toArray());
+				}
+			}
+			rd.endObject();
+			rd.close();
+		}
+		catch (FileNotFoundException e) {
+			System.out.println("File not found: " + filename);
+		}
+		catch (IOException e) {
+			System.out.println("Error while reading file: " + filename);
+		}
+
+		return config;
 	}
 
 	// Used on Android
@@ -71,11 +172,10 @@ public class GameUtils {
 											(col + i) * IMAGE_BLOCK_SIZE,
 											IMAGE_BLOCK_SIZE,
 											IMAGE_BLOCK_SIZE);
-			sprite[i] = Bitmap.createScaledBitmap(sprite[i], canvasWidth /
-															 NUM_BLOCK_CANVAS,
-												  canvasHeight /
-												  NUM_BLOCK_CANVAS, true
-												 );
+			sprite[i] = Bitmap.createScaledBitmap(sprite[i],
+												  canvasWidth / NUM_BLOCK_CANVAS,
+												  canvasHeight / NUM_BLOCK_CANVAS,
+												  true);
 		}
 		return sprite;
 	}

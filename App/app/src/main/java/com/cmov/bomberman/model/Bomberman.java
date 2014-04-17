@@ -31,6 +31,12 @@ public class Bomberman extends MovableAgent {
     public Bomberman(Position pos, Algorithm ai, int range, int speed) {
         super(pos,ai,speed);
         explosionRange = range;
+        // arguments must be changed
+        spriteTop = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
+        spriteBottom = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
+        spriteLeft = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
+        spriteRight = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
+        spriteDie = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_DIE_STEP);
     }
 
     private boolean isDead(){
@@ -52,7 +58,17 @@ public class Bomberman extends MovableAgent {
 
     @Override
     public void draw(Canvas canvas) {
-
+        if (currentAction.equals(Actions.MOVE_TOP.toString())) {
+            canvas.drawBitmap(spriteTop[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+        } else if (currentAction.equals(Actions.MOVE_BOTTOM.toString())) {
+            canvas.drawBitmap(spriteBottom[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+        } else if (currentAction.equals(Actions.MOVE_LEFT.toString())) {
+            canvas.drawBitmap(spriteLeft[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+        } else if (currentAction.equals(Actions.MOVE_RIGHT.toString())) {
+            canvas.drawBitmap(spriteRight[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+        } else if (currentAction.equals(Actions.DIE.toString())) {
+            canvas.drawBitmap(spriteDie[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+        }
     }
 
     @Override
@@ -70,6 +86,7 @@ public class Bomberman extends MovableAgent {
 
         if (collision != null) {
             if (collision.equals(Collision.WCHARACTER.toString())) {
+                currentAction = Actions.DIE.toString();
                 step = 0;
                 isDead = true;
             }

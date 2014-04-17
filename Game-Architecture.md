@@ -154,10 +154,15 @@ Also, everytime a player presses a key, this information is sent to the server.
 
 	// An Agent is an object that can play (has an algorithm) and can be printed on the screen.
 	abstract class Agent implements Drawable, Playable {
+		public enum Action {
+			MOVE_UP, MOVE_RIGHT, MOVE_DOWN, MOVE_LEFT
+		};
+		
 		Position currentPos;
 		Algorithm algorithm;
 
-		public Character(Position, Algorithm);
+		public Agent(Position, Algorithm);
+		public final void move(Agent.Action, int speed);  
 	}
 
 	class Bomberman extends Agent {

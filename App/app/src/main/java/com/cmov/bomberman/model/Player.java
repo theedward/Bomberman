@@ -68,8 +68,14 @@ public class Player {
     }
 
     // This method will be called every round. This will update all the object's positions.
-    void onUpdate(Map<String, Position[]> objectsPositions){
-        //TODO: Implement this
+    // don't know if this should replace the whole list
+    // or change the positions of matching characters
+    // is this supposed to draw each object?
+
+    //void onUpdate(Map<String, Position[]> objectsPositions){
+    void onUpdate(List<Agent> agentsToUpdate) {
+        setObjects(agentsToUpdate);
+        myScreen.drawAll();
     }
 
 }

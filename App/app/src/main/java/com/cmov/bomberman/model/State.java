@@ -10,7 +10,7 @@ import java.util.Map;
 public class State {
 
     /*
-    * 'E' stands for empty
+    * '-' stands for empty
     * 'W' stands for wall
     * 'M' stands for movable agent
     * 'O' stands for obstacle
@@ -22,10 +22,14 @@ public class State {
 
     public State() {
         objects = new HashMap<Position, Agent>();
+
     }
 
     public void setMapPosition() {}
 
+    public List<Agent> getObjects() {
+        return (List<Agent>) objects.values();
+    }
     // This method will call the method play of each player.
     // in the end after all plays must check for possible deaths or
     // objects to be destroyed
@@ -54,7 +58,7 @@ public class State {
         Position pos = object.getCurrentPos();
 
         objects.remove(object);
-        map[pos.yToDiscrete()][pos.xToDiscrete()] = 'E';
+        map[pos.yToDiscrete()][pos.xToDiscrete()] = '-';
         //must clean respective map position
     }
 

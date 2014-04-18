@@ -53,6 +53,10 @@ public class Bomberman extends MovableAgent {
         return isDead;
     }
 
+    public void setIsDead(boolean dead) {
+        isDead = dead;
+    }
+
     private Move ActionToMove(String action) {
 
         if(action.equals(Actions.MOVE_BOTTOM)) {
@@ -104,7 +108,7 @@ public class Bomberman extends MovableAgent {
             state.addCharacter(new Bomb(this.getCurrentPos(),explosionRange));
         } else if (isDead()) {
             if (step > 0 && step < MAX_DIE_STEP) {
-                step = (step+1) % 6;    // when does it have do be removed from playable list in state
+                step = (step+1) % 6;
             } else if (step == MAX_DIE_STEP) {
                 isDestroyed = true;
                 return;

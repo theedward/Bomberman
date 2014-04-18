@@ -27,4 +27,24 @@ public class Position {
 	public void setY(final float y) {
 		this.y = y;
 	}
+
+    //this method converts float x coordinate into an int
+    public int xToDiscrete() {
+        return 0;
+    }
+
+    //this method converts float y coordinate into an int
+    public int yToDiscrete() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) {
+            return false;
+        }
+        super.equals(o);
+        Position pos = (Position) o;
+        return (pos.getX() == this.getX()) && (pos.getY() == this.getY());
+    }
 }

@@ -61,7 +61,7 @@ public class State {
     //Given a certain explosion range, this method will clear all fields that are in the bomb's path
     public void bombExplosion(int explosionRange, Bomb bomb){
 
-        int i,j;
+        int i;
         float bombPosX = bomb.getCurrentPos().getX();
         float bombPosY = bomb.getCurrentPos().getY();
 
@@ -70,29 +70,29 @@ public class State {
         //for now it destroys the characters immediately
 
         //destroy character in position bomb.pos.line + i
-        for(j = 0; j < explosionRange ;j++) {
-            Position pos = new Position(bombPosX,bombPosY+j);
+        for(i = 0; i < explosionRange ;i++) {
+            Position pos = new Position(bombPosX,bombPosY+i);
             if (objects.containsKey(pos)) {
                 destroyCharacter(objects.get(pos));
             }
         }
         //destroy character in position bomb.pos.column + i
-        for(j = 0; j < explosionRange ;j++) {
-            Position pos = new Position(bombPosX+j,bombPosY);
+        for(i = 0; i < explosionRange ;i++) {
+            Position pos = new Position(bombPosX+i,bombPosY);
             if (objects.containsKey(pos)) {
                 destroyCharacter(objects.get(pos));
             }
         }
         //destroy character in position bomb.pos.line - i
-        for(j = 0; j < explosionRange ;j++) {
-            Position pos = new Position(bombPosX,bombPosY-j);
+        for(i = 0; i < explosionRange ;i++) {
+            Position pos = new Position(bombPosX,bombPosY-i);
             if (objects.containsKey(pos)) {
                 destroyCharacter(objects.get(pos));
             }
         }
         //destroy character in position bomb.pos.column - i
-        for(j = 0; j < explosionRange ;j++) {
-            Position pos = new Position(bombPosX-j,bombPosY);
+        for(i = 0; i < explosionRange ;i++) {
+            Position pos = new Position(bombPosX-i,bombPosY);
             if (objects.containsKey(pos)) {
                 destroyCharacter(objects.get(pos));
             }

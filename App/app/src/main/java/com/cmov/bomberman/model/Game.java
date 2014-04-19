@@ -7,6 +7,7 @@ import java.util.TreeMap;
 // This is where all the game will be processed.
 public final class Game {
 	private int level;
+	private int time;
 	private Map<String, Player> players;
 	private Map<String, Player> playersOnPause;
 	private State gameState;
@@ -62,13 +63,46 @@ public final class Game {
 	}
 
 	/**
+	 * Creates all the objects and populates the game state.
+	 */
+	private void populateGame() {
+		// Attribute each player a Bomberman object
+		Player[] characterOwners = (Player[]) players.values().toArray();
+		int playerCounter = 0;
+
+		for (int i = 0; i < gameState.map.length; i++) {
+			for (int j = 0; j < gameState.map[i].length; j++) {
+				char character = gameState.map[i][j];
+				// the position will be right in the middle
+				final Position pos = new Position(i + 0.5f, j + 0.5f);
+				if (character == State.Character.OBSTACLE.toChar()) {
+					gameState.addCharacter(new Obstacle(gameState.createNewId(), pos));
+				} else if (character == State.Character.BOMBERMAN.toChar()) {
+					Bomberman bm = new Bomberman(gameState.createNewId(), pos,
+												 characterOwners[playerCounter].getController(),
+												 gameConfiguration.getExplosionRange(),
+												 gameConfiguration.getbSpeed());
+					gameState.addCharacter(bm);
+					characterOwners[playerCounter].addAgent(bm);
+				} else if (character == State.Character.ROBOT.toChar()) {
+					gameState.addCharacter(new Robot(gameState.createNewId(), pos, gameConfiguration.getrSpeed()));
+				}
+			}
+		}
+	}
+
+	/**
 	 * Creates the game configuration and the game state.
 	 * Calls Player#onGameStart for every registered player.
 	 * Starts the game loop on a separate thread.
 	 */
 	public void start() {
+		gameState.map = GameUtils.readLevelFromFile(level);
 		gameConfiguration = GameUtils.readConfigurationFile(level);
-		// TODO create the game state
+
+		populateGame();
+
+		// tell players that the game has started
 		for (Player p : players.values()) {
 			p.onGameStart(gameConfiguration);
 		}
@@ -127,14 +161,27 @@ public final class Game {
 	}
 
 	/**
-	 * TODO: when does the game finish?
 	 * Verifies if the game has already finished.
-	 *
-	 * @return true when?
 	 */
 	private boolean hasFinished() {
-		// TODO
-		return false;
+		// return if time has already finished
+		if (time == 0) {
+			return true;
+		}
+
+		// check how many are still alive
+		int numMovableAgents = 0;
+		final char[][] map = gameState.map;
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[i].length; j++) {
+				if (map[i][j] == State.Character.BOMBERMAN.toChar() || map[i][j] == State.Character.ROBOT.toChar()) {
+					numMovableAgents++;
+				}
+			}
+		}
+
+		// the game only finishes when only ONE movable agent is alive
+		return numMovableAgents == 1;
 	}
 
 	/**
@@ -143,15 +190,18 @@ public final class Game {
 	 */
 	private void loop() {
 		final int sleepTime = 1000 / gameConfiguration.getNumUpdatesPerSecond();
+		int timeCounter = 0;
 		while (!hasFinished()) {
 			update();
+			timeCounter = (timeCounter + 1) % gameConfiguration.getNumUpdatesPerSecond();
+			if (timeCounter == 0) {
+				time--;
+			}
+
 			try {
 				Thread.sleep(sleepTime);
 			}
-			catch (InterruptedException e) {
-				// TODO: improve comment
-				System.out.println("They don't let me sleep");
-			}
+			catch (InterruptedException e) {}
 		}
 	}
 

@@ -58,7 +58,8 @@ abstract class MovableAgent extends Agent {
 		if (character == State.Character.EMPTY.toChar()) {
 			setPosition(new Position(x, y));
 			return null;
-		} else if (character == State.Character.BOMB.toChar() || character == State.Character.MOVABLE_AGENT.toChar()) {
+		} else if (character == State.Character.BOMB.toChar() || character == State.Character.BOMBERMAN.toChar() ||
+				character == State.Character.ROBOT.toChar()) {
 			if (moveAxis == Axis.HORIZONTAL) {
 				x = (direction == Move.LEFT) ? (float) Math.floor(x) + 0.5f : (float) Math.ceil(x) - 0.5f;
 			} else {

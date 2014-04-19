@@ -103,44 +103,6 @@ public class GameUtils {
 					config.setPointRobot(rd.nextInt());
 				} else if (msg.equals("PointOpponent")) {
 					config.setPointOpponent(rd.nextInt());
-				} else if (msg.equals("BombermanInitialPositions")) {
-					List<Position> bombermanPositions = new LinkedList<Position>();
-					// Read array of positions
-					rd.beginArray();
-					while (rd.hasNext()) {
-						Position p = new Position();
-						// Read position object
-						rd.beginObject();
-						msg = rd.nextName();
-						if (msg.equals("X")) {
-							p.setX((float) rd.nextDouble());
-						} else if (msg.equals("Y")) {
-							p.setY((float) rd.nextDouble());
-						}
-						rd.endObject();
-						bombermanPositions.add(p);
-					}
-					rd.endArray();
-					config.setBombermanInitialPositions((Position[]) bombermanPositions.toArray());
-				} else if (msg.equals("RobotInitialPositions")) {
-					List<Position> robotPositions = new LinkedList<Position>();
-					// Read array of positions
-					rd.beginArray();
-					while (rd.hasNext()) {
-						Position p = new Position();
-						// Read position object
-						rd.beginObject();
-						msg = rd.nextName();
-						if (msg.equals("X")) {
-							p.setX((float) rd.nextDouble());
-						} else if (msg.equals("Y")) {
-							p.setY((float) rd.nextDouble());
-						}
-						rd.endObject();
-						robotPositions.add(p);
-					}
-					rd.endArray();
-					config.setRobotInitialPositions((Position[]) robotPositions.toArray());
 				}
 			}
 			rd.endObject();

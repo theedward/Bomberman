@@ -8,13 +8,23 @@ import java.util.Map;
  */
 public class Player {
 
-	String username;
-	int currentScore;
-	Screen myScreen;
-	List<Agent> objects;
+	private String username;
+	private int currentScore;
+	private Screen myScreen;
+	private List<Agent> objects;
+	private Controllable controller;
 
-	public Player(String username) {
+	public Player(String username, Controllable controller) {
 		this.username = username;
+		this.controller = controller;
+	}
+
+	public Controllable getController() {
+		return controller;
+	}
+
+	public void addAgent(Agent agent) {
+		objects.add(agent);
 	}
 
 	public String getUsername() {

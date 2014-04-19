@@ -109,7 +109,7 @@ public class State {
 	}
 
 	public enum Character {
-		EMPTY('-'), WALL('W'), MOVABLE_AGENT('M'), OBSTACLE('O'), BOMB('B');
+		EMPTY('-'), WALL('W'), ROBOT('R'), BOMBERMAN('M'), OBSTACLE('O'), BOMB('B');
 
 		private char symbol;
 

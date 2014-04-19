@@ -16,7 +16,7 @@ abstract class MovableAgent extends Agent {
 	;
 
 	// Returns type of potential collision or null if there s none
-	public Collision move(State currentState, Move direction) {
+	public boolean move(State currentState, Move direction) {
 		/*
 			if it's the first move or it's in the same axis as the previous move (horizontal or vertical),
 			just move the agent.
@@ -57,7 +57,7 @@ abstract class MovableAgent extends Agent {
 		char character = currentState.map[curPos.xToDiscrete()][curPos.yToDiscrete()];
 		if (character == State.Character.EMPTY.toChar()) {
 			setPosition(new Position(x, y));
-			return null;
+			return true;
 		} else if (character == State.Character.BOMB.toChar() || character == State.Character.BOMBERMAN.toChar() ||
 				   character == State.Character.ROBOT.toChar()) {
 			if (moveAxis == Axis.HORIZONTAL) {
@@ -66,7 +66,8 @@ abstract class MovableAgent extends Agent {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
 			setPosition(new Position(x, y));
-			return Collision.WCHARACTER;
+            handleEvent(Event.DESTROY);
+			return false;
 		} else if (character == State.Character.OBSTACLE.toChar() || character == State.Character.WALL.toChar()) {
 			// correct position
 			// set position in the opposite direction
@@ -76,12 +77,12 @@ abstract class MovableAgent extends Agent {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
 			setPosition(new Position(x, y));
-			return Collision.WOBSTACLE;
+			return false;
 		}
 
 		// Should never happen
 		System.out.println("MovableAgent#move: Unhandled case.");
-		return null;
+		return false;
 	}
 
 	private enum Axis {
@@ -90,11 +91,5 @@ abstract class MovableAgent extends Agent {
 
 	public enum Move {
 		UP, RIGHT, DOWN, LEFT
-	}
-
-	// possible collisions
-	// with obstacle or with character
-	public enum Collision {
-		WOBSTACLE, WCHARACTER
 	}
 }

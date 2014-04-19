@@ -22,8 +22,8 @@ public class Bomberman extends MovableAgent {
 	String currentAction;
 	boolean isDead;
 	boolean isDestroyed;
-	public Bomberman(Position pos, Algorithm ai, int range, int speed) {
-		super(pos, ai, speed);
+	public Bomberman(int id, Position pos, Algorithm ai, int range, int speed) {
+		super(id, pos, ai, speed);
 		explosionRange = range;
 		// arguments must be changed
 		if (spriteTop == null) {
@@ -72,15 +72,15 @@ public class Bomberman extends MovableAgent {
 	@Override
 	public void draw(Canvas canvas) {
 		if (currentAction.equals(Actions.MOVE_TOP.toString())) {
-			canvas.drawBitmap(spriteTop[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(spriteTop[step], getPosition().getX(), getPosition().getY(), null);
 		} else if (currentAction.equals(Actions.MOVE_BOTTOM.toString())) {
-			canvas.drawBitmap(spriteBottom[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(spriteBottom[step], getPosition().getX(), getPosition().getY(), null);
 		} else if (currentAction.equals(Actions.MOVE_LEFT.toString())) {
-			canvas.drawBitmap(spriteLeft[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(spriteLeft[step], getPosition().getX(), getPosition().getY(), null);
 		} else if (currentAction.equals(Actions.MOVE_RIGHT.toString())) {
-			canvas.drawBitmap(spriteRight[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(spriteRight[step], getPosition().getX(), getPosition().getY(), null);
 		} else if (currentAction.equals(Actions.DIE.toString())) {
-			canvas.drawBitmap(spriteDie[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(spriteDie[step], getPosition().getX(), getPosition().getY(), null);
 		}
 	}
 
@@ -104,7 +104,7 @@ public class Bomberman extends MovableAgent {
 				isDead = true;
 			}
 		} else if (nextAction.equals(Actions.PUT_BOMB.toString())) {
-			state.addCharacter(new Bomb(this.getCurrentPos(), explosionRange));
+			state.addCharacter(new Bomb(state.createNewId(), this.getPosition(), explosionRange));
 		} else if (isDead()) {
 			if (step > 0 && step < MAX_DIE_STEP) {
 				step = (step + 1) % 6;

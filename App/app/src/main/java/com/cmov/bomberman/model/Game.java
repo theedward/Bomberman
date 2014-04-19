@@ -163,19 +163,16 @@ public final class Game {
 		gameState.playAll();
 
 		// Get all the character positions
-		final Map<String, Position[]> characterPositions = new TreeMap<String, Position[]>();
+		final Map<Integer, Position> positions = new TreeMap<Integer, Position>();
 		for (Player p : players.values()) {
-			final Agent[] objects = (Agent[]) p.getObjects().toArray();
-			final Position[] positions = new Position[objects.length];
-			for (int i = 0; i < positions.length; i++) {
-				positions[i] = objects[i].getCurrentPos();
+			for (Agent agent : p.getObjects()) {
+				positions.put(agent.getId(), agent.getPosition());
 			}
-			characterPositions.put(p.getUsername(), positions);
 		}
 
 		// Update every player with the character positions
 		for (Player p : players.values()) {
-			p.onUpdate(characterPositions);
+			p.onUpdate(positions);
 		}
 	}
 }

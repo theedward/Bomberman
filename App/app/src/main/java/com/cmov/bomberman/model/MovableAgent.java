@@ -7,8 +7,8 @@ abstract class MovableAgent extends Agent {
 
 	;
 
-	public MovableAgent(Position pos, Algorithm ai, int sp) {
-		super(pos, ai);
+	public MovableAgent(final int id, final Position pos, final Algorithm ai, final int sp) {
+		super(id, pos, ai);
 		speed = sp;
 		lastAxis = null;
 	}
@@ -24,8 +24,8 @@ abstract class MovableAgent extends Agent {
 			in both axis, otherwise he won't move.
 		 */
 		final Axis moveAxis = (direction == Move.UP || direction == Move.DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
-		float x = getCurrentPos().getX();
-		float y = getCurrentPos().getY();
+		float x = getPosition().getX();
+		float y = getPosition().getY();
 		boolean canMove = false;
 		if (lastAxis == null || lastAxis == moveAxis) {
 			canMove = true;
@@ -56,7 +56,7 @@ abstract class MovableAgent extends Agent {
 		final Position curPos = new Position(x, y);
 		char character = currentState.map[curPos.xToDiscrete()][curPos.yToDiscrete()];
 		if (character == State.Character.EMPTY.toChar()) {
-			setCurrentPos(new Position(x, y));
+			setPosition(new Position(x, y));
 			return null;
 		} else if (character == State.Character.BOMB.toChar() || character == State.Character.MOVABLE_AGENT.toChar()) {
 			if (moveAxis == Axis.HORIZONTAL) {
@@ -64,7 +64,7 @@ abstract class MovableAgent extends Agent {
 			} else {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
-			setCurrentPos(new Position(x, y));
+			setPosition(new Position(x, y));
 			return Collision.WCHARACTER;
 		} else if (character == State.Character.OBSTACLE.toChar() || character == State.Character.WALL.toChar()) {
 			// correct position
@@ -74,7 +74,7 @@ abstract class MovableAgent extends Agent {
 			} else {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
-			setCurrentPos(new Position(x, y));
+			setPosition(new Position(x, y));
 			return Collision.WOBSTACLE;
 		}
 

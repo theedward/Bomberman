@@ -1,19 +1,24 @@
 package com.cmov.bomberman.model;
 
 public abstract class Agent implements Drawable {
+	private final int id;
 	private final Algorithm ai;
-	private Position currentPos;
+	private Position position;
 
-	public Agent(Position startingPos, Algorithm ai) {
-		currentPos = startingPos;
+	public Agent(int id, Position startingPos, Algorithm ai) {
+		this.id = id;
+		position = startingPos;
 		this.ai = ai;
 	}
 
-	protected Position getCurrentPos() {
-		return currentPos;
+	public int getId() {
+		return id;
 	}
-	protected void setCurrentPos(Position p) {
-		this.currentPos = p;
+	protected Position getPosition() {
+		return position;
+	}
+	protected void setPosition(Position p) {
+		this.position = p;
 	}
 	protected Algorithm getAlgorithm() {
 		return ai;

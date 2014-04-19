@@ -25,8 +25,9 @@ public class Robot extends MovableAgent {
 	private String currentAction;
 	private int moveStep;
 	private int dieStep;
-	public Robot(Position position, Algorithm ai, int speed) {
-		super(position, ai, speed);
+
+	public Robot(final int id, final Position position, final Algorithm ai, final int speed) {
+		super(id, position, ai, speed);
 
 		sprite = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
 		spriteDie = GameUtils.readCharacterSprite(SPRITE_DIE_LINE, SPRITE_DIE_COLUMN, MAX_DIE_STEP);
@@ -35,9 +36,9 @@ public class Robot extends MovableAgent {
 	@Override
 	public void draw(Canvas canvas) {
 		if (currentAction.equals(Actions.MOVE)) {
-			canvas.drawBitmap(sprite[moveStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(sprite[moveStep], getPosition().getX(), getPosition().getY(), null);
 		} else {
-			canvas.drawBitmap(spriteDie[dieStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(spriteDie[dieStep], getPosition().getX(), getPosition().getY(), null);
 		}
 
 	}

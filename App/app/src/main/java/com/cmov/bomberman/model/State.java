@@ -17,10 +17,15 @@ public class State {
 	* 'B' stands for bomb
 	* */
 	private Map<Position, Agent> objects; //this only contains destroyable characters
+	private int idCounter;
 
 	public State() {
 		objects = new HashMap<Position, Agent>();
+		idCounter = 0;
+	}
 
+	public int createNewId() {
+		return idCounter++;
 	}
 
 	public void setMapPosition() {}
@@ -49,13 +54,13 @@ public class State {
 	}
 
 	public void addCharacter(Agent object) {
-		objects.put(object.getCurrentPos(), object);
+		objects.put(object.getPosition(), object);
 		// must change the map and respective char
 		//must add respective map position
 	}
 
 	public void destroyCharacter(Agent object) {
-		Position pos = object.getCurrentPos();
+		Position pos = object.getPosition();
 
 		objects.remove(object);
 		map[pos.yToDiscrete()][pos.xToDiscrete()] = '-';
@@ -66,8 +71,8 @@ public class State {
 	public void bombExplosion(int explosionRange, Bomb bomb) {
 
 		int i;
-		float bombPosX = bomb.getCurrentPos().getX();
-		float bombPosY = bomb.getCurrentPos().getY();
+		float bombPosX = bomb.getPosition().getX();
+		float bombPosY = bomb.getPosition().getY();
 
 		//this either can be delayed to watch a certain character die muahahah
 		//or it can destroy the characters immediately

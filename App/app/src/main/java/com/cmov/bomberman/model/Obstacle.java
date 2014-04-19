@@ -26,8 +26,8 @@ public class Obstacle extends Agent {
 	 */
 	private boolean destroyed;
 
-	public Obstacle(final Position startingPos, final Algorithm ai) {
-		super(startingPos, ai);
+	public Obstacle(final int id, final Position startingPos, final Algorithm ai) {
+		super(id, startingPos, ai);
 
 		// load sprites if it's the first obstacle
 		if (sprite == null) {
@@ -37,7 +37,7 @@ public class Obstacle extends Agent {
 
 	@Override
 	public void draw(final Canvas canvas) {
-		canvas.drawBitmap(sprite[step], getCurrentPos().getX(), getCurrentPos().getY(), null);
+		canvas.drawBitmap(sprite[step], getPosition().getX(), getPosition().getY(), null);
 	}
 
 	@Override

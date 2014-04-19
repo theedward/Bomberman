@@ -1,6 +1,7 @@
 package com.cmov.bomberman.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by JoãoEduardo on 15-04-2014.
@@ -66,14 +67,8 @@ public class Player {
 		//TODO:Implement this
 	}
 
-	// This method will be called every round. This will update all the object's positions.
-	// don't know if this should replace the whole list
-	// or change the positions of matching characters
-	// is this supposed to draw each object?
-
-	//void onUpdate(Map<String, Position[]> objectsPositions){
-	void onUpdate(List<Agent> agentsToUpdate) {
-		setObjects(agentsToUpdate);
+	void onUpdate(Map<Integer, Position> agentsToUpdate) {
+//		setObjects(agentsToUpdate);
 		myScreen.drawAll();
 	}
 

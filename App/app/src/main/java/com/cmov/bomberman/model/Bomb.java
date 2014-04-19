@@ -25,8 +25,8 @@ public class Bomb extends Agent {
 	private int timeout = 5;
 	private boolean destroyed;
 
-	public Bomb(final Position startingPos, int bombRange) {
-		super(startingPos, null);
+	public Bomb(final int id, final Position startingPos, int bombRange) {
+		super(id, startingPos, null);
 
 		this.bombRange = bombRange;
 
@@ -42,9 +42,9 @@ public class Bomb extends Agent {
 	@Override
 	public void draw(final Canvas canvas) {
 		if (timeout != 0) {
-			canvas.drawBitmap(bombSprite[bombStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(bombSprite[bombStep], getPosition().getX(), getPosition().getY(), null);
 		} else {
-			canvas.drawBitmap(explosionSprite[explStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
+			canvas.drawBitmap(explosionSprite[explStep], getPosition().getX(), getPosition().getY(), null);
 		}
 	}
 

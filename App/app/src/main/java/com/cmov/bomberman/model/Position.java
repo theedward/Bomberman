@@ -30,12 +30,12 @@ public class Position {
 
     //this method converts float x coordinate into an int
     public int xToDiscrete() {
-        return 0;
+        return (int) Math.round(x);
     }
 
     //this method converts float y coordinate into an int
     public int yToDiscrete() {
-        return 0;
+        return (int) Math.round(y);
     }
 
     @Override

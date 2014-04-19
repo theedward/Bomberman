@@ -9,6 +9,19 @@ import java.util.Map;
 
 public class State {
 
+	public enum Character {
+		EMPTY('-'), WALL('W'), MOVABLE_AGENT('M'), OBSTACLE('O'), BOMB('B');
+
+		private char symbol;
+		Character(final char symbol) {
+			this.symbol = symbol;
+		}
+
+		char toChar() {
+			return symbol;
+		}
+	}
+
     /*
     * '-' stands for empty
     * 'W' stands for wall

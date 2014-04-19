@@ -153,24 +153,21 @@ public final class Game {
 	private void update() {
 		// Update the state
 		gameState.playAll();
-        // this list contains the agents whose positions are already updated
-        List<Agent> agentsUpdated = gameState.getObjects();
 
-        // this just passes to each player its own characters positions (not updated)
-
-		//final Map<String, Position[]> characterPositions = new TreeMap<String, Position[]>();
-		//for (Player p : players.values()) {
-		//	final Agent[] objects = (Agent[]) p.getObjects().toArray();
-		//	final Position[] positions = new Position[objects.length];
-		//	for (int i = 0; i < positions.length; i++) {
-		//		positions[i] = objects[i].getCurrentPos();
-		//	}
-		//	characterPositions.put(p.getUsername(), positions);
-		//}
-
-        // pass the updated agents to each player so they can substitute theirs and draw the updated ones
+		// Get all the character positions
+		final Map<String, Position[]> characterPositions = new TreeMap<String, Position[]>();
 		for (Player p : players.values()) {
-			p.onUpdate(agentsUpdated);
+			final Agent[] objects = (Agent[]) p.getObjects().toArray();
+			final Position[] positions = new Position[objects.length];
+			for (int i = 0; i < positions.length; i++) {
+				positions[i] = objects[i].getCurrentPos();
+			}
+			characterPositions.put(p.getUsername(), positions);
+		}
+
+		// Update every player with the character positions
+		for (Player p : players.values()) {
+			p.onUpdate(characterPositions);
 		}
 	}
 }

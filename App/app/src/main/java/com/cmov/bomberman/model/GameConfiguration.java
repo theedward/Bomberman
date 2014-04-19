@@ -32,8 +32,7 @@ public class GameConfiguration {
 		return bombermanInitialPositions;
 	}
 
-	public void setBombermanInitialPositions(
-			final Position[] bombermanInitialPositions) {
+	public void setBombermanInitialPositions(final Position[] bombermanInitialPositions) {
 		this.bombermanInitialPositions = bombermanInitialPositions;
 	}
 
@@ -41,8 +40,7 @@ public class GameConfiguration {
 		return robotInitialPositions;
 	}
 
-	public void setRobotInitialPositions(
-			final Position[] robotInitialPositions) {
+	public void setRobotInitialPositions(final Position[] robotInitialPositions) {
 		this.robotInitialPositions = robotInitialPositions;
 	}
 

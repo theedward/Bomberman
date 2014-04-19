@@ -9,51 +9,50 @@ import android.graphics.Canvas;
 public class Robot extends MovableAgent {
 
 
+	private static final int SPRITE_LINE = 2;
 
-    public enum Actions {
-        MOVE, DIE
-    };
+	;
+	private static final int SPRITE_COLUMN = 0;
+	private static final int SPRITE_DIE_LINE = 2;
+	private static final int SPRITE_DIE_COLUMN = 6;
+	private static final int MAX_MOVEMENT_STEP = 6;
+	private static final int MAX_DIE_STEP = 5;
+	private static final int IMAGE_WIDTH = 10;
+	private static final int IMAGE_HEIGHT = 10;
+	private static Bitmap[] sprite;
+	private static Bitmap[] spriteDie;
+	private boolean isDestroyed;
+	private String currentAction;
+	private int moveStep;
+	private int dieStep;
+	public Robot(Position position, Algorithm ai, int speed) {
+		super(position, ai, speed);
 
-    private static Bitmap[] sprite;
-    private static Bitmap[] spriteDie;
-    private boolean isDestroyed;
-    private String currentAction;
-    private int moveStep;
-    private int dieStep;
+		sprite = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
+		spriteDie = GameUtils.readCharacterSprite(SPRITE_DIE_LINE, SPRITE_DIE_COLUMN, MAX_DIE_STEP);
+	}
 
-    private static final int SPRITE_LINE = 2;
-    private static final int SPRITE_COLUMN = 0;
-    private static final int SPRITE_DIE_LINE = 2;
-    private static final int SPRITE_DIE_COLUMN = 6;
-    private static final int MAX_MOVEMENT_STEP = 6;
-    private static final int MAX_DIE_STEP = 5;
-    private static final int IMAGE_WIDTH = 10;
-    private static final int IMAGE_HEIGHT = 10;
+	@Override
+	public void draw(Canvas canvas) {
+		if (currentAction.equals(Actions.MOVE)) {
+			canvas.drawBitmap(sprite[moveStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
+		} else {
+			canvas.drawBitmap(spriteDie[dieStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
+		}
 
+	}
 
-    public Robot(Position position, Algorithm ai, int speed){
-        super(position, ai, speed);
+	@Override
+	public void play(State state) {
 
-        sprite = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-        spriteDie = GameUtils.readCharacterSprite(SPRITE_DIE_LINE, SPRITE_DIE_COLUMN, MAX_DIE_STEP);
-    }
+	}
 
+	@Override
+	public boolean isDestroyed() {
+		return isDestroyed;
+	}
 
-    @Override
-        public void draw(Canvas canvas) {
-        if(currentAction.equals(Actions.MOVE))
-        canvas.drawBitmap(sprite[moveStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
-        else canvas.drawBitmap(spriteDie[dieStep], getCurrentPos().getX(), getCurrentPos().getY(), null);
-
-    }
-
-    @Override
-    public void play(State state) {
-
-    }
-
-    @Override
-    public boolean isDestroyed() {
-        return isDestroyed;
-    }
+	public enum Actions {
+		MOVE, DIE
+	}
 }

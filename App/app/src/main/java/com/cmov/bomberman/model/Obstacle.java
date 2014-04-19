@@ -4,33 +4,23 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class Obstacle extends Agent {
-	/**
-	 * The possible actions of this agent.
-	 */
-	public enum Actions {
-		DESTROY
-	}
+	private static final int SPRITE_LINE = 13;
 
 	;
-
-	private static Bitmap[] sprite;
-	private static final int SPRITE_LINE = 13;
 	private static final int SPRITE_COLUMN = 1;
 	private static final int NUM_IMAGES = 7;
 	private static final int IMAGE_WIDTH = 10;
 	private static final int IMAGE_HEIGHT = 10;
 	private static final int MAX_STEP = 6;
-
+	private static Bitmap[] sprite;
 	/**
 	 * The image to be displayed.
 	 */
 	private Bitmap obstacle;
-
 	/**
 	 * Step is the id of the image to be displayed.
 	 */
 	private int step;
-
 	/**
 	 * Represents if the obstacle is destroyed.
 	 */
@@ -71,5 +61,12 @@ public class Obstacle extends Agent {
 	@Override
 	public boolean isDestroyed() {
 		return false;
+	}
+
+	/**
+	 * The possible actions of this agent.
+	 */
+	public enum Actions {
+		DESTROY
 	}
 }

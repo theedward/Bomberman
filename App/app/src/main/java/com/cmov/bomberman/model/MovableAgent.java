@@ -2,31 +2,21 @@ package com.cmov.bomberman.model;
 
 abstract class MovableAgent extends Agent {
 	private static final float ROTATE_MARGIN = 0.25f;
-
-	private enum Axis {
-		HORIZONTAL, VERTICAL
-	}
-
-    public enum Move {
-        UP, RIGHT, DOWN, LEFT
-    };
-
-    // possible collisions
-    // with obstacle or with character
-    public enum Collision {
-        WOBSTACLE, WCHARACTER
-    };
-
-    int speed;
+	int speed;
 	Axis lastAxis;
 
-    public MovableAgent(Position pos, Algorithm ai, int sp) {
-        super(pos,ai);
-        speed = sp;
+	;
+
+	public MovableAgent(Position pos, Algorithm ai, int sp) {
+		super(pos, ai);
+		speed = sp;
 		lastAxis = null;
-    }
-    // Returns type of potential collision or null if there s none
-    public Collision move(State currentState, Move direction) {
+	}
+
+	;
+
+	// Returns type of potential collision or null if there s none
+	public Collision move(State currentState, Move direction) {
 		/*
 			if it's the first move or it's in the same axis as the previous move (horizontal or vertical),
 			just move the agent.
@@ -91,5 +81,18 @@ abstract class MovableAgent extends Agent {
 		// Should never happen
 		System.out.println("MovableAgent#move: Unhandled case.");
 		return null;
-    }
+	}
+	private enum Axis {
+		HORIZONTAL, VERTICAL
+	}
+
+	public enum Move {
+		UP, RIGHT, DOWN, LEFT
+	}
+
+	// possible collisions
+	// with obstacle or with character
+	public enum Collision {
+		WOBSTACLE, WCHARACTER
+	}
 }

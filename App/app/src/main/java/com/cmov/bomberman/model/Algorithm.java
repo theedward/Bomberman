@@ -10,5 +10,5 @@ package com.cmov.bomberman.model;
  * Ex: Bomberman, Robot
  */
 public interface Algorithm {
-    public String getNextActionName();
+	public String getNextActionName();
 }

@@ -13,8 +13,8 @@ public class InitialActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_initial);
-		
-		
+
+
 	}
 
 	@Override
@@ -23,19 +23,19 @@ public class InitialActivity extends Activity {
 		getMenuInflater().inflate(R.menu.initial, menu);
 		return true;
 	}
-	
-	public void newGame(View v){
-		Intent intent = new Intent (InitialActivity.this, NewGameActivity.class);
-		startActivity(intent);
-	}
-	
-	public void multiplayerGame(View v){
-		Intent intent = new Intent (InitialActivity.this, MultiplayerActivity.class);
+
+	public void newGame(View v) {
+		Intent intent = new Intent(InitialActivity.this, NewGameActivity.class);
 		startActivity(intent);
 	}
 
-	public void about(View v){
-		Intent intent = new Intent (InitialActivity.this, AboutActivity.class);
+	public void multiplayerGame(View v) {
+		Intent intent = new Intent(InitialActivity.this, MultiplayerActivity.class);
+		startActivity(intent);
+	}
+
+	public void about(View v) {
+		Intent intent = new Intent(InitialActivity.this, AboutActivity.class);
 		startActivity(intent);
 	}
 }

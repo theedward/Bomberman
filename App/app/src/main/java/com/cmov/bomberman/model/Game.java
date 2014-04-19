@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 // This is where all the game will be processed.
 public final class Game {
@@ -18,8 +20,10 @@ public final class Game {
 
 	/**
 	 * Adds a new player to the game.
+	 *
 	 * @param username the player username
-	 * @param p the player object
+	 * @param p        the player object
+	 *
 	 * @return true if the username is unique, false otherwise.
 	 */
 	public boolean addPlayer(String username, Player p) {
@@ -33,6 +37,7 @@ public final class Game {
 
 	/**
 	 * Removes the player from the game.
+	 *
 	 * @param p the player object
 	 */
 	public void removePlayer(Player p) {
@@ -84,6 +89,7 @@ public final class Game {
 
 	/**
 	 * Pauses the game for the player with the given username
+	 *
 	 * @param username the player's username
 	 */
 	public void pause(String username) {
@@ -95,6 +101,7 @@ public final class Game {
 
 	/**
 	 * Unpauses the game for the player with the given username
+	 *
 	 * @param username the player's username
 	 */
 	public void unpause(String username) {
@@ -122,6 +129,7 @@ public final class Game {
 	/**
 	 * TODO: when does the game finish?
 	 * Verifies if the game has already finished.
+	 *
 	 * @return true when?
 	 */
 	private boolean hasFinished() {
@@ -135,7 +143,7 @@ public final class Game {
 	 */
 	private void loop() {
 		final int sleepTime = 1000 / gameConfiguration.getNumUpdatesPerSecond();
-		while (! hasFinished()) {
+		while (!hasFinished()) {
 			update();
 			try {
 				Thread.sleep(sleepTime);

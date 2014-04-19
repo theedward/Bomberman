@@ -80,8 +80,7 @@ public final class Game {
 				} else if (character == State.Character.BOMBERMAN.toChar()) {
 					Bomberman bm = new Bomberman(gameState.createNewId(), pos,
 												 characterOwners[playerCounter].getController(),
-												 gameConfiguration.getExplosionRange(),
-												 gameConfiguration.getbSpeed());
+												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed());
 					gameState.addCharacter(bm);
 					characterOwners[playerCounter].addAgent(bm);
 				} else if (character == State.Character.ROBOT.toChar()) {
@@ -201,7 +200,8 @@ public final class Game {
 			try {
 				Thread.sleep(sleepTime);
 			}
-			catch (InterruptedException e) {}
+			catch (InterruptedException e) {
+			}
 		}
 	}
 

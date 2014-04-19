@@ -3,17 +3,17 @@ package com.cmov.bomberman.model;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-public class Maze implements Drawable {
-	// The bitmaps properties
+public class Maze extends Drawing {
 	private static final int IMAGE_X = 0;
 	private static final int IMAGE_Y = 0;
 	private static final int IMAGE_WIDTH = 240;
 	private static final int IMAGE_HEIGHT = 160;
 
-	private Bitmap maze;
+	private static Bitmap maze;
 
 	public Maze() {
-		Bitmap bm = GameUtils.readLevelBitmap(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
+		super(new Position(0, 0));
+		maze = GameUtils.readLevelBitmap(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
 	}
 
 	@Override

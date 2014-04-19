@@ -78,7 +78,7 @@ public class Player {
 	}
 
 	void onUpdate(Map<Integer, Position> agentsToUpdate) {
-//		setObjects(agentsToUpdate);
+		//		setObjects(agentsToUpdate);
 		myScreen.drawAll();
 	}
 

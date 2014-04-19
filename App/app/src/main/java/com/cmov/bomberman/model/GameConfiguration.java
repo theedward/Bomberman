@@ -38,60 +38,79 @@ public class GameConfiguration {
 	public int getNumUpdatesPerSecond() {
 		return numUpdatesPerSecond;
 	}
+
 	public void setNumUpdatesPerSecond(final int numUpdatesPerSecond) {
 		this.numUpdatesPerSecond = numUpdatesPerSecond;
 	}
+
 	public int getMaxNumPlayers() {
 		return maxNumPlayers;
 	}
+
 	public void setMaxNumPlayers(final int maxNumPlayers) {
 		this.maxNumPlayers = maxNumPlayers;
 	}
+
 	public int getTimeLimit() {
 		return timeLimit;
 	}
+
 	public void setTimeLimit(final int timeLimit) {
 		this.timeLimit = timeLimit;
 	}
+
 	public int getbSpeed() {
 		return bSpeed;
 	}
+
 	public void setbSpeed(final int bSpeed) {
 		this.bSpeed = bSpeed;
 	}
+
 	public int getrSpeed() {
 		return rSpeed;
 	}
+
 	public void setrSpeed(final int rSpeed) {
 		this.rSpeed = rSpeed;
 	}
+
 	public int getTimeToExplode() {
 		return timeToExplode;
 	}
+
 	public void setTimeToExplode(final int timeToExplode) {
 		this.timeToExplode = timeToExplode;
 	}
+
 	public int getExplosionDuration() {
 		return explosionDuration;
 	}
+
 	public void setExplosionDuration(final int explosionDuration) {
 		this.explosionDuration = explosionDuration;
 	}
+
 	public int getExplosionRange() {
 		return explosionRange;
 	}
+
 	public void setExplosionRange(final int explosionRange) {
 		this.explosionRange = explosionRange;
 	}
+
 	public int getPointRobot() {
 		return pointRobot;
 	}
+
 	public void setPointRobot(final int pointRobot) {
 		this.pointRobot = pointRobot;
 	}
+
 	public int getPointOpponent() {
 		return pointOpponent;
 	}
+
 	public void setPointOpponent(final int pointOpponent) {
 		this.pointOpponent = pointOpponent;
 	}

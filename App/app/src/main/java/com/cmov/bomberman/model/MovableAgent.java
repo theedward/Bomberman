@@ -59,7 +59,7 @@ abstract class MovableAgent extends Agent {
 			setPosition(new Position(x, y));
 			return null;
 		} else if (character == State.Character.BOMB.toChar() || character == State.Character.BOMBERMAN.toChar() ||
-				character == State.Character.ROBOT.toChar()) {
+				   character == State.Character.ROBOT.toChar()) {
 			if (moveAxis == Axis.HORIZONTAL) {
 				x = (direction == Move.LEFT) ? (float) Math.floor(x) + 0.5f : (float) Math.ceil(x) - 0.5f;
 			} else {
@@ -83,6 +83,7 @@ abstract class MovableAgent extends Agent {
 		System.out.println("MovableAgent#move: Unhandled case.");
 		return null;
 	}
+
 	private enum Axis {
 		HORIZONTAL, VERTICAL
 	}

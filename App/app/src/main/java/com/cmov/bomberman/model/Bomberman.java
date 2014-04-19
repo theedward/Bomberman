@@ -1,48 +1,29 @@
 package com.cmov.bomberman.model;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 
 public class Bomberman extends MovableAgent {
 	private static final int SPRITE_LINE = 0;
-
-	;
 	private static final int SPRITE_COLUMN = 0;
 	private static final int MAX_MOVEMENT_STEP = 3;
 	private static final int MAX_DIE_STEP = 6;
-	private static final int IMAGE_WIDTH = 10;
-	private static final int IMAGE_HEIGHT = 10;
+
 	private static Bitmap[] spriteTop;
 	private static Bitmap[] spriteBottom;
 	private static Bitmap[] spriteLeft;
 	private static Bitmap[] spriteRight;
 	private static Bitmap[] spriteDie;
-	int explosionRange;
-	int step;
-	String currentAction;
-	boolean isDead;
-	boolean isDestroyed;
+
+	private int explosionRange;
+	private int step;
+	private String currentAction;
+	private boolean isDead;
+	private boolean isDestroyed;
+
 	public Bomberman(int id, Position pos, Algorithm ai, int range, int speed) {
 		super(id, pos, ai, speed);
 		explosionRange = range;
 		// arguments must be changed
-		if (spriteTop == null) {
-			spriteTop = GameUtils.readCharacterSprite(SPRITE_LINE + 1, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-		}
-		if (spriteBottom == null) {
-			spriteBottom = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-		}
-		if (spriteLeft == null) {
-			spriteLeft = GameUtils
-					.readCharacterSprite(SPRITE_LINE + 1, SPRITE_COLUMN + MAX_MOVEMENT_STEP, MAX_MOVEMENT_STEP);
-		}
-		if (spriteRight == null) {
-			spriteRight = GameUtils
-					.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN + MAX_MOVEMENT_STEP, MAX_MOVEMENT_STEP);
-		}
-		if (spriteDie == null) {
-			spriteDie = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN + MAX_DIE_STEP, MAX_DIE_STEP);
-		}
 	}
 
 	private boolean isDead() {
@@ -66,21 +47,6 @@ public class Bomberman extends MovableAgent {
 			return Move.RIGHT;
 		} else {
 			return null;
-		}
-	}
-
-	@Override
-	public void draw(Canvas canvas) {
-		if (currentAction.equals(Actions.MOVE_TOP.toString())) {
-			canvas.drawBitmap(spriteTop[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Actions.MOVE_BOTTOM.toString())) {
-			canvas.drawBitmap(spriteBottom[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Actions.MOVE_LEFT.toString())) {
-			canvas.drawBitmap(spriteLeft[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Actions.MOVE_RIGHT.toString())) {
-			canvas.drawBitmap(spriteRight[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Actions.DIE.toString())) {
-			canvas.drawBitmap(spriteDie[step], getPosition().getX(), getPosition().getY(), null);
 		}
 	}
 

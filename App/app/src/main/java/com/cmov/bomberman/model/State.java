@@ -12,7 +12,8 @@ public class State {
 	/*
 	* '-' stands for empty
 	* 'W' stands for wall
-	* 'M' stands for movable agent
+	* 'M' stands for Bomberman
+	* 'R' stands for Robot
 	* 'O' stands for obstacle
 	* 'B' stands for bomb
 	* */
@@ -63,8 +64,9 @@ public class State {
 		Position pos = object.getPosition();
 
 		object.handleEvent(Event.DESTROY);
-		objects.remove(object);
-		map[pos.yToDiscrete()][pos.xToDiscrete()] = '-';
+		//cannot do this
+		//objects.remove(object);
+		//map[pos.yToDiscrete()][pos.xToDiscrete()] = '-';
 		//must clean respective map position
 	}
 
@@ -83,28 +85,32 @@ public class State {
 		for (i = 0; i < explosionRange; i++) {
 			Position pos = new Position(bombPosX, bombPosY + i);
 			if (objects.containsKey(pos)) {
-				destroyCharacter(objects.get(pos));
+				//destroyCharacter(objects.get(pos));
+                objects.get(pos).handleEvent(Event.DESTROY);
 			}
 		}
 		//destroy character in position bomb.pos.column + i
 		for (i = 0; i < explosionRange; i++) {
 			Position pos = new Position(bombPosX + i, bombPosY);
 			if (objects.containsKey(pos)) {
-				destroyCharacter(objects.get(pos));
+				//destroyCharacter(objects.get(pos));
+                objects.get(pos).handleEvent(Event.DESTROY);
 			}
 		}
 		//destroy character in position bomb.pos.line - i
 		for (i = 0; i < explosionRange; i++) {
 			Position pos = new Position(bombPosX, bombPosY - i);
 			if (objects.containsKey(pos)) {
-				destroyCharacter(objects.get(pos));
+				//destroyCharacter(objects.get(pos));
+                objects.get(pos).handleEvent(Event.DESTROY);
 			}
 		}
 		//destroy character in position bomb.pos.column - i
 		for (i = 0; i < explosionRange; i++) {
 			Position pos = new Position(bombPosX - i, bombPosY);
 			if (objects.containsKey(pos)) {
-				destroyCharacter(objects.get(pos));
+				//destroyCharacter(objects.get(pos));
+                objects.get(pos).handleEvent(Event.DESTROY);
 			}
 		}
 	}

@@ -19,7 +19,7 @@ public class Obstacle extends Agent {
 			@Override
 			public String getNextActionName() {
 				if (destroyMode) {
-					return Actions.DESTROY.toString();
+					return AgentActions.DESTROY.toString();
 				} else {
 					return "";
 				}
@@ -46,7 +46,7 @@ public class Obstacle extends Agent {
 		} else {
 			// check if the next action is DESTROY
 			Algorithm ai = getAlgorithm();
-			if (ai.getNextActionName().equals(Actions.DESTROY.toString())) {
+			if (ai.getNextActionName().equals(AgentActions.DESTROY.toString())) {
 				step++;
 			}
 		}
@@ -57,7 +57,4 @@ public class Obstacle extends Agent {
 		return destroyed;
 	}
 
-	private enum Actions {
-		DESTROY
-	}
 }

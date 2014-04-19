@@ -13,7 +13,7 @@ public class BombermanDrawing extends Drawing {
 	private static Bitmap[] spriteBottom;
 	private static Bitmap[] spriteLeft;
 	private static Bitmap[] spriteRight;
-	private static Bitmap[] spriteDie;
+	private static Bitmap[] spriteDestroy;
 
 	private int step;
 	private String currentAction;
@@ -37,24 +37,24 @@ public class BombermanDrawing extends Drawing {
 			spriteRight = GameUtils
 					.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN + MAX_MOVEMENT_STEP, MAX_MOVEMENT_STEP);
 		}
-		if (spriteDie == null) {
-			spriteDie = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN + MAX_DIE_STEP, MAX_DIE_STEP);
+		if (spriteDestroy == null) {
+			spriteDestroy = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN + MAX_DIE_STEP, MAX_DIE_STEP);
 		}
 	}
 
 
 	@Override
 	public void draw(Canvas canvas) {
-		if (currentAction.equals(Bomberman.Actions.MOVE_TOP.toString())) {
+		if (currentAction.equals(MovableAgentActions.MOVE_TOP.toString())) {
 			canvas.drawBitmap(spriteTop[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Bomberman.Actions.MOVE_BOTTOM.toString())) {
+		} else if (currentAction.equals(MovableAgentActions.MOVE_BOTTOM.toString())) {
 			canvas.drawBitmap(spriteBottom[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Bomberman.Actions.MOVE_LEFT.toString())) {
+		} else if (currentAction.equals(MovableAgentActions.MOVE_LEFT.toString())) {
 			canvas.drawBitmap(spriteLeft[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Bomberman.Actions.MOVE_RIGHT.toString())) {
+		} else if (currentAction.equals(MovableAgentActions.MOVE_RIGHT.toString())) {
 			canvas.drawBitmap(spriteRight[step], getPosition().getX(), getPosition().getY(), null);
-		} else if (currentAction.equals(Bomberman.Actions.DIE.toString())) {
-			canvas.drawBitmap(spriteDie[step], getPosition().getX(), getPosition().getY(), null);
+		} else if (currentAction.equals(AgentActions.DESTROY.toString())) {
+			canvas.drawBitmap(spriteDestroy[step], getPosition().getX(), getPosition().getY(), null);
 		}
 	}
 }

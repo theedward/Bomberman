@@ -35,4 +35,14 @@ public class Controllable implements Algorithm {
 	public String getNextActionName() {
 		return keymap.containsKey(lastKeyPressed) ? keymap.get(lastKeyPressed) : "";
 	}
+
+	/**
+	 * The agents that have are controllable, they override the Agent#handleEvent method.
+	 *
+	 * @param e
+	 */
+	@Override
+	public void handleEvent(final Event e) {
+		// Empty on purpose
+	}
 }

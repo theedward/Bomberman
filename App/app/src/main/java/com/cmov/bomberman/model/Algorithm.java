@@ -11,4 +11,6 @@ package com.cmov.bomberman.model;
  */
 public interface Algorithm {
 	public String getNextActionName();
+
+	public void handleEvent(Event e);
 }

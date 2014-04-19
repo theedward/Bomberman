@@ -25,4 +25,13 @@ public abstract class Agent implements Drawable {
 	}
 	abstract public void play(State state);
 	abstract public boolean isDestroyed();
+
+	/**
+	 * The default implementation is to pass the events to the algorithm.
+	 *
+	 * @param e the event
+	 */
+	public void handleEvent(Event e) {
+		ai.handleEvent(e);
+	}
 }

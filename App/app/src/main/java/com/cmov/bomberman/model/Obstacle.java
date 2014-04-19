@@ -26,7 +26,25 @@ public class Obstacle extends Agent {
 	private boolean destroyed;
 
 	public Obstacle(final int id, final Position startingPos) {
-		super(id, startingPos, null);
+		super(id, startingPos, new Algorithm() {
+			private boolean destroyMode;
+
+			@Override
+			public String getNextActionName() {
+				if (destroyMode) {
+					return Actions.DESTROY.toString();
+				} else {
+					return "";
+				}
+			}
+
+			@Override
+			public void handleEvent(final Event e) {
+				if (e == Event.DESTROY) {
+					destroyMode = true;
+				}
+			}
+		});
 
 		// load sprites if it's the first obstacle
 		if (sprite == null) {
@@ -38,8 +56,6 @@ public class Obstacle extends Agent {
 	public void draw(final Canvas canvas) {
 		canvas.drawBitmap(sprite[step], getPosition().getX(), getPosition().getY(), null);
 	}
-
-	// TODO: don't forget that the State class is not creating the new algorithm for obstacles
 
 	@Override
 	public void play(final State state) {
@@ -64,10 +80,7 @@ public class Obstacle extends Agent {
 		return destroyed;
 	}
 
-	/**
-	 * The possible actions of this agent.
-	 */
-	public enum Actions {
+	private enum Actions {
 		DESTROY
 	}
 }

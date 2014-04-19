@@ -62,6 +62,7 @@ public class State {
 	public void destroyCharacter(Agent object) {
 		Position pos = object.getPosition();
 
+		object.handleEvent(Event.DESTROY);
 		objects.remove(object);
 		map[pos.yToDiscrete()][pos.xToDiscrete()] = '-';
 		//must clean respective map position

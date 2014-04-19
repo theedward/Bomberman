@@ -1,5 +1,6 @@
 package com.cmov.bomberman.model;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class Player {
 	private String username;
 	private int currentScore;
 	private Screen myScreen;
-	private List<Agent> objects;
+	private List<Agent> objects; // this is not needed
 	private Controllable controller;
 
 	public Player(String username, Controllable controller) {
@@ -24,7 +25,7 @@ public class Player {
 	}
 
 	public void addAgent(Agent agent) {
-		objects.add(agent);
+	    //objects.add(agent);
 	}
 
 	public String getUsername() {
@@ -77,9 +78,15 @@ public class Player {
 		//TODO:Implement this
 	}
 
+    // this method will receive text containing the info needed to construct
+    // new drawings to be drawn on the client side
+    // signature must be changed
 	void onUpdate(Map<Integer, Position> agentsToUpdate) {
-		//		setObjects(agentsToUpdate);
-		myScreen.drawAll();
+
+        List<Drawing> myDrawings = new LinkedList<Drawing>();
+        // parse the given and construct objects
+        // add them to the list
+		myScreen.drawAll(myDrawings);
 	}
 
 }

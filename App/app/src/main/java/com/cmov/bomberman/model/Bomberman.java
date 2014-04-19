@@ -20,10 +20,9 @@ public class Bomberman extends MovableAgent {
 	private boolean isDead;
 	private boolean isDestroyed;
 
-	public Bomberman(int id, Position pos, Algorithm ai, int range, int speed) {
-		super(id, pos, ai, speed);
+	public Bomberman(Position pos, Algorithm ai, int range, int speed) {
+		super(pos, ai, speed);
 		explosionRange = range;
-		// arguments must be changed
 	}
 
 	private boolean isDead() {
@@ -36,14 +35,14 @@ public class Bomberman extends MovableAgent {
 
 	private Move ActionToMove(String action) {
 
-		if (action.equals(Actions.MOVE_BOTTOM)) {
+		if (action.equals(MovableAgentActions.MOVE_BOTTOM)) {
 			return Move.DOWN;
-		} else if (action.equals(Actions.MOVE_TOP)) {
+		} else if (action.equals(MovableAgentActions.MOVE_TOP)) {
 			return Move.UP;
-		} else if (action.equals(Actions.MOVE_LEFT)) {
+		} else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
 			return Move.LEFT;
 		}
-		if (action.equals(Actions.MOVE_RIGHT)) {
+		if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
 			return Move.RIGHT;
 		} else {
 			return null;
@@ -61,33 +60,27 @@ public class Bomberman extends MovableAgent {
 		String nextAction = getAlgorithm().getNextActionName();
 
 		Move move = ActionToMove(nextAction);
-		String collision = move(state, move).toString();
+		move(state, move);
 
-		if (collision != null) {
-			if (collision.equals(Collision.WCHARACTER.toString())) {
-				currentAction = Actions.DIE.toString();
-				step = 0;
-				isDead = true;
-			}
-		} else if (nextAction.equals(Actions.PUT_BOMB.toString())) {
-			state.addCharacter(new Bomb(state.createNewId(), this.getPosition(), explosionRange));
-		} else if (isDead()) {
-			if (step > 0 && step < MAX_DIE_STEP) {
-				step = (step + 1) % 6;
-			} else if (step == MAX_DIE_STEP) {
-				isDestroyed = true;
-				return;
-			}
-		} else if (!currentAction.equals(nextAction)) {
-			currentAction = nextAction;
-			step = 0;
-		} else if (step > 0 && step < MAX_MOVEMENT_STEP) {
-			step = (step + 1) % 3;
-		}
+        if (!currentAction.equals(nextAction)) {
+            currentAction = nextAction;
+            step = 0;
+            if (nextAction.equals(BombermanActions.PUT_BOMB.toString())) {
+                state.addAgent(new Bomb(this.getPosition(), explosionRange));
+            }
+        } else if (currentAction.equals(AgentActions.DESTROY)) {
+            if (step > 0 && step < MAX_DIE_STEP) {
+                step = (step + 1) % 6;
+            } else if (step == MAX_DIE_STEP) {
+                isDestroyed = true;
+                return;
+            }
+        } else if (step > 0 && step < MAX_MOVEMENT_STEP) {
+            step = (step + 1) % 3;
+        }
+    }
 
-	}
-
-	public enum Actions {
-		MOVE_TOP, MOVE_BOTTOM, MOVE_LEFT, MOVE_RIGHT, PUT_BOMB, DIE
+	public enum BombermanActions {
+		PUT_BOMB;
 	}
 }

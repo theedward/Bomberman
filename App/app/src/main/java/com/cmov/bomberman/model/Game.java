@@ -76,15 +76,15 @@ public final class Game {
 				// the position will be right in the middle
 				final Position pos = new Position(i + 0.5f, j + 0.5f);
 				if (character == State.Character.OBSTACLE.toChar()) {
-					gameState.addCharacter(new Obstacle(gameState.createNewId(), pos));
+					gameState.addAgent(new Obstacle(pos));
 				} else if (character == State.Character.BOMBERMAN.toChar()) {
-					Bomberman bm = new Bomberman(gameState.createNewId(), pos,
+					Bomberman bm = new Bomberman(pos,
 												 characterOwners[playerCounter].getController(),
 												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed());
-					gameState.addCharacter(bm);
+					gameState.addAgent(bm);
 					characterOwners[playerCounter].addAgent(bm);
 				} else if (character == State.Character.ROBOT.toChar()) {
-					gameState.addCharacter(new Robot(gameState.createNewId(), pos, gameConfiguration.getrSpeed()));
+					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
 				}
 			}
 		}
@@ -208,6 +208,7 @@ public final class Game {
 	/**
 	 * Updates the state (new frame). Updates every player with all the characters positions
 	 */
+    // THIS METHOD MUST BE CHANGED
 	private void update() {
 		// Update the state
 		gameState.playAll();
@@ -216,8 +217,9 @@ public final class Game {
 		final Map<Integer, Position> positions = new TreeMap<Integer, Position>();
 		for (Player p : players.values()) {
 			for (Agent agent : p.getObjects()) {
-				positions.put(agent.getId(), agent.getPosition());
-			}
+				//positions.put(agent.getId(), agent.getPosition());
+			    // this must be changed
+            }
 		}
 
 		// Update every player with the character positions

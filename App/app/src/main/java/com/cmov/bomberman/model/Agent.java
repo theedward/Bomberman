@@ -1,18 +1,12 @@
 package com.cmov.bomberman.model;
 
 public abstract class Agent {
-	private final int id;
 	private final Algorithm ai;
 	private Position position;
 
-	public Agent(int id, Position startingPos, Algorithm ai) {
-		this.id = id;
+	public Agent(Position startingPos, Algorithm ai) {
 		position = startingPos;
 		this.ai = ai;
-	}
-
-	public int getId() {
-		return id;
 	}
 
 	protected Position getPosition() {

@@ -7,8 +7,8 @@ abstract class MovableAgent extends Agent {
 
 	;
 
-	public MovableAgent(final int id, final Position pos, final Algorithm ai, final int sp) {
-		super(id, pos, ai);
+	public MovableAgent(final Position pos, final Algorithm ai, final int sp) {
+		super(pos, ai);
 		speed = sp;
 		lastAxis = null;
 	}

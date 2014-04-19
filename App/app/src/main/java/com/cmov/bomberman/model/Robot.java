@@ -22,8 +22,8 @@ public class Robot extends MovableAgent {
 	private int moveStep;
 	private int dieStep;
 
-	public Robot(final int id, final Position position, final int speed) {
-		super(id, position, null, speed);
+	public Robot(final Position position, final int speed) {
+		super(position, null, speed);
 
 		sprite = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
 		spriteDie = GameUtils.readCharacterSprite(SPRITE_DIE_LINE, SPRITE_DIE_COLUMN, MAX_DIE_STEP);

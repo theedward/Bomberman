@@ -15,8 +15,8 @@ public class Bomb extends Agent {
 	private int timeout = 5;
 	private boolean destroyed;
 
-	public Bomb(final int id, final Position startingPos, int bombRange) {
-		super(id, startingPos, null);
+	public Bomb(final Position startingPos, int bombRange) {
+		super(startingPos, null);
 		this.bombRange = bombRange;
 	}
 

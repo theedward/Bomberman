@@ -12,8 +12,8 @@ public class Obstacle extends Agent {
 	 */
 	private boolean destroyed;
 
-	public Obstacle(final int id, final Position startingPos) {
-		super(id, startingPos, new Algorithm() {
+	public Obstacle(final Position startingPos) {
+		super(startingPos, new Algorithm() {
 			private boolean destroyMode;
 
 			@Override

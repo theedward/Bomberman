@@ -5,10 +5,12 @@ import android.util.JsonWriter;
 public abstract class Agent {
 	private final Algorithm ai;
 	private Position position;
+    private String type;
 
-	public Agent(Position startingPos, Algorithm ai) {
+	public Agent(Position startingPos, Algorithm ai, String agentType) {
 		position = startingPos;
 		this.ai = ai;
+        this.type = agentType;
 	}
 
 	protected Position getPosition() {
@@ -18,6 +20,8 @@ public abstract class Agent {
 	protected void setPosition(Position p) {
 		this.position = p;
 	}
+
+    protected String getType() { return type;}
 
 	protected Algorithm getAlgorithm() {
 		return ai;

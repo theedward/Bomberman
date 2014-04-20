@@ -13,7 +13,6 @@ import java.util.List;
 public final class Game {
 	private int level;
 	private int time;
-    private Map<String, String> charactersByPlayer; // we need to know witch character belongs to who
 	private Map<String, Player> players;
 	private Map<String, Player> playersOnPause;
 	private State gameState;
@@ -22,7 +21,6 @@ public final class Game {
 	public Game() {
 		players = new HashMap<String, Player>();
 		playersOnPause = new HashMap<String, Player>();
-        charactersByPlayer = new HashMap<String, String>();
 		gameState = new State();
 	}
 
@@ -50,7 +48,6 @@ public final class Game {
 	 */
 	public void removePlayer(Player p) {
 		players.remove(p);
-		//gameState.removeAll(p.getObjects());
 	}
 
 	private void pausePlayer(String username) {
@@ -84,15 +81,19 @@ public final class Game {
 				// the position will be right in the middle
 				final Position pos = new Position(i + 0.5f, j + 0.5f);
 				if (character == State.Character.OBSTACLE.toChar()) {
-					gameState.addAgent(new Obstacle(pos));
+					gameState.addAgent(new Obstacle(pos, "Obstacle"));
 				} else if (character == State.Character.BOMBERMAN.toChar()) {
 					Bomberman bm = new Bomberman(pos,
 												 characterOwners[playerCounter].getController(),
-												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed());
-					gameState.addAgent(bm);
-					//characterOwners[playerCounter].addAgent(bm);
+												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed(), "Bomberman");
+                    // attributes a character, witch can only be a Bomberman
+                    // to the player Username
+                    // attribution should be done somewhere else?
+                    bm.setOwnerUsername(characterOwners[playerCounter].getUsername());
+                    gameState.addAgent(bm);
+					characterOwners[playerCounter].setMyCharacter(bm);
 				} else if (character == State.Character.ROBOT.toChar()) {
-					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
+					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed(), "Robot"));
 				} else if (character == State.Character.WALL.toChar()) {
                     final Position posDrawing = new Position(i,j);
                     wallDrawings.add(new WallDrawing(posDrawing));
@@ -139,9 +140,7 @@ public final class Game {
 	 */
 	public void pause(String username) {
 		pausePlayer(username);
-		for (Player p : players.values()) {
-			p.onGameUpdate(gameConfiguration);
-		}
+        gameState.pauseCharacter(username);
 	}
 
 	/**
@@ -151,9 +150,7 @@ public final class Game {
 	 */
 	public void unpause(String username) {
 		unpausePlayer(username);
-		for (Player p : players.values()) {
-			p.onGameUpdate(gameConfiguration);
-		}
+		gameState.unPauseCharacter(username);
 	}
 
 	/**

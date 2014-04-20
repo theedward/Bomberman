@@ -16,7 +16,7 @@ public class Obstacle extends Agent {
 	 */
 	private boolean destroyed;
 
-	public Obstacle(final Position startingPos) {
+	public Obstacle(final Position startingPos, String type) {
 		super(startingPos, new Algorithm() {
 			private boolean destroyMode;
 
@@ -35,7 +35,7 @@ public class Obstacle extends Agent {
 					destroyMode = true;
 				}
 			}
-		});
+		},type);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class Obstacle extends Agent {
 	public void toJson(final JsonWriter writer) {
 		try {
 			writer.beginObject();
-			writer.name("type").value("Obstacle");
+			writer.name("type").value(getType());
 
 			writer.name("position");
 			writer.beginArray();

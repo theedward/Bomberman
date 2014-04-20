@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.JsonWriter;
 
+import java.io.IOException;
+
 /**
  * Created by JoãoEduardo on 17/04/2014.
  */
@@ -23,8 +25,8 @@ public class Robot extends MovableAgent {
 	private int moveStep;
 	private int dieStep;
 
-	public Robot(final Position position, final int speed) {
-		super(position, null, speed);
+	public Robot(final Position position, final int speed, String type) {
+		super(position, null, speed, type);
 
 		sprite = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
 		spriteDie = GameUtils.readCharacterSprite(SPRITE_DIE_LINE, SPRITE_DIE_COLUMN, MAX_DIE_STEP);
@@ -51,7 +53,23 @@ public class Robot extends MovableAgent {
 
     @Override
     public void toJson(JsonWriter writer) {
+        try {
+            writer.beginObject();
+            writer.name("type").value(getType());
 
+            writer.name("position");
+            writer.beginArray();
+            writer.value(getPosition().getX() - 0.5f);
+            writer.value(getPosition().getY() - 0.5f);
+            writer.endArray();
+
+            writer.name("currentAction").value(currentAction);
+            writer.name("step").value(0);
+            writer.endObject();
+        }
+        catch (IOException e) {
+
+        }
     }
 
     public enum Actions {

@@ -1,6 +1,5 @@
 package com.cmov.bomberman.model;
 
-import android.graphics.Bitmap;
 import android.util.JsonWriter;
 
 import java.io.IOException;
@@ -10,20 +9,26 @@ public class Bomberman extends MovableAgent {
 	private static final int MAX_MOVEMENT_STEP = 3;
 	private static final int MAX_DIE_STEP = 6;
 
-    private String ownerUsername;
+    private String ownerUsername = "";
 	private int explosionRange;
 	private int step;
 	private String currentAction;
 	private boolean isDestroyed;
 
-	public Bomberman(Position pos, Algorithm ai, int range, int speed) {
-		super(pos, ai, speed);
+	public Bomberman(Position pos, Algorithm ai, int range, int speed, String type) {
+		super(pos, ai, speed,type);
 		explosionRange = range;
 	}
 
     public String getOwnerUsername() { return ownerUsername;}
 
     public void setOwnerUsername(String username) { this.ownerUsername = username; }
+
+    public boolean hasOwnerWithUsername(String username) {
+        if (ownerUsername.equals(username)) {
+            return true;
+        } else return false;
+    }
 
 	private Move ActionToMove(String action) {
 
@@ -57,7 +62,7 @@ public class Bomberman extends MovableAgent {
             currentAction = nextAction;
             step = 0;
             if (nextAction.equals(BombermanActions.PUT_BOMB.toString())) {
-                state.addAgent(new Bomb(this.getPosition(), explosionRange));
+                state.addAgent(new Bomb(this.getPosition(), explosionRange, "Bomb"));
             }
         } else if (currentAction.equals(AgentActions.DESTROY)) {
             if (step > 0 && step < MAX_DIE_STEP) {
@@ -75,7 +80,7 @@ public class Bomberman extends MovableAgent {
     public void toJson(JsonWriter writer) {
         try {
             writer.beginObject();
-            writer.name("type").value("Bomberman");
+            writer.name("type").value(getType());
 
             writer.name("position");
             writer.beginArray();

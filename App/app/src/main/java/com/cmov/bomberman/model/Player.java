@@ -7,15 +7,13 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by JoãoEduardo on 15-04-2014.
- */
 public class Player {
 
 	private String username;
 	private int currentScore;
 	private Screen myScreen;
 	private Controllable controller;
+    private Agent myCharacter;
 
 	public Player(String username, Controllable controller) {
 		this.username = username;
@@ -25,6 +23,10 @@ public class Player {
 	public Controllable getController() {
 		return controller;
 	}
+
+    public Agent getMyCharacter() { return myCharacter; }
+
+    public void setMyCharacter(Agent character) { this.myCharacter = character; }
 
 	public String getUsername() {
 		return username;
@@ -53,8 +55,6 @@ public class Player {
 	// This method will create all the characters and all the drawables
 	void onGameStart(GameConfiguration initialConfig) {
         myScreen.setWalls(initialConfig.getWalls());
-
-
 	}
 
 	// This method will update all the state of the Player.

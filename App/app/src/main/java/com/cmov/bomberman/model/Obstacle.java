@@ -1,5 +1,9 @@
 package com.cmov.bomberman.model;
 
+import android.util.JsonWriter;
+
+import java.io.IOException;
+
 public class Obstacle extends Agent {
 	private static final int MAX_STEP = 6;
 
@@ -57,4 +61,24 @@ public class Obstacle extends Agent {
 		return destroyed;
 	}
 
+	@Override
+	public void toJson(final JsonWriter writer) {
+		try {
+			writer.beginObject();
+			writer.name("type").value("Obstacle");
+
+			writer.name("position");
+			writer.beginArray();
+			writer.value(getPosition().getX() - 0.5f);
+			writer.value(getPosition().getY() - 0.5f);
+			writer.endArray();
+
+			writer.name("step").value(step);
+			writer.endObject();
+		}
+		catch (IOException e) {
+
+		}
+
+	}
 }

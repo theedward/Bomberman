@@ -1,8 +1,11 @@
 package com.cmov.bomberman.model;
 
+import android.util.JsonWriter;
+
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 // This is where all the game will be processed.
 public final class Game {
@@ -208,23 +211,30 @@ public final class Game {
 	/**
 	 * Updates the state (new frame). Updates every player with all the characters positions
 	 */
-    // THIS METHOD MUST BE CHANGED
 	private void update() {
 		// Update the state
 		gameState.playAll();
 
 		// Get all the character positions
-		final Map<Integer, Position> positions = new TreeMap<Integer, Position>();
-		for (Player p : players.values()) {
-			for (Agent agent : p.getObjects()) {
-				//positions.put(agent.getId(), agent.getPosition());
-			    // this must be changed
-            }
+		StringWriter msg = new StringWriter();
+		JsonWriter writer = new JsonWriter(msg);
+
+		try {
+			writer.setIndent("  ");
+			writer.beginArray();
+			for (Agent object : gameState.getObjects()) {
+
+			}
+			writer.endArray();
+			writer.close();
+		}
+		catch (IOException e) {
+			// TODO
 		}
 
 		// Update every player with the character positions
 		for (Player p : players.values()) {
-			p.onUpdate(positions);
+			p.onUpdate(msg.toString());
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package com.cmov.bomberman.model;
 
+import android.util.JsonWriter;
+
 public abstract class Agent {
 	private final Algorithm ai;
 	private Position position;
@@ -33,4 +35,6 @@ public abstract class Agent {
 	public void handleEvent(Event e) {
 		ai.handleEvent(e);
 	}
+
+	abstract public void toJson(JsonWriter writer);
 }

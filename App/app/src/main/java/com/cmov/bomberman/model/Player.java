@@ -1,8 +1,11 @@
 package com.cmov.bomberman.model;
 
+import android.util.JsonReader;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by JoãoEduardo on 15-04-2014.
@@ -81,9 +84,49 @@ public class Player {
     // this method will receive text containing the info needed to construct
     // new drawings to be drawn on the client side
     // signature must be changed
-	void onUpdate(Map<Integer, Position> agentsToUpdate) {
+	void onUpdate(String msg) {
+		List<Drawing> myDrawings = new LinkedList<Drawing>();
 
-        List<Drawing> myDrawings = new LinkedList<Drawing>();
+		JsonReader rd = new JsonReader(new StringReader(msg));
+		try {
+			rd.beginArray();
+			while (rd.hasNext()) {
+				Position position = null;
+				int step = 0;
+				String type = "";
+
+				rd.beginObject();
+				while (rd.hasNext()) {
+					String name = rd.nextName();
+					if (name != null) {
+						if (name.equals("type")) {
+							type = rd.nextString();
+						} else if (name.equals("step")) {
+							step = rd.nextInt();
+						} else if (name.equals("position")) {
+							float x, y;
+							rd.beginArray();
+							x = (float) rd.nextDouble();
+							y = (float) rd.nextDouble();
+							position = new Position(x, y);
+							rd.endArray();
+						}
+					}
+
+					if (type != null) {
+						if (type.equals("Obstacle")) {
+							myDrawings.add(new ObstacleDrawing(position, step));
+						}
+					}
+				}
+				rd.endObject();
+			}
+			rd.endArray();
+		}
+		catch (IOException e) {
+
+		}
+
         // parse the given and construct objects
         // add them to the list
 		myScreen.drawAll(myDrawings);

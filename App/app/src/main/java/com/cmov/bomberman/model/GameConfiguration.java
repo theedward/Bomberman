@@ -1,7 +1,9 @@
 package com.cmov.bomberman.model;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.List;
 
 /**
  * Created by JoãoEduardo on 15-04-2014.
@@ -10,6 +12,7 @@ public class GameConfiguration {
 	private Map<String, Integer> playerCharacterId;
 	private Map<String, Integer> playerScore;
 	private Map<Integer, Position> characterPositions;
+    private List<Drawing> walls;
 	private int numUpdatesPerSecond;
 	private int maxNumPlayers;
 	private int timeLimit;
@@ -33,6 +36,7 @@ public class GameConfiguration {
 		playerCharacterId = new HashMap<String, Integer>();
 		playerScore = new HashMap<String, Integer>();
 		characterPositions = new HashMap<Integer, Position>();
+        walls = new LinkedList<Drawing>();
 	}
 
 	public int getNumUpdatesPerSecond() {
@@ -114,4 +118,8 @@ public class GameConfiguration {
 	public void setPointOpponent(final int pointOpponent) {
 		this.pointOpponent = pointOpponent;
 	}
+
+    public List<Drawing> getWalls() { return this.walls;}
+
+    public void setWalls(final List<Drawing> wallDrawings) { this.walls = wallDrawings; }
 }

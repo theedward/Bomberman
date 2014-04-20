@@ -1,5 +1,7 @@
 package com.cmov.bomberman.model;
 
+import android.util.JsonWriter;
+
 /**
  * Created by JoãoEduardo on 17/04/2014.
  */
@@ -38,7 +40,8 @@ public class Bomb extends Agent {
 		return false;
 	}
 
-	public enum Actions {
-		DESTROY
-	}
+    @Override
+    public void toJson(JsonWriter writer) {
+
+    }
 }

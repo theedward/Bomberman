@@ -15,7 +15,6 @@ public class Player {
 	private String username;
 	private int currentScore;
 	private Screen myScreen;
-	private List<Agent> objects; // this is not needed
 	private Controllable controller;
 
 	public Player(String username, Controllable controller) {
@@ -25,10 +24,6 @@ public class Player {
 
 	public Controllable getController() {
 		return controller;
-	}
-
-	public void addAgent(Agent agent) {
-	    //objects.add(agent);
 	}
 
 	public String getUsername() {
@@ -55,18 +50,11 @@ public class Player {
 		this.myScreen = myScreen;
 	}
 
-	public List<Agent> getObjects() {
-		return objects;
-	}
-
-	public void setObjects(List<Agent> objects) {
-		this.objects = objects;
-	}
-
-
 	// This method will create all the characters and all the drawables
 	void onGameStart(GameConfiguration initialConfig) {
-		//TODO:Implement this
+        myScreen.setWalls(initialConfig.getWalls());
+
+
 	}
 
 	// This method will update all the state of the Player.
@@ -94,6 +82,7 @@ public class Player {
 				Position position = null;
 				int step = 0;
 				String type = "";
+                String currentAction = "";
 
 				rd.beginObject();
 				while (rd.hasNext()) {
@@ -101,7 +90,9 @@ public class Player {
 					if (name != null) {
 						if (name.equals("type")) {
 							type = rd.nextString();
-						} else if (name.equals("step")) {
+						} else if (name.equals("currentAction")) {
+                            currentAction = rd.nextString();
+                        } else if (name.equals("step")) {
 							step = rd.nextInt();
 						} else if (name.equals("position")) {
 							float x, y;
@@ -116,7 +107,13 @@ public class Player {
 					if (type != null) {
 						if (type.equals("Obstacle")) {
 							myDrawings.add(new ObstacleDrawing(position, step));
-						}
+						} else if (type.equals("Bomberman")) {
+                            myDrawings.add(new BombermanDrawing(position,step,currentAction));
+                        } else if (type.equals("Robot")) {
+
+                        } else if (type.equals("Bomb")) {
+
+                        }
 					}
 				}
 				rd.endObject();
@@ -127,8 +124,6 @@ public class Player {
 
 		}
 
-        // parse the given and construct objects
-        // add them to the list
 		myScreen.drawAll(myDrawings);
 	}
 

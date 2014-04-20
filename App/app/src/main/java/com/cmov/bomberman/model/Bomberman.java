@@ -1,23 +1,19 @@
 package com.cmov.bomberman.model;
 
 import android.graphics.Bitmap;
+import android.util.JsonWriter;
+
+import java.io.IOException;
 
 public class Bomberman extends MovableAgent {
-	private static final int SPRITE_LINE = 0;
-	private static final int SPRITE_COLUMN = 0;
+
 	private static final int MAX_MOVEMENT_STEP = 3;
 	private static final int MAX_DIE_STEP = 6;
 
-	private static Bitmap[] spriteTop;
-	private static Bitmap[] spriteBottom;
-	private static Bitmap[] spriteLeft;
-	private static Bitmap[] spriteRight;
-	private static Bitmap[] spriteDie;
-
+    private String ownerUsername;
 	private int explosionRange;
 	private int step;
 	private String currentAction;
-	private boolean isDead;
 	private boolean isDestroyed;
 
 	public Bomberman(Position pos, Algorithm ai, int range, int speed) {
@@ -25,13 +21,9 @@ public class Bomberman extends MovableAgent {
 		explosionRange = range;
 	}
 
-	private boolean isDead() {
-		return isDead;
-	}
+    public String getOwnerUsername() { return ownerUsername;}
 
-	public void setIsDead(boolean dead) {
-		isDead = dead;
-	}
+    public void setOwnerUsername(String username) { this.ownerUsername = username; }
 
 	private Move ActionToMove(String action) {
 
@@ -41,8 +33,7 @@ public class Bomberman extends MovableAgent {
 			return Move.UP;
 		} else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
 			return Move.LEFT;
-		}
-		if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
+		} else if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
 			return Move.RIGHT;
 		} else {
 			return null;
@@ -80,7 +71,28 @@ public class Bomberman extends MovableAgent {
         }
     }
 
-	public enum BombermanActions {
+    @Override
+    public void toJson(JsonWriter writer) {
+        try {
+            writer.beginObject();
+            writer.name("type").value("Bomberman");
+
+            writer.name("position");
+            writer.beginArray();
+            writer.value(getPosition().getX() - 0.5f);
+            writer.value(getPosition().getY() - 0.5f);
+            writer.endArray();
+
+            writer.name("currentAction").value(currentAction);
+            writer.name("step").value(step);
+            writer.endObject();
+        }
+        catch (IOException e) {
+
+        }
+    }
+
+    private enum BombermanActions {
 		PUT_BOMB;
 	}
 }

@@ -2,6 +2,7 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.JsonWriter;
 
 /**
  * Created by JoãoEduardo on 17/04/2014.
@@ -48,7 +49,12 @@ public class Robot extends MovableAgent {
 		return isDestroyed;
 	}
 
-	public enum Actions {
+    @Override
+    public void toJson(JsonWriter writer) {
+
+    }
+
+    public enum Actions {
 		MOVE, DIE
 	}
 }

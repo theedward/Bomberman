@@ -5,12 +5,15 @@ import android.util.JsonWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.List;
 
 // This is where all the game will be processed.
 public final class Game {
 	private int level;
 	private int time;
+    private Map<String, String> charactersByPlayer; // we need to know witch character belongs to who
 	private Map<String, Player> players;
 	private Map<String, Player> playersOnPause;
 	private State gameState;
@@ -19,6 +22,7 @@ public final class Game {
 	public Game() {
 		players = new HashMap<String, Player>();
 		playersOnPause = new HashMap<String, Player>();
+        charactersByPlayer = new HashMap<String, String>();
 		gameState = new State();
 	}
 
@@ -46,7 +50,7 @@ public final class Game {
 	 */
 	public void removePlayer(Player p) {
 		players.remove(p);
-		gameState.removeAll(p.getObjects());
+		//gameState.removeAll(p.getObjects());
 	}
 
 	private void pausePlayer(String username) {
@@ -71,6 +75,7 @@ public final class Game {
 	private void populateGame() {
 		// Attribute each player a Bomberman object
 		Player[] characterOwners = (Player[]) players.values().toArray();
+        List<Drawing> wallDrawings = new LinkedList<Drawing>();
 		int playerCounter = 0;
 
 		for (int i = 0; i < gameState.map.length; i++) {
@@ -85,12 +90,16 @@ public final class Game {
 												 characterOwners[playerCounter].getController(),
 												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed());
 					gameState.addAgent(bm);
-					characterOwners[playerCounter].addAgent(bm);
+					//characterOwners[playerCounter].addAgent(bm);
 				} else if (character == State.Character.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
-				}
+				} else if (character == State.Character.WALL.toChar()) {
+                    final Position posDrawing = new Position(i,j);
+                    wallDrawings.add(new WallDrawing(posDrawing));
+                }
 			}
 		}
+        gameConfiguration.setWalls(wallDrawings);
 	}
 
 	/**
@@ -223,7 +232,7 @@ public final class Game {
 			writer.setIndent("  ");
 			writer.beginArray();
 			for (Agent object : gameState.getObjects()) {
-
+                object.toJson(writer);
 			}
 			writer.endArray();
 			writer.close();

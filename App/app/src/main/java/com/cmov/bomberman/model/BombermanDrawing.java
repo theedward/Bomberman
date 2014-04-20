@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class BombermanDrawing extends Drawing {
+
 	private static final int SPRITE_LINE = 0;
 	private static final int SPRITE_COLUMN = 0;
 	private static final int MAX_MOVEMENT_STEP = 3;

@@ -13,7 +13,6 @@ public class Player {
 	private int currentScore;
 	private Screen myScreen;
 	private Controllable controller;
-    private Agent myCharacter;
 
 	public Player(String username, Controllable controller) {
 		this.username = username;
@@ -23,10 +22,6 @@ public class Player {
 	public Controllable getController() {
 		return controller;
 	}
-
-    public Agent getMyCharacter() { return myCharacter; }
-
-    public void setMyCharacter(Agent character) { this.myCharacter = character; }
 
 	public String getUsername() {
 		return username;
@@ -57,11 +52,10 @@ public class Player {
         myScreen.setWalls(initialConfig.getWalls());
 	}
 
-	// This method will update all the state of the Player.
-	// Ex: This will be called when any player pauses the game.
-	void onGameUpdate(GameConfiguration currentConfig) {
-		//TODO:Implement this
-	}
+    // this method will send to the server the button pressed by the player
+    void sendActionToServer() {
+
+    }
 
 	// This method will be called when the game finishes. This can be useful to
 	// tell each player who is the winner. (if there's any winner)

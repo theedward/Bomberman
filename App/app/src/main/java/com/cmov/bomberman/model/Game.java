@@ -91,7 +91,6 @@ public final class Game {
                     // attribution should be done somewhere else?
                     bm.setOwnerUsername(characterOwners[playerCounter].getUsername());
                     gameState.addAgent(bm);
-					characterOwners[playerCounter].setMyCharacter(bm);
 				} else if (character == State.Character.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed(), "Robot"));
 				} else if (character == State.Character.WALL.toChar()) {

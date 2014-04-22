@@ -1,49 +1,69 @@
 package com.cmov.bomberman.model;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.util.JsonWriter;
-
 import java.io.IOException;
 
-/**
- * Created by JoãoEduardo on 17/04/2014.
- */
 public class Robot extends MovableAgent {
-	private static final int SPRITE_LINE = 2;
-	private static final int SPRITE_COLUMN = 0;
-	private static final int SPRITE_DIE_LINE = 2;
-	private static final int SPRITE_DIE_COLUMN = 6;
-	private static final int MAX_MOVEMENT_STEP = 6;
+
+	private static final int MAX_MOVEMENT_STEP = 1;
 	private static final int MAX_DIE_STEP = 5;
 
-	private static Bitmap[] sprite;
-	private static Bitmap[] spriteDie;
 
 	private boolean isDestroyed;
 	private String currentAction;
-	private int moveStep;
-	private int dieStep;
+
+    private int step;
 
 	public Robot(final Position position, final int speed, String type) {
-		super(position, null, speed, type);
+		super(position, new Algorithm() {
+            private boolean destroyMode;
 
-		sprite = GameUtils.readCharacterSprite(SPRITE_LINE, SPRITE_COLUMN, MAX_MOVEMENT_STEP);
-		spriteDie = GameUtils.readCharacterSprite(SPRITE_DIE_LINE, SPRITE_DIE_COLUMN, MAX_DIE_STEP);
-	}
+            @Override
+            public String getNextActionName() {
+                int nextMove = (int) Math.random() % 4;
 
-	public void draw(Canvas canvas) {
-		if (currentAction.equals(Actions.MOVE)) {
-			canvas.drawBitmap(sprite[moveStep], getPosition().getX(), getPosition().getY(), null);
-		} else {
-			canvas.drawBitmap(spriteDie[dieStep], getPosition().getX(), getPosition().getY(), null);
-		}
+                if(nextMove == 0) {
+                    return MovableAgentActions.MOVE_BOTTOM.toString();
+                } else if(nextMove == 1) {
+                    return MovableAgentActions.MOVE_TOP.toString();
+                } else if(nextMove == 2) {
+                    return MovableAgentActions.MOVE_LEFT.toString();
+                } else if(nextMove == 3) {
+                    return MovableAgentActions.MOVE_RIGHT.toString();
+                }
+                return null;
+            }
 
+            @Override
+            public void handleEvent(Event e) {
+                if (e == Event.DESTROY) {
+                    destroyMode = true;
+                }
+            }
+        }, speed, type);
 	}
 
 	@Override
 	public void play(State state) {
 
+        String nextAction = getAlgorithm().getNextActionName();
+
+        Move move = ActionToMove(nextAction);
+        move(state, move);
+
+        if (!currentAction.equals(nextAction)) {
+            currentAction = nextAction;
+            step = 0;
+        } else if (currentAction.equals(AgentActions.DESTROY)) {
+            if (step > 0 && step < MAX_DIE_STEP) {
+                step = (step + 1) % 5;
+            } else if (step == MAX_DIE_STEP) {
+                isDestroyed = true;
+                return;
+            }
+        } else if (step > 0 && step < MAX_MOVEMENT_STEP) {
+            step = (step + 1) % 1;
+        }
 	}
 
 	@Override
@@ -71,8 +91,4 @@ public class Robot extends MovableAgent {
 
         }
     }
-
-    public enum Actions {
-		MOVE, DIE
-	}
 }

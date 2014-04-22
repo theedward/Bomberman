@@ -5,7 +5,6 @@ abstract class MovableAgent extends Agent {
 	int speed;
 	Axis lastAxis;
 
-	;
 
 	public MovableAgent(final Position pos, final Algorithm ai, final int sp, String type) {
 		super(pos, ai,type);
@@ -13,7 +12,20 @@ abstract class MovableAgent extends Agent {
 		lastAxis = null;
 	}
 
-	;
+    protected Move ActionToMove(String action) {
+
+        if (action.equals(MovableAgentActions.MOVE_BOTTOM)) {
+            return Move.DOWN;
+        } else if (action.equals(MovableAgentActions.MOVE_TOP)) {
+            return Move.UP;
+        } else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
+            return Move.LEFT;
+        } else if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
+            return Move.RIGHT;
+        } else {
+            return null;
+        }
+    }
 
 	// Returns type of potential collision or null if there s none
 	public boolean move(State currentState, Move direction) {

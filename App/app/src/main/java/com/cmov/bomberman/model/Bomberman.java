@@ -30,21 +30,6 @@ public class Bomberman extends MovableAgent {
         } else return false;
     }
 
-	private Move ActionToMove(String action) {
-
-		if (action.equals(MovableAgentActions.MOVE_BOTTOM)) {
-			return Move.DOWN;
-		} else if (action.equals(MovableAgentActions.MOVE_TOP)) {
-			return Move.UP;
-		} else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
-			return Move.LEFT;
-		} else if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
-			return Move.RIGHT;
-		} else {
-			return null;
-		}
-	}
-
 	@Override
 	public boolean isDestroyed() {
 		return isDestroyed;

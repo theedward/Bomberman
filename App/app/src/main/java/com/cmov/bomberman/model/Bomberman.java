@@ -1,53 +1,34 @@
 package com.cmov.bomberman.model;
 
-import android.graphics.Bitmap;
+import android.util.JsonWriter;
+
+import java.io.IOException;
 
 public class Bomberman extends MovableAgent {
-	private static final int SPRITE_LINE = 0;
-	private static final int SPRITE_COLUMN = 0;
+
 	private static final int MAX_MOVEMENT_STEP = 3;
 	private static final int MAX_DIE_STEP = 6;
 
-	private static Bitmap[] spriteTop;
-	private static Bitmap[] spriteBottom;
-	private static Bitmap[] spriteLeft;
-	private static Bitmap[] spriteRight;
-	private static Bitmap[] spriteDie;
-
+    private String ownerUsername = "";
 	private int explosionRange;
 	private int step;
 	private String currentAction;
-	private boolean isDead;
 	private boolean isDestroyed;
 
-	public Bomberman(Position pos, Algorithm ai, int range, int speed) {
-		super(pos, ai, speed);
+	public Bomberman(Position pos, Algorithm ai, int range, int speed, String type) {
+		super(pos, ai, speed,type);
 		explosionRange = range;
 	}
 
-	private boolean isDead() {
-		return isDead;
-	}
+    public String getOwnerUsername() { return ownerUsername;}
 
-	public void setIsDead(boolean dead) {
-		isDead = dead;
-	}
+    public void setOwnerUsername(String username) { this.ownerUsername = username; }
 
-	private Move ActionToMove(String action) {
-
-		if (action.equals(MovableAgentActions.MOVE_BOTTOM)) {
-			return Move.DOWN;
-		} else if (action.equals(MovableAgentActions.MOVE_TOP)) {
-			return Move.UP;
-		} else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
-			return Move.LEFT;
-		}
-		if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
-			return Move.RIGHT;
-		} else {
-			return null;
-		}
-	}
+    public boolean hasOwnerWithUsername(String username) {
+        if (ownerUsername.equals(username)) {
+            return true;
+        } else return false;
+    }
 
 	@Override
 	public boolean isDestroyed() {
@@ -66,7 +47,7 @@ public class Bomberman extends MovableAgent {
             currentAction = nextAction;
             step = 0;
             if (nextAction.equals(BombermanActions.PUT_BOMB.toString())) {
-                state.addAgent(new Bomb(this.getPosition(), explosionRange));
+                state.addAgent(new Bomb(this.getPosition(), explosionRange, "Bomb"));
             }
         } else if (currentAction.equals(AgentActions.DESTROY)) {
             if (step > 0 && step < MAX_DIE_STEP) {
@@ -80,7 +61,28 @@ public class Bomberman extends MovableAgent {
         }
     }
 
-	public enum BombermanActions {
+    @Override
+    public void toJson(JsonWriter writer) {
+        try {
+            writer.beginObject();
+            writer.name("type").value(getType());
+
+            writer.name("position");
+            writer.beginArray();
+            writer.value(getPosition().getX() - 0.5f);
+            writer.value(getPosition().getY() - 0.5f);
+            writer.endArray();
+
+            writer.name("currentAction").value(currentAction);
+            writer.name("step").value(step);
+            writer.endObject();
+        }
+        catch (IOException e) {
+
+        }
+    }
+
+    private enum BombermanActions {
 		PUT_BOMB;
 	}
 }

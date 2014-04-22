@@ -9,20 +9,25 @@ import java.util.List;
 // This class is responsible to draw everything in the canvas.
 public class Screen {
 	Canvas canvas;
-	//List<Drawing> objects;
+	List<Drawing> walls; // with wallDrawings
 
 	public Screen(Canvas canvas) {
 		this.canvas = canvas;
-		//objects = new LinkedList<Drawing>();
+		walls = new LinkedList<Drawing>();
 	}
 
-	public void addObject(Drawing object) {
-		//objects.add(object);
-	}
+    public void setWalls(List<Drawing> wallDrawings) {
+        this.walls = wallDrawings;
+    }
 
 	// Calls the method draw for all the objects
 	public void drawAll(List<Drawing> objects) {
-		for (Drawing obj : objects) {
+		// draw walls
+        for (Drawing wall : walls) {
+            wall.draw(canvas);
+        }
+        // draw objects
+        for (Drawing obj : objects) {
 			obj.draw(canvas);
 		}
 	}

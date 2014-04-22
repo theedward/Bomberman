@@ -17,9 +17,11 @@ public class State {
     * */
     public char[][] map;
     private List<Agent> agents;
+    private List<Bomberman> pausedCharacters;
 
 	public State() {
 		agents = new LinkedList<Agent>();
+        pausedCharacters = new LinkedList<Bomberman>();
 	}
 
 	/*
@@ -59,6 +61,30 @@ public class State {
 		agents.add(object);
 	}
 
+    public void setMapPosition(Position newPosition, Position oldPosition) {
+        char character = map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()];
+
+        map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()] = Character.EMPTY.toChar();
+        map[newPosition.yToDiscrete()][newPosition.yToDiscrete()] = character;
+    }
+
+    public void pauseCharacter(String ownerUsername) {
+        Bomberman bmCharacter = getAgentByOwner(ownerUsername);
+        if (bmCharacter != null) {
+            agents.remove(bmCharacter);
+            pausedCharacters.add(bmCharacter);
+            cleanMapEntry(bmCharacter.getPosition());
+        }
+    }
+
+    public void unPauseCharacter(String ownerUsername) {
+        Bomberman bmCharacter = getAgentByOwner(ownerUsername);
+        if (bmCharacter != null) {
+            pausedCharacters.remove(bmCharacter);
+            agents.add(bmCharacter);
+            addMapEntry(bmCharacter.getPosition());
+        }
+    }
     /*
     * This method removes the given agent from the state
     * */
@@ -138,5 +164,25 @@ public class State {
             }
         }
         return null;
+    }
+
+    private Bomberman getAgentByOwner(String ownerUsername) {
+        Bomberman bomberman = null;
+
+        for(Agent agent: agents) {
+            bomberman = (Bomberman) agent;
+            if (bomberman.hasOwnerWithUsername(ownerUsername)) {
+                return bomberman;
+            }
+        }
+        return bomberman;
+    }
+
+    private void cleanMapEntry(Position position) {
+        map[position.yToDiscrete()][position.xToDiscrete()] = Character.EMPTY.toChar();
+    }
+
+    private void addMapEntry(Position position) {
+        map[position.yToDiscrete()][position.xToDiscrete()] = Character.BOMBERMAN.toChar();
     }
 }

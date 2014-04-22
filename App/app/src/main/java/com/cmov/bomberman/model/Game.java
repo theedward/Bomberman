@@ -5,7 +5,9 @@ import android.util.JsonWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.List;
 
 // This is where all the game will be processed.
 public final class Game {
@@ -46,7 +48,6 @@ public final class Game {
 	 */
 	public void removePlayer(Player p) {
 		players.remove(p);
-		gameState.removeAll(p.getObjects());
 	}
 
 	private void pausePlayer(String username) {
@@ -71,6 +72,7 @@ public final class Game {
 	private void populateGame() {
 		// Attribute each player a Bomberman object
 		Player[] characterOwners = (Player[]) players.values().toArray();
+        List<Drawing> wallDrawings = new LinkedList<Drawing>();
 		int playerCounter = 0;
 
 		for (int i = 0; i < gameState.map.length; i++) {
@@ -79,18 +81,25 @@ public final class Game {
 				// the position will be right in the middle
 				final Position pos = new Position(i + 0.5f, j + 0.5f);
 				if (character == State.Character.OBSTACLE.toChar()) {
-					gameState.addAgent(new Obstacle(pos));
+					gameState.addAgent(new Obstacle(pos, "Obstacle"));
 				} else if (character == State.Character.BOMBERMAN.toChar()) {
 					Bomberman bm = new Bomberman(pos,
 												 characterOwners[playerCounter].getController(),
-												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed());
-					gameState.addAgent(bm);
-					characterOwners[playerCounter].addAgent(bm);
+												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed(), "Bomberman");
+                    // attributes a character, witch can only be a Bomberman
+                    // to the player Username
+                    // attribution should be done somewhere else?
+                    bm.setOwnerUsername(characterOwners[playerCounter].getUsername());
+                    gameState.addAgent(bm);
 				} else if (character == State.Character.ROBOT.toChar()) {
-					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
-				}
+					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed(), "Robot"));
+				} else if (character == State.Character.WALL.toChar()) {
+                    final Position posDrawing = new Position(i,j);
+                    wallDrawings.add(new WallDrawing(posDrawing));
+                }
 			}
 		}
+        gameConfiguration.setWalls(wallDrawings);
 	}
 
 	/**
@@ -130,9 +139,7 @@ public final class Game {
 	 */
 	public void pause(String username) {
 		pausePlayer(username);
-		for (Player p : players.values()) {
-			p.onGameUpdate(gameConfiguration);
-		}
+        gameState.pauseCharacter(username);
 	}
 
 	/**
@@ -142,9 +149,7 @@ public final class Game {
 	 */
 	public void unpause(String username) {
 		unpausePlayer(username);
-		for (Player p : players.values()) {
-			p.onGameUpdate(gameConfiguration);
-		}
+		gameState.unPauseCharacter(username);
 	}
 
 	/**
@@ -223,7 +228,7 @@ public final class Game {
 			writer.setIndent("  ");
 			writer.beginArray();
 			for (Agent object : gameState.getObjects()) {
-
+                object.toJson(writer);
 			}
 			writer.endArray();
 			writer.close();

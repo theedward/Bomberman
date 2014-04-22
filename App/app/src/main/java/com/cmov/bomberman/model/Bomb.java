@@ -1,5 +1,9 @@
 package com.cmov.bomberman.model;
 
+import android.util.JsonWriter;
+
+import java.io.IOException;
+
 /**
  * Created by JoãoEduardo on 17/04/2014.
  */
@@ -15,8 +19,8 @@ public class Bomb extends Agent {
 	private int timeout = 5;
 	private boolean destroyed;
 
-	public Bomb(final Position startingPos, int bombRange) {
-		super(startingPos, null);
+	public Bomb(final Position startingPos, int bombRange, String type) {
+		super(startingPos, null, type);
 		this.bombRange = bombRange;
 	}
 
@@ -38,7 +42,25 @@ public class Bomb extends Agent {
 		return false;
 	}
 
-	public enum Actions {
-		DESTROY
-	}
+    @Override
+    public void toJson(JsonWriter writer) {
+
+        try {
+            writer.beginObject();
+            writer.name("type").value(getType());
+
+            writer.name("position");
+            writer.beginArray();
+            writer.value(getPosition().getX() - 0.5f);
+            writer.value(getPosition().getY() - 0.5f);
+            writer.endArray();
+
+            writer.name("currentAction").value("");
+            writer.name("step").value(0);
+            writer.endObject();
+        }
+        catch (IOException e) {
+
+        }
+    }
 }

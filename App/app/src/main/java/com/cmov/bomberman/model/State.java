@@ -61,6 +61,13 @@ public class State {
 		agents.add(object);
 	}
 
+    public void setMapPosition(Position newPosition, Position oldPosition) {
+        char character = map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()];
+
+        map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()] = Character.EMPTY.toChar();
+        map[newPosition.yToDiscrete()][newPosition.yToDiscrete()] = character;
+    }
+
     public void pauseCharacter(String ownerUsername) {
         Bomberman bmCharacter = getAgentByOwner(ownerUsername);
         if (bmCharacter != null) {

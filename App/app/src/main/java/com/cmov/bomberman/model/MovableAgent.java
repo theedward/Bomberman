@@ -68,6 +68,7 @@ abstract class MovableAgent extends Agent {
 		final Position curPos = new Position(x, y);
 		char character = currentState.map[curPos.xToDiscrete()][curPos.yToDiscrete()];
 		if (character == State.Character.EMPTY.toChar()) {
+            currentState.setMapPosition(new Position(x,y), getPosition());
 			setPosition(new Position(x, y));
 			return true;
 		} else if (character == State.Character.BOMB.toChar() || character == State.Character.BOMBERMAN.toChar() ||
@@ -77,8 +78,11 @@ abstract class MovableAgent extends Agent {
 			} else {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
+            currentState.setMapPosition(new Position(x,y), getPosition());
 			setPosition(new Position(x, y));
-            handleEvent(Event.DESTROY);
+            if (this.getType().equals("Bomberman")) {
+                handleEvent(Event.DESTROY);
+            }
 			return false;
 		} else if (character == State.Character.OBSTACLE.toChar() || character == State.Character.WALL.toChar()) {
 			// correct position
@@ -88,7 +92,8 @@ abstract class MovableAgent extends Agent {
 			} else {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
-			setPosition(new Position(x, y));
+            currentState.setMapPosition(new Position(x,y), getPosition());
+            setPosition(new Position(x, y));
 			return false;
 		}
 

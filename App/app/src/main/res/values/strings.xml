@@ -13,6 +13,18 @@
     <string name="start">Start</string>
     <string name="level">Level</string>
 
+    <string name="player_name">Player Name</string>
+    <string name="player_score">Player Score</string>
+    <string name="time_left">Time Left</string>
+    <string name="number_player">Number Players</string>
+    <string name="pause">Pause</string>
+    <string name="quit">Quit</string>
+    <string name="bomb">Bomb</string>
+    <string name="arrowLeft">←</string>
+    <string name="arrowUp">↑</string>
+    <string name="arrowRight">→</string>
+    <string name="arrowDown">↓</string>
+
     <color name="silver">#C0C0C0</color>
     <color name="white">#FFFFFF</color>
 

@@ -11,13 +11,15 @@ public class Bomberman extends MovableAgent {
 
     private String ownerUsername = "";
 	private int explosionRange;
+    private int explosionTimeout;
 	private int step;
 	private String currentAction;
 	private boolean isDestroyed;
 
-	public Bomberman(Position pos, Algorithm ai, int range, int speed, String type) {
+	public Bomberman(Position pos, Algorithm ai, int range, int speed, String type, int timeout) {
 		super(pos, ai, speed,type);
 		explosionRange = range;
+        explosionTimeout = timeout;
 	}
 
     public String getOwnerUsername() { return ownerUsername;}
@@ -47,16 +49,16 @@ public class Bomberman extends MovableAgent {
             currentAction = nextAction;
             step = 0;
             if (nextAction.equals(BombermanActions.PUT_BOMB.toString())) {
-                state.addAgent(new Bomb(this.getPosition(), explosionRange, "Bomb"));
+                state.addAgent(new Bomb(this.getPosition(), explosionRange, "Bomb", explosionTimeout));
             }
         } else if (currentAction.equals(AgentActions.DESTROY)) {
-            if (step > 0 && step < MAX_DIE_STEP) {
-                step = (step + 1) % 6;
+            if (step < MAX_DIE_STEP) {
+                step++;
             } else if (step == MAX_DIE_STEP) {
                 isDestroyed = true;
-                return;
             }
-        } else if (step > 0 && step < MAX_MOVEMENT_STEP) {
+        } else {
+            // Cool effect, moves even when against a wall
             step = (step + 1) % 3;
         }
     }

@@ -55,14 +55,12 @@ public class Robot extends MovableAgent {
             currentAction = nextAction;
             step = 0;
         } else if (currentAction.equals(AgentActions.DESTROY)) {
-            if (step > 0 && step < MAX_DIE_STEP) {
-                step = (step + 1) % 5;
+            if (step < MAX_DIE_STEP) {
+                step++;
             } else if (step == MAX_DIE_STEP) {
                 isDestroyed = true;
                 return;
             }
-        } else if (step > 0 && step < MAX_MOVEMENT_STEP) {
-            step = (step + 1) % 1;
         }
 	}
 

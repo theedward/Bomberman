@@ -4,37 +4,50 @@ import android.util.JsonWriter;
 
 import java.io.IOException;
 
-/**
- * Created by JoãoEduardo on 17/04/2014.
- */
 public class Bomb extends Agent {
 	private static final int BOMB_MAX_STEP = 3;
 	private static final int EXPL_MAX_STEP = 4;
 
 	private int bombRange;
-	private int bombStep;
-	private int explStep;
+	private int step;
+    private int incr;
+    private boolean explosion;
+    private String currentAction;
 
-	//At the moment all bombs explode after 5 seconds, this can be passed to a constructor or changed
-	private int timeout = 5;
+
+
 	private boolean destroyed;
 
-	public Bomb(final Position startingPos, int bombRange, String type) {
-		super(startingPos, null, type);
+	public Bomb(final Position startingPos, int bombRange, String type, int timeout) {
+		super(startingPos,new BombAlgorithm(System.currentTimeMillis(), timeout), type);
 		this.bombRange = bombRange;
 	}
 
 	@Override
 	public void play(State state) {
-		if (bombStep > 0 && bombStep < BOMB_MAX_STEP) {
-			bombStep++;
-		} else if (explStep == EXPL_MAX_STEP) {
-			destroyed = true;
-		} else if (bombStep == BOMB_MAX_STEP) {
-			state.bombExplosion(bombRange, this);
-			timeout = 0;
-			explStep++;
-		}
+
+        long currentTime = System.currentTimeMillis();
+        String nextAction = getAlgorithm().getNextActionName();
+
+        if (!currentAction.equals(nextAction)) {
+            currentAction = nextAction;
+            step = 0;
+            incr = 1;
+            if (currentAction.equals(BombActions.EXPLODE.toString())) {
+                state.bombExplosion(bombRange, this);
+                explosion = true;
+            }
+        } else if (explosion) {
+            if (step < EXPL_MAX_STEP) {
+                step += incr;
+            } else if (step == EXPL_MAX_STEP) {
+                incr = -1;
+            } else if (step == 0 && incr == -1) {
+                destroyed = true;
+            }
+        } else {
+            step = (step + 1) % BOMB_MAX_STEP;
+        }
 	}
 
 	@Override
@@ -63,4 +76,9 @@ public class Bomb extends Agent {
 
         }
     }
+
+    private enum BombActions {
+        EXPLODE;
+    }
+
 }

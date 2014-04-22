@@ -85,7 +85,7 @@ public final class Game {
 				} else if (character == State.Character.BOMBERMAN.toChar()) {
 					Bomberman bm = new Bomberman(pos,
 												 characterOwners[playerCounter].getController(),
-												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed(), "Bomberman");
+												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed(), "Bomberman", gameConfiguration.getExplosionDuration());
                     // attributes a character, witch can only be a Bomberman
                     // to the player Username
                     // attribution should be done somewhere else?

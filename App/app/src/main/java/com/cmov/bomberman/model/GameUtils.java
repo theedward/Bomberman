@@ -1,6 +1,6 @@
 package com.cmov.bomberman.model;
 
-import android.content.res.Resources;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.JsonReader;
@@ -8,51 +8,38 @@ import com.cmov.bomberman.R;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.InputStreamReader;
 
 // This class provides utility functions that can be used by other classes.
 // The init method must be called before using the readBitmapFromResource.
 public class GameUtils {
-	/**
-	 * The image files have lots of sprites. The block size is the size of each image in the sprite.
-	 */
-	private static final int IMAGE_BLOCK_SIZE = 10;
+	public static final int IMG_WIDTH = 60;
+	public static final int IMG_HEIGHT = 60;
 
-	/**
-	 * The number of blocks that fit in the canvas.
-	 */
-	private static final int NUM_BLOCK_CANVAS = 20;
-	private static int canvasWidth;
-	private static int canvasHeight;
-	private static Resources resources;
+	private static Context context;
 
-	public static void init(final Resources resources, final int canvasWidth, final int canvasHeight) {
-		GameUtils.resources = resources;
-		GameUtils.canvasWidth = canvasWidth;
-		GameUtils.canvasHeight = canvasHeight;
-	}
-
-	/**
-	 * @param level the game level
-	 *
-	 * @return the file name of this level.
-	 */
-	private static String levelFilename(final int level) {
-		return "level" + level;
+	public static void init(final Context context) {
+		GameUtils.context = context;
 	}
 
 	public static char[][] readLevelFromFile(final int level) {
 		final String filename = GameUtils.levelFilename(level);
-		List<char[]> map = new LinkedList<char[]>();
+
 		try {
-			BufferedReader rd = new BufferedReader(new FileReader(filename));
-			String line;
-			while ((line = rd.readLine()) != null) {
-				map.add(line.toCharArray());
+			BufferedReader rd = new BufferedReader(new InputStreamReader(context.getAssets().open(filename)));
+			final int width = Integer.parseInt(rd.readLine());
+			final int height = Integer.parseInt(rd.readLine());
+
+			char[][] map = new char[height][width];
+
+			for (int i = 0; i < height; i++) {
+				String line = rd.readLine();
+				for (int j = 0; j < width; j++) {
+					map[i][j] = line.charAt(j);
+				}
 			}
+			return map;
 		}
 		catch (FileNotFoundException e) {
 			System.out.println("File not found: " + filename);
@@ -61,8 +48,15 @@ public class GameUtils {
 			System.out.println("Error while reading file: " + filename);
 		}
 
-		return (char[][]) map.toArray();
+		return new char[0][0];
 	}
+
+	/**
+	 * @param level the game level
+	 *
+	 * @return the file name of this level.
+	 */
+	private static String levelFilename(final int level) { return "level_" + level + ".txt"; }
 
 	/**
 	 * @param level the game level
@@ -70,14 +64,14 @@ public class GameUtils {
 	 * @return the file name of the configuration file for this level.
 	 */
 	private static String configFilename(final int level) {
-		return "level" + level;
+		return "configuration_" + level + ".txt";
 	}
 
 	public static GameConfiguration readConfigurationFile(final int level) {
 		final String filename = configFilename(level);
 		final GameConfiguration config = new GameConfiguration();
 		try {
-			JsonReader rd = new JsonReader(new FileReader(filename));
+			JsonReader rd = new JsonReader(new InputStreamReader(context.getAssets().open(filename)));
 			rd.beginObject();
 			while (rd.hasNext()) {
 				String msg = rd.nextName();
@@ -97,8 +91,6 @@ public class GameUtils {
 					config.setExplosionDuration(rd.nextInt());
 				} else if (msg.equals("ExplosionRange")) {
 					config.setExplosionRange(rd.nextInt());
-				} else if (msg.equals("NumUpdatesPerSecond")) {
-					config.setNumUpdatesPerSecond(rd.nextInt());
 				} else if (msg.equals("PointRobot")) {
 					config.setPointRobot(rd.nextInt());
 				} else if (msg.equals("PointOpponent")) {
@@ -112,31 +104,20 @@ public class GameUtils {
 			System.out.println("File not found: " + filename);
 		}
 		catch (IOException e) {
-			System.out.println("Error while reading file: " + filename);
+			e.printStackTrace();
 		}
 
 		return config;
 	}
 
-	// Used on Android
-	public static Bitmap readLevelBitmap(int row, int col, int width, int height) {
-		Bitmap level = BitmapFactory.decodeResource(resources, R.drawable.levels);
-		level = Bitmap.createBitmap(level, row * IMAGE_BLOCK_SIZE, col * IMAGE_BLOCK_SIZE, width, height);
-		return Bitmap.createScaledBitmap(level, canvasWidth, canvasHeight, true);
+	public static Bitmap readWallSprite() {
+		Bitmap tilesSprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomberman_tiles_sheet);
+		// Each image has this width and height
+		final int imgWidth = 30;
+		final int imgHeight = 32;
 
-	}
-
-	public static Bitmap[] readCharacterSprite(int row, int col, int num) {
-		Bitmap characters = BitmapFactory.decodeResource(resources, R.drawable.characters);
-		Bitmap[] sprite = new Bitmap[num];
-		for (int i = 0; i < num; i++) {
-			sprite[i] = Bitmap
-					.createBitmap(characters, row * IMAGE_BLOCK_SIZE, (col + i) * IMAGE_BLOCK_SIZE, IMAGE_BLOCK_SIZE,
-								  IMAGE_BLOCK_SIZE);
-			sprite[i] = Bitmap
-					.createScaledBitmap(sprite[i], canvasWidth / NUM_BLOCK_CANVAS, canvasHeight / NUM_BLOCK_CANVAS,
-										true);
-		}
-		return sprite;
+		// Wall image is the third one
+		Bitmap wallImg = Bitmap.createBitmap(tilesSprite, 2 * imgWidth, 0, imgWidth, imgHeight);
+		return Bitmap.createScaledBitmap(wallImg, IMG_WIDTH, IMG_HEIGHT, true);
 	}
 }

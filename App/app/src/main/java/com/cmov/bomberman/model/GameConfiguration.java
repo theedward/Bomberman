@@ -1,15 +1,17 @@
 package com.cmov.bomberman.model;
 
+import com.cmov.bomberman.model.drawing.Drawing;
+
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 public class GameConfiguration {
 	private Map<String, Integer> playerCharacterId;
 	private Map<String, Integer> playerScore;
 	private Map<Integer, Position> characterPositions;
-    private List<Drawing> walls;
+	private List<Drawing> fixedDrawings;
 	private int numUpdatesPerSecond;
 	private int maxNumPlayers;
 	private int timeLimit;
@@ -33,7 +35,7 @@ public class GameConfiguration {
 		playerCharacterId = new HashMap<String, Integer>();
 		playerScore = new HashMap<String, Integer>();
 		characterPositions = new HashMap<Integer, Position>();
-        walls = new LinkedList<Drawing>();
+		fixedDrawings = new LinkedList<Drawing>();
 	}
 
 	public int getNumUpdatesPerSecond() {
@@ -116,7 +118,7 @@ public class GameConfiguration {
 		this.pointOpponent = pointOpponent;
 	}
 
-    public List<Drawing> getWalls() { return this.walls;}
+	public List<Drawing> getFixedDrawings() { return this.fixedDrawings;}
 
-    public void setWalls(final List<Drawing> wallDrawings) { this.walls = wallDrawings; }
+	public void setFixedDrawings(final List<Drawing> wallDrawings) { this.fixedDrawings = wallDrawings; }
 }

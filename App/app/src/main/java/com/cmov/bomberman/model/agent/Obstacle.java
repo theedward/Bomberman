@@ -1,6 +1,9 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.Event;
+import com.cmov.bomberman.model.Position;
+import com.cmov.bomberman.model.State;
 
 import java.io.IOException;
 
@@ -35,7 +38,7 @@ public class Obstacle extends Agent {
 					destroyMode = true;
 				}
 			}
-		},type);
+		}, type);
 	}
 
 	@Override
@@ -73,7 +76,7 @@ public class Obstacle extends Agent {
 			writer.value(getPosition().getY() - 0.5f);
 			writer.endArray();
 
-            writer.name("currentAction").value("");
+			writer.name("currentAction").value("");
 			writer.name("step").value(step);
 			writer.endObject();
 		}

@@ -1,4 +1,0 @@
-level : 1
-numUpdatesPerSecond : 10
-maxNumPlayers : 5
-timeLimit : 180

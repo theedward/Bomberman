@@ -1,7 +1,8 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.drawing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import com.cmov.bomberman.model.Position;
 
 public class BombDrawing extends Drawing {
 	private static final int BOMB_SPRITE_LINE = 1;
@@ -24,21 +25,10 @@ public class BombDrawing extends Drawing {
 		this.explStep = explStep;
 		this.timeout = timeout;
 
-		if (bombSprite == null) {
-			bombSprite = GameUtils.readCharacterSprite(BOMB_SPRITE_LINE, BOMB_SPRITE_COLUMN, BOMB_NUM_IMAGES);
-		}
-
-		if (explosionSprite == null) {
-			explosionSprite = GameUtils.readCharacterSprite(EXPL_SPRITE_LINE, EXPL_SPRITE_COLUMN, EXPL_NUM_IMAGES);
-		}
 	}
 
 	@Override
 	public void draw(final Canvas canvas) {
-		if (timeout != 0) {
-			canvas.drawBitmap(bombSprite[bombStep], getPosition().getX(), getPosition().getY(), null);
-		} else {
-			canvas.drawBitmap(explosionSprite[explStep], getPosition().getX(), getPosition().getY(), null);
-		}
+
 	}
 }

@@ -7,12 +7,12 @@ import android.view.Menu;
 import android.view.View;
 import com.cmov.bomberman.R;
 
-public class InitialActivity extends Activity {
+public class HomeActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_initial);
+		setContentView(R.layout.activity_home);
 
 
 	}
@@ -25,17 +25,17 @@ public class InitialActivity extends Activity {
 	}
 
 	public void newGame(View v) {
-		Intent intent = new Intent(InitialActivity.this, NewGameActivity.class);
+		Intent intent = new Intent(HomeActivity.this, NewGameActivity.class);
 		startActivity(intent);
 	}
 
 	public void multiplayerGame(View v) {
-		Intent intent = new Intent(InitialActivity.this, MultiplayerActivity.class);
+		Intent intent = new Intent(HomeActivity.this, MultiplayerActivity.class);
 		startActivity(intent);
 	}
 
 	public void about(View v) {
-		Intent intent = new Intent(InitialActivity.this, AboutActivity.class);
+		Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
 		startActivity(intent);
 	}
 }

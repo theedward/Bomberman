@@ -1,4 +1,8 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.agent;
+
+import com.cmov.bomberman.model.Event;
+import com.cmov.bomberman.model.Position;
+import com.cmov.bomberman.model.State;
 
 abstract class MovableAgent extends Agent {
 	private static final float ROTATE_MARGIN = 0.25f;
@@ -7,25 +11,25 @@ abstract class MovableAgent extends Agent {
 
 
 	public MovableAgent(final Position pos, final Algorithm ai, final int sp, String type) {
-		super(pos, ai,type);
+		super(pos, ai, type);
 		speed = sp;
 		lastAxis = null;
 	}
 
-    protected Move ActionToMove(String action) {
+	protected Move ActionToMove(String action) {
 
-        if (action.equals(MovableAgentActions.MOVE_BOTTOM)) {
-            return Move.DOWN;
-        } else if (action.equals(MovableAgentActions.MOVE_TOP)) {
-            return Move.UP;
-        } else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
-            return Move.LEFT;
-        } else if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
-            return Move.RIGHT;
-        } else {
-            return null;
-        }
-    }
+		if (action.equals(MovableAgentActions.MOVE_BOTTOM)) {
+			return Move.DOWN;
+		} else if (action.equals(MovableAgentActions.MOVE_TOP)) {
+			return Move.UP;
+		} else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
+			return Move.LEFT;
+		} else if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
+			return Move.RIGHT;
+		} else {
+			return null;
+		}
+	}
 
 	// Returns type of potential collision or null if there s none
 	public boolean move(State currentState, Move direction) {
@@ -67,24 +71,24 @@ abstract class MovableAgent extends Agent {
 		// map coordinates
 		final Position curPos = new Position(x, y);
 		char character = currentState.map[curPos.xToDiscrete()][curPos.yToDiscrete()];
-		if (character == State.Character.EMPTY.toChar()) {
-            currentState.setMapPosition(new Position(x,y), getPosition());
+		if (character == State.DrawingType.EMPTY.toChar()) {
+			currentState.setMapPosition(new Position(x, y), getPosition());
 			setPosition(new Position(x, y));
 			return true;
-		} else if (character == State.Character.BOMB.toChar() || character == State.Character.BOMBERMAN.toChar() ||
-				   character == State.Character.ROBOT.toChar()) {
+		} else if (character == State.DrawingType.BOMB.toChar() || character == State.DrawingType.BOMBERMAN.toChar() ||
+				   character == State.DrawingType.ROBOT.toChar()) {
 			if (moveAxis == Axis.HORIZONTAL) {
 				x = (direction == Move.LEFT) ? (float) Math.floor(x) + 0.5f : (float) Math.ceil(x) - 0.5f;
 			} else {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
-            currentState.setMapPosition(new Position(x,y), getPosition());
+			currentState.setMapPosition(new Position(x, y), getPosition());
 			setPosition(new Position(x, y));
-            if (this.getType().equals("Bomberman")) {
-                handleEvent(Event.DESTROY);
-            }
+			if (this.getType().equals("Bomberman")) {
+				handleEvent(Event.DESTROY);
+			}
 			return false;
-		} else if (character == State.Character.OBSTACLE.toChar() || character == State.Character.WALL.toChar()) {
+		} else if (character == State.DrawingType.OBSTACLE.toChar() || character == State.DrawingType.WALL.toChar()) {
 			// correct position
 			// set position in the opposite direction
 			if (moveAxis == Axis.HORIZONTAL) {
@@ -92,8 +96,8 @@ abstract class MovableAgent extends Agent {
 			} else {
 				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
 			}
-            currentState.setMapPosition(new Position(x,y), getPosition());
-            setPosition(new Position(x, y));
+			currentState.setMapPosition(new Position(x, y), getPosition());
+			setPosition(new Position(x, y));
 			return false;
 		}
 

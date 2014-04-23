@@ -1,4 +1,6 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.agent;
+
+import com.cmov.bomberman.model.Event;
 
 public class RobotAlgorithm implements Algorithm {
 	private boolean destroyMode;

@@ -38,8 +38,10 @@ public class Controllable implements Algorithm {
 
         if (destroyMode) {
             return AgentActions.DESTROY.toString();
-        }else return keymap.containsKey(lastKeyPressed) ? keymap.get(lastKeyPressed) : "";
-    }
+		} else {
+			return keymap.containsKey(lastKeyPressed) ? keymap.get(lastKeyPressed) : "";
+		}
+	}
 
 	/**
 	 * The agents that have are controllable, they override the Agent#handleEvent method.

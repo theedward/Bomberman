@@ -1,6 +1,8 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.Position;
+import com.cmov.bomberman.model.State;
 
 import java.io.IOException;
 
@@ -8,7 +10,7 @@ public class Robot extends MovableAgent {
 	private static final int MAX_DIE_STEP = 5;
 
 	private boolean isDestroyed;
-	private String currentAction;
+	private String currentAction = "";
 	private int step;
 
 	public Robot(final Position position, final int speed, String type) {
@@ -24,7 +26,7 @@ public class Robot extends MovableAgent {
 		if (!currentAction.equals(nextAction)) {
 			currentAction = nextAction;
 			step = 0;
-		} else if (currentAction.equals(AgentActions.DESTROY)) {
+		} else if (currentAction.equals(AgentActions.DESTROY.toString())) {
 			if (step < MAX_DIE_STEP) {
 				step++;
 			} else {

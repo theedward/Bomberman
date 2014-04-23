@@ -1,56 +1,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/background"
-    tools:context=".NewGameActivity" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context=".NewGameActivity">
 
     <TextView
-        android:id="@+id/level"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/levelPicker"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/levelPicker"
-        android:layout_marginTop="66dp"
-        android:text="@string/level"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/white"
-        android:textSize="25sp" />
+            android:id="@+id/level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/levelPicker"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/levelPicker"
+            android:layout_marginTop="66dp"
+            android:text="@string/level"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white"
+            android:textSize="25sp"/>
 
     <NumberPicker
-        android:id="@+id/levelPicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/level"
-        android:layout_marginLeft="18dp"
-        android:layout_marginTop="29dp"
-        />
+            android:id="@+id/levelPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/level"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="29dp"
+            />
 
     <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/level"
-        android:layout_marginLeft="120dp"
-        android:layout_marginTop="25dp"
-        android:src="@drawable/level1" />
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/level"
+            android:layout_marginLeft="120dp"
+            android:layout_marginTop="25dp"/>
 
     <Button
-        android:id="@+id/start"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/imageView1"
-        android:layout_marginTop="50dp"
-        android:layout_toRightOf="@+id/levelPicker"
-        android:alpha="1"
-        android:text="@string/start"
-        android:onClick="startGame"
-         />
+            android:id="@+id/start"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/imageView1"
+            android:layout_marginTop="50dp"
+            android:layout_toRightOf="@+id/levelPicker"
+            android:alpha="1"
+            android:text="@string/start"
+            android:onClick="startGame"
+            />
 
 </RelativeLayout>

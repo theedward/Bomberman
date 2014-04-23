@@ -21,7 +21,7 @@ public class NewGameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_game);
 
-		mapPreviewId = new int[] { R.drawable.level1, R.drawable.suicide_bomber };
+		mapPreviewId = new int[0];
 
 		levelPicker = (NumberPicker) findViewById(R.id.levelPicker);
 		levelPicker.setMinValue(MAP_MIN_LEVEL);

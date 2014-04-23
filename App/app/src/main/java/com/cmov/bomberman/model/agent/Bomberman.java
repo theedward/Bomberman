@@ -1,6 +1,8 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.Position;
+import com.cmov.bomberman.model.State;
 
 import java.io.IOException;
 
@@ -13,7 +15,7 @@ public class Bomberman extends MovableAgent {
 	private int explosionRange;
 	private int explosionTimeout;
 	private int step;
-	private String currentAction;
+	private String currentAction = "";
 	private boolean isDestroyed;
 
 	public Bomberman(Position pos, Algorithm ai, int range, int speed, String type, int timeout) {

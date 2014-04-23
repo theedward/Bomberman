@@ -1,15 +1,26 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.agent;
+
+import com.cmov.bomberman.model.Event;
 
 import java.util.Map;
+import java.util.TreeMap;
 
-/**
- * Created by JoãoEduardo on 15-04-2014.
- */
 public class Controllable implements Algorithm {
+	public static final Map<Character, String> DEFAULT_KEYMAP = new TreeMap<Character, String>() {{
+		put('U', "MOVE_TOP");
+		put('L', "MOVE_LEFT");
+		put('D', "MOVE_BOTTOM");
+		put('R', "MOVE_RIGHT");
+		put('B', "PUT_BOMB");
+	}};
 
 	final Map<Character, String> keymap;
 	char lastKeyPressed;
-    private boolean destroyMode;
+	private boolean destroyMode;
+
+	public Controllable() {
+		this.keymap = DEFAULT_KEYMAP;
+	}
 
 	public Controllable(Map<Character, String> keymap) {
 		this.keymap = keymap;
@@ -36,8 +47,8 @@ public class Controllable implements Algorithm {
 	@Override
 	public String getNextActionName() {
 
-        if (destroyMode) {
-            return AgentActions.DESTROY.toString();
+		if (destroyMode) {
+			return AgentActions.DESTROY.toString();
 		} else {
 			return keymap.containsKey(lastKeyPressed) ? keymap.get(lastKeyPressed) : "";
 		}
@@ -50,8 +61,8 @@ public class Controllable implements Algorithm {
 	 */
 	@Override
 	public void handleEvent(final Event e) {
-        if (e == Event.DESTROY) {
-            destroyMode = true;
-        }
+		if (e == Event.DESTROY) {
+			destroyMode = true;
+		}
 	}
 }

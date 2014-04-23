@@ -47,4 +47,8 @@ public class Position {
 		Position pos = (Position) o;
 		return (pos.getX() == this.getX()) && (pos.getY() == this.getY());
 	}
+
+	public String toString() {
+		return "X: " + x + " Y: " + y;
+	}
 }

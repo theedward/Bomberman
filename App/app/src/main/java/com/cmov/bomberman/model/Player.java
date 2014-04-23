@@ -3,6 +3,10 @@ package com.cmov.bomberman.model;
 import android.graphics.Canvas;
 import android.util.JsonReader;
 import com.cmov.bomberman.controller.GameView;
+import com.cmov.bomberman.model.agent.Controllable;
+import com.cmov.bomberman.model.drawing.BombermanDrawing;
+import com.cmov.bomberman.model.drawing.Drawing;
+import com.cmov.bomberman.model.drawing.ObstacleDrawing;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -53,13 +57,8 @@ public class Player {
 
 	// This method will create all the characters and all the drawables
 	void onGameStart(GameConfiguration initialConfig) {
-        myScreen.setWalls(initialConfig.getWalls());
+		myScreen.setFixedDrawings(initialConfig.getFixedDrawings());
 	}
-
-    // this method will send to the server the button pressed by the player
-    void sendActionToServer() {
-
-    }
 
 	// This method will be called when the game finishes. This can be useful to
 	// tell each player who is the winner. (if there's any winner)
@@ -67,21 +66,19 @@ public class Player {
 		//TODO:Implement this
 	}
 
-    // this method will receive text containing the info needed to construct
-    // new drawings to be drawn on the client side
-    // signature must be changed
-	void onUpdate(String msg) {
-		List<Drawing> myDrawings = new LinkedList<Drawing>();
-
+	private List<Drawing> parseMessage(String msg) {
+		List<Drawing> drawings = new LinkedList<Drawing>();
 		JsonReader rd = new JsonReader(new StringReader(msg));
+
 		try {
 			rd.beginArray();
 			while (rd.hasNext()) {
 				Position position = null;
 				int step = 0;
 				String type = "";
-                String currentAction = "";
+				String currentAction = "";
 
+				// Parse object
 				rd.beginObject();
 				while (rd.hasNext()) {
 					String name = rd.nextName();
@@ -89,32 +86,33 @@ public class Player {
 						if (name.equals("type")) {
 							type = rd.nextString();
 						} else if (name.equals("currentAction")) {
-                            currentAction = rd.nextString();
-                        } else if (name.equals("step")) {
+							currentAction = rd.nextString();
+						} else if (name.equals("step")) {
 							step = rd.nextInt();
 						} else if (name.equals("position")) {
 							float x, y;
 							rd.beginArray();
 							x = (float) rd.nextDouble();
 							y = (float) rd.nextDouble();
-							position = new Position(x, y);
+							position = new Position(x * GameUtils.IMG_WIDTH, y * GameUtils.IMG_HEIGHT);
 							rd.endArray();
 						}
 					}
-
-					if (type != null) {
-						if (type.equals("Obstacle")) {
-							myDrawings.add(new ObstacleDrawing(position, step));
-						} else if (type.equals("Bomberman")) {
-                            myDrawings.add(new BombermanDrawing(position,step,currentAction));
-                        } else if (type.equals("Robot")) {
-
-                        } else if (type.equals("Bomb")) {
-
-                        }
-					}
 				}
 				rd.endObject();
+
+				// Create object instance
+				if (type != null) {
+					if (type.equals("Obstacle")) {
+						drawings.add(new ObstacleDrawing(position, step));
+					} else if (type.equals("Bomberman")) {
+						drawings.add(new BombermanDrawing(position, step, currentAction));
+					} else if (type.equals("Robot")) {
+						// TODO
+					} else if (type.equals("Bomb")) {
+						// TODO
+					}
+				}
 			}
 			rd.endArray();
 		}
@@ -122,10 +120,16 @@ public class Player {
 			System.out.println("Player#onUpdate: Error while parsing the message.");
 		}
 
-		// Update the objects on the screen
-		myScreen.setObjects(myDrawings);
+		return drawings;
+	}
 
-		// Draw
+	// this method will receive text containing the info needed to construct
+	// new drawings to be drawn on the client side
+	// signature must be changed
+	void onUpdate(String msg) {
+		List<Drawing> drawings = parseMessage(msg);
+		myScreen.setObjects(drawings);
+
 		Canvas canvas = null;
 		try {
 			if (gameView.getHolder() != null) {

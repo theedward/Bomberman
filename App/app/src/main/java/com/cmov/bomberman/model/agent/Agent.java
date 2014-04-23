@@ -1,19 +1,22 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.Event;
+import com.cmov.bomberman.model.Position;
+import com.cmov.bomberman.model.State;
 
 public abstract class Agent {
 	private final Algorithm ai;
 	private Position position;
-    private String type;
+	private String type;
 
 	public Agent(Position startingPos, Algorithm ai, String agentType) {
 		position = startingPos;
 		this.ai = ai;
-        this.type = agentType;
+		this.type = agentType;
 	}
 
-	protected Position getPosition() {
+	public Position getPosition() {
 		return position;
 	}
 
@@ -21,7 +24,7 @@ public abstract class Agent {
 		this.position = p;
 	}
 
-    protected String getType() { return type;}
+	public String getType() { return type;}
 
 	protected Algorithm getAlgorithm() {
 		return ai;

@@ -1,27 +1,46 @@
 package com.cmov.bomberman.model;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.agent.Agent;
+import com.cmov.bomberman.model.agent.Bomberman;
+import com.cmov.bomberman.model.agent.Obstacle;
+import com.cmov.bomberman.model.agent.Robot;
+import com.cmov.bomberman.model.drawing.Drawing;
+import com.cmov.bomberman.model.drawing.WallDrawing;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
-// This is where all the game will be processed.
+/**
+ * This is where all the game will be processed.
+ */
 public final class Game {
-	private int level;
-	private int time;
-	private Map<String, Player> players;
-	private Map<String, Player> playersOnPause;
-	private State gameState;
-	private GameConfiguration gameConfiguration;
+	private final Map<String, Player> players;
+	private final Map<String, Player> playersOnPause;
+	private final State gameState;
+	private final GameConfiguration gameConfiguration;
+	/**
+	 * The number of updates the game will have.
+	 */
+	private int duration;
+	private boolean hasStarted;
 
-	public Game() {
-		players = new HashMap<String, Player>();
-		playersOnPause = new HashMap<String, Player>();
-		gameState = new State();
+	public Game(final int level) {
+		this.players = new HashMap<String, Player>();
+		this.playersOnPause = new HashMap<String, Player>();
+		this.gameState = new State();
+		this.hasStarted = false;
+
+		// Read data from files
+		this.gameState.map = GameUtils.readLevelFromFile(level);
+		this.gameConfiguration = GameUtils.readConfigurationFile(level);
+		this.duration = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
+
+		populateGame();
 	}
 
 	/**
@@ -39,6 +58,13 @@ public final class Game {
 			players.put(username, p);
 			return true;
 		}
+	}
+
+	/**
+	 * @return the number of updates per second
+	 */
+	public int getNumberUpdates() {
+		return this.gameConfiguration.getNumUpdatesPerSecond();
 	}
 
 	/**
@@ -62,17 +88,15 @@ public final class Game {
 		addPlayer(username, p);
 	}
 
-	public void setLevel(final int level) {
-		this.level = level;
-	}
-
 	/**
 	 * Creates all the objects and populates the game state.
+	 * Attributes each player a Bomberman.
 	 */
 	private void populateGame() {
-		// Attribute each player a Bomberman object
-		Player[] characterOwners = (Player[]) players.values().toArray();
-        List<Drawing> wallDrawings = new LinkedList<Drawing>();
+		Player[] characterOwners = new Player[players.size()];
+		players.values().toArray(characterOwners);
+
+		List<Drawing> fixedDrawings = new LinkedList<Drawing>();
 		int playerCounter = 0;
 
 		for (int i = 0; i < gameState.map.length; i++) {
@@ -80,99 +104,98 @@ public final class Game {
 				char character = gameState.map[i][j];
 				// the position will be right in the middle
 				final Position pos = new Position(i + 0.5f, j + 0.5f);
-				if (character == State.Character.OBSTACLE.toChar()) {
+				if (character == State.DrawingType.OBSTACLE.toChar()) {
 					gameState.addAgent(new Obstacle(pos, "Obstacle"));
-				} else if (character == State.Character.BOMBERMAN.toChar()) {
-					Bomberman bm = new Bomberman(pos,
-												 characterOwners[playerCounter].getController(),
-												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed(), "Bomberman", gameConfiguration.getExplosionDuration());
-                    // attributes a character, witch can only be a Bomberman
-                    // to the player Username
-                    // attribution should be done somewhere else?
-                    bm.setOwnerUsername(characterOwners[playerCounter].getUsername());
-                    gameState.addAgent(bm);
-				} else if (character == State.Character.ROBOT.toChar()) {
+				} else if (character == State.DrawingType.BOMBERMAN.toChar()) {
+					Bomberman bm = new Bomberman(pos, characterOwners[playerCounter].getController(),
+												 gameConfiguration.getExplosionRange(), gameConfiguration.getbSpeed(),
+												 "Bomberman", gameConfiguration.getExplosionDuration());
+					bm.setOwnerUsername(characterOwners[playerCounter].getUsername());
+					gameState.addAgent(bm);
+				} else if (character == State.DrawingType.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed(), "Robot"));
-				} else if (character == State.Character.WALL.toChar()) {
-                    final Position posDrawing = new Position(i,j);
-                    wallDrawings.add(new WallDrawing(posDrawing));
-                }
+				} else if (character == State.DrawingType.WALL.toChar()) {
+					fixedDrawings.add(new WallDrawing(new Position(i * GameUtils.IMG_WIDTH,
+																   j * GameUtils.IMG_HEIGHT)));
+				}
 			}
 		}
-        gameConfiguration.setWalls(wallDrawings);
+
+		gameConfiguration.setFixedDrawings(fixedDrawings);
 	}
 
 	/**
-	 * Creates the game configuration and the game state.
+	 * Creates all the agents in the map.
 	 * Calls Player#onGameStart for every registered player.
-	 * Starts the game loop on a separate thread.
+	 * Starts the game loop
 	 */
-	public void start() {
-		gameState.map = GameUtils.readLevelFromFile(level);
-		gameConfiguration = GameUtils.readConfigurationFile(level);
-
-		populateGame();
-
+	public void begin() {
 		// tell players that the game has started
 		for (Player p : players.values()) {
 			p.onGameStart(gameConfiguration);
 		}
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				loop();
-			}
-		}).start();
 	}
 
 	public void end() {
+		// tell players that the game has ended
 		for (Player p : players.values()) {
 			p.onGameEnd(gameConfiguration);
+		}
+
+		// TODO: compute scores, statistics, etc...
+	}
+
+	/**
+	 * Updates the state (new frame).
+	 */
+	public void update() {
+		if (!this.hasStarted) {
+			this.begin();
+		}
+
+		// Update the state
+		//		gameState.playAll();
+		updatePlayers();
+		this.duration--;
+
+		if (this.hasFinished()) {
+			this.end();
 		}
 	}
 
 	/**
-	 * Pauses the game for the player with the given username
-	 *
-	 * @param username the player's username
+	 * Calls Player#onUpdate with the new state.
 	 */
-	public void pause(String username) {
-		pausePlayer(username);
-        gameState.pauseCharacter(username);
-	}
+	private void updatePlayers() {
+		// Get all the character positions
+		StringWriter msg = new StringWriter();
+		JsonWriter writer = new JsonWriter(msg);
 
-	/**
-	 * Unpauses the game for the player with the given username
-	 *
-	 * @param username the player's username
-	 */
-	public void unpause(String username) {
-		unpausePlayer(username);
-		gameState.unPauseCharacter(username);
-	}
+		try {
+			writer.setIndent("  ");
+			writer.beginArray();
+			for (Agent object : gameState.getObjects()) {
+				object.toJson(writer);
+			}
+			writer.endArray();
+			writer.close();
+		}
+		catch (IOException e) {
+			System.out.println("Game#onUpdate: error creating json message.");
+		}
 
-	/**
-	 * Stops the game. All the game state is deleted.
-	 */
-	public void stop() {
-		// TODO
-	}
-
-	/**
-	 * Restarts the game. It's the same as Game#stop and Game#start.
-	 */
-	public void restart() {
-		stop();
-		start();
+		// Update every player with the character positions
+		for (Player p : players.values()) {
+			p.onUpdate(msg.toString());
+		}
 	}
 
 	/**
 	 * Verifies if the game has already finished.
 	 */
-	private boolean hasFinished() {
+	public boolean hasFinished() {
 		// return if time has already finished
-		if (time == 0) {
+		if (duration == 0) {
 			return true;
 		}
 
@@ -181,7 +204,8 @@ public final class Game {
 		final char[][] map = gameState.map;
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
-				if (map[i][j] == State.Character.BOMBERMAN.toChar() || map[i][j] == State.Character.ROBOT.toChar()) {
+				if (map[i][j] == State.DrawingType.BOMBERMAN.toChar() ||
+					map[i][j] == State.DrawingType.ROBOT.toChar()) {
 					numMovableAgents++;
 				}
 			}
@@ -192,54 +216,22 @@ public final class Game {
 	}
 
 	/**
-	 * The game loop.
-	 * Performs the number of updates specified in the game configuration.
+	 * Pauses the game for the player with the given username
+	 *
+	 * @param username the player's username
 	 */
-	private void loop() {
-		final int sleepTime = 1000 / gameConfiguration.getNumUpdatesPerSecond();
-		int timeCounter = 0;
-		while (!hasFinished()) {
-			update();
-			timeCounter = (timeCounter + 1) % gameConfiguration.getNumUpdatesPerSecond();
-			if (timeCounter == 0) {
-				time--;
-			}
-
-			try {
-				Thread.sleep(sleepTime);
-			}
-			catch (InterruptedException e) {
-			}
-		}
+	public void pause(String username) {
+		pausePlayer(username);
+		gameState.pauseCharacter(username);
 	}
 
 	/**
-	 * Updates the state (new frame). Updates every player with all the characters positions
+	 * Unpauses the game for the player with the given username
+	 *
+	 * @param username the player's username
 	 */
-	private void update() {
-		// Update the state
-		gameState.playAll();
-
-		// Get all the character positions
-		StringWriter msg = new StringWriter();
-		JsonWriter writer = new JsonWriter(msg);
-
-		try {
-			writer.setIndent("  ");
-			writer.beginArray();
-			for (Agent object : gameState.getObjects()) {
-                object.toJson(writer);
-			}
-			writer.endArray();
-			writer.close();
-		}
-		catch (IOException e) {
-			// TODO
-		}
-
-		// Update every player with the character positions
-		for (Player p : players.values()) {
-			p.onUpdate(msg.toString());
-		}
+	public void unpause(String username) {
+		unpausePlayer(username);
+		gameState.unPauseCharacter(username);
 	}
 }

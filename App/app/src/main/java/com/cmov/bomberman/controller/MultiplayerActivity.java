@@ -1,8 +1,11 @@
 package com.cmov.bomberman.controller;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+
 import com.cmov.bomberman.R;
 
 public class MultiplayerActivity extends Activity {
@@ -20,4 +23,15 @@ public class MultiplayerActivity extends Activity {
 		return true;
 	}
 
+    public void joinServer(View v) {
+        Intent intent = new Intent(MultiplayerActivity.this, JoinServerActivity.class);
+        startActivity(intent);
+    }
+
+    public void createServer(View v) {
+        Intent intent = new Intent(MultiplayerActivity.this, CreateServerActivity.class);
+        startActivity(intent);
+    }
+
 }
+

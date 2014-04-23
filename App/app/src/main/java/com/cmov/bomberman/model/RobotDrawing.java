@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class RobotDrawing extends Drawing {
-
     private static final int SPRITE_LINE = 2;
     private static final int SPRITE_MOVE_COLUMN = 0;
     private static final int SPRITE_DIE_COLUMN = 6;
@@ -33,8 +32,8 @@ public class RobotDrawing extends Drawing {
 
     @Override
     public void draw(Canvas canvas) {
-        if (currentAction.equals(MovableAgentActions.MOVE_BOTTOM.toString())) {
-            canvas.drawBitmap(spriteDie[step], getPosition().getX(), getPosition().getY(), null);
+		if (currentAction.equals(AgentActions.DESTROY.toString())) {
+			canvas.drawBitmap(spriteDie[step], getPosition().getX(), getPosition().getY(), null);
         } else {
             canvas.drawBitmap(spriteMove[step], getPosition().getX(), getPosition().getY(), null);
         }

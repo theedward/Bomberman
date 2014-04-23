@@ -60,7 +60,8 @@
                 android:background="@drawable/border"/>
     </LinearLayout>
 
-    <SurfaceView
+    <view
+            class="com.cmov.bomberman.controller.GameView"
             android:id="@+id/canvas"
             android:layout_width="match_parent"
             android:layout_height="300dp"
@@ -74,28 +75,28 @@
             android:layout_below="@+id/canvas">
 
         <Button
-                android:id="@+id/pauseBtn"
+                android:onClick="pressedPause"
                 android:text="@string/pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"/>
 
         <Button
-                android:id="@+id/quitBtn"
+                android:onClick="pressedQuit"
                 android:text="@string/quit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"/>
 
         <Button
-                android:id="@+id/arrowUpBtn"
+                android:onClick="pressedArrowUp"
                 android:text="@string/arrowUp"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="150dp"/>
 
         <Button
-                android:id="@+id/arrowLeftBtn"
+                android:onClick="pressedArrowLeft"
                 android:text="@string/arrowLeft"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
@@ -103,7 +104,7 @@
                 android:layout_marginLeft="100dp"/>
 
         <Button
-                android:id="@+id/arrowDownBtn"
+                android:onClick="pressedArrowDown"
                 android:text="@string/arrowDown"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
@@ -111,7 +112,7 @@
                 android:layout_marginLeft="150dp"/>
 
         <Button
-                android:id="@+id/arrowRightBtn"
+                android:onClick="pressedArrowRight"
                 android:text="@string/arrowRight"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
@@ -119,7 +120,7 @@
                 android:layout_marginLeft="200dp"/>
 
         <Button
-                android:id="@+id/bombBtn"
+                android:onClick="pressedBomb"
                 android:text="@string/bomb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model;
 
+import android.graphics.Canvas;
 import android.util.JsonReader;
+import com.cmov.bomberman.controller.GameView;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -8,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Player {
+	private GameView gameView;
 
 	private String username;
 	private int currentScore;
@@ -17,6 +20,11 @@ public class Player {
 	public Player(String username, Controllable controller) {
 		this.username = username;
 		this.controller = controller;
+		this.myScreen = new Screen();
+	}
+
+	public void setGameView(final GameView gameView) {
+		this.gameView = gameView;
 	}
 
 	public Controllable getController() {
@@ -41,10 +49,6 @@ public class Player {
 
 	public Screen getMyScreen() {
 		return myScreen;
-	}
-
-	public void setMyScreen(Screen myScreen) {
-		this.myScreen = myScreen;
 	}
 
 	// This method will create all the characters and all the drawables
@@ -115,10 +119,26 @@ public class Player {
 			rd.endArray();
 		}
 		catch (IOException e) {
-
+			System.out.println("Player#onUpdate: Error while parsing the message.");
 		}
 
-		myScreen.drawAll(myDrawings);
+		// Update the objects on the screen
+		myScreen.setObjects(myDrawings);
+
+		// Draw
+		Canvas canvas = null;
+		try {
+			if (gameView.getHolder() != null) {
+				canvas = gameView.getHolder().lockCanvas();
+				synchronized (gameView.getHolder()) {
+					gameView.onDraw(canvas);
+				}
+			}
+		} finally {
+			if (canvas != null) {
+				gameView.getHolder().unlockCanvasAndPost(canvas);
+			}
+		}
 	}
 
 }

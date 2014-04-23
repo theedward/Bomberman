@@ -12,23 +12,21 @@
 
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:background="@drawable/yellow_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="150dp"
         android:text="@string/join_server"
-        android:textSize="25sp"
+        style="@style/ButtonText"
         android:id="@+id/joinserverbtn"
         android:onClick="joinServer"
         />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:background="@drawable/yellow_button"
         android:text="@string/create_server"
         android:id="@+id/createserverbtn"
         android:layout_alignParentBottom="true"
-        android:textSize="25sp"
+        style="@style/ButtonText"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="150dp"
         android:onClick="createServer"

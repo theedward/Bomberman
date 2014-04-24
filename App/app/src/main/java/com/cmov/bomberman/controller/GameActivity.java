@@ -135,8 +135,10 @@ public class GameActivity extends Activity {
 		if (hasFocus && this.gameThread.getState() == Thread.State.NEW) {
 			// Initialize the GameUtils image parameters
 			// This is used in the Game#populateGame
-			GameUtils.IMG_CANVAS_WIDTH = this.gameView.getWidth() / this.game.getMapWidth();
-			GameUtils.IMG_CANVAS_HEIGHT = this.gameView.getHeight() / this.game.getMapHeight();
+			final int size = Math.min(Math.round(this.gameView.getWidth() / this.game.getMapWidth()),
+									  Math.round(this.gameView.getHeight() / this.game.getMapHeight()));
+			GameUtils.IMG_CANVAS_WIDTH = size;
+			GameUtils.IMG_CANVAS_HEIGHT = size;
 
 			this.game.populateGame();
 

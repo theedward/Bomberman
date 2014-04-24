@@ -120,7 +120,7 @@ public class Player {
 							rd.beginArray();
 							x = (float) rd.nextDouble();
 							y = (float) rd.nextDouble();
-							position = new Position(x * GameUtils.IMG_WIDTH, y * GameUtils.IMG_HEIGHT);
+							position = new Position(x, y);
 							rd.endArray();
 						} else if (name.equals("range")) {
 							range = rd.nextInt();

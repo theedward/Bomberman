@@ -75,7 +75,7 @@ public class GameActivity extends Activity {
 		}
 
 		// jump to the home activity
-		Intent intent = new Intent(GameActivity.this, InitialActivity.class);
+		Intent intent = new Intent(GameActivity.this, HomeActivity.class);
 		startActivity(intent);
 	}
 

@@ -6,29 +6,33 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Controllable implements Algorithm {
-	public static final Map<Character, String> DEFAULT_KEYMAP = new TreeMap<Character, String>() {{
-		put('U', "MOVE_TOP");
-		put('L', "MOVE_LEFT");
-		put('D', "MOVE_BOTTOM");
-		put('R', "MOVE_RIGHT");
-		put('B', "PUT_BOMB");
-	}};
-
-	final Map<Character, String> keymap;
-	char lastKeyPressed;
+	private final Map<Character, String> keymap;
+	private char lastKeyPressed;
 	private boolean destroyMode;
 
+	/**
+	 * This constructor uses the default keymap.
+	 */
 	public Controllable() {
-		this.keymap = DEFAULT_KEYMAP;
+		this.keymap = new TreeMap<Character, String>() {{
+			put('U', "MOVE_UP");
+			put('L', "MOVE_LEFT");
+			put('D', "MOVE_DOWN");
+			put('R', "MOVE_RIGHT");
+			put('B', "PUT_BOMB");
+		}};
 	}
 
+	/**
+	 * A constructor with a custom keymap.
+	 * @param keymap the keymap
+	 */
 	public Controllable(Map<Character, String> keymap) {
 		this.keymap = keymap;
 	}
 
 	/**
 	 * Changes the last key pressed when the character is in the keymap.
-	 *
 	 * @return if the character is in the keymap.
 	 */
 	public boolean keyPressed(char c) {
@@ -48,16 +52,16 @@ public class Controllable implements Algorithm {
 	public String getNextActionName() {
 
 		if (destroyMode) {
-			return AgentActions.DESTROY.toString();
+			return Agent.Actions.DESTROY.toString();
 		} else {
 			return keymap.containsKey(lastKeyPressed) ? keymap.get(lastKeyPressed) : "";
 		}
 	}
 
 	/**
-	 * The agents that have are controllable, they override the Agent#handleEvent method.
-	 *
-	 * @param e
+	 * The agents that are controllable can override the Agent#handleEvent method to pass the events
+	 * to the algorithm.
+	 * @param e the event
 	 */
 	@Override
 	public void handleEvent(final Event e) {

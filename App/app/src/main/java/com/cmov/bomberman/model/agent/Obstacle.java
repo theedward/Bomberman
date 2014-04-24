@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -14,46 +13,30 @@ public class Obstacle extends Agent {
 	 * Step is the id of the image to be displayed.
 	 */
 	private int step;
+
 	/**
 	 * Represents if the obstacle is destroyed.
 	 */
 	private boolean destroyed;
 
-	public Obstacle(final Position startingPos, String type) {
-		super(startingPos, new Algorithm() {
-			private boolean destroyMode;
-
-			@Override
-			public String getNextActionName() {
-				if (destroyMode) {
-					return AgentActions.DESTROY.toString();
-				} else {
-					return "";
-				}
-			}
-
-			@Override
-			public void handleEvent(final Event e) {
-				if (e == Event.DESTROY) {
-					destroyMode = true;
-				}
-			}
-		}, type);
+	public Obstacle(final Position startingPos) {
+		super(startingPos, new ObstacleAlgorithm());
+		this.step = 0;
+		this.destroyed = false;
 	}
 
 	@Override
-	public void play(final State state) {
+	public void play(final State state, final long dt) {
 		if (step > 0 && step < MAX_STEP) {
 			// increase step until it reaches MAX_STEP
 			step++;
 		} else if (step == MAX_STEP) {
 			// when the MAX_STEP is reached, destroy the obstacle
 			destroyed = true;
-			return;
 		} else {
 			// check if the next action is DESTROY
 			Algorithm ai = getAlgorithm();
-			if (ai.getNextActionName().equals(AgentActions.DESTROY.toString())) {
+			if (ai.getNextActionName().equals(Agent.Actions.DESTROY.toString())) {
 				step++;
 			}
 		}
@@ -81,7 +64,7 @@ public class Obstacle extends Agent {
 			writer.endObject();
 		}
 		catch (IOException e) {
-
+			System.out.println("Obstacle#toJson: Error while serializing to json.");
 		}
 
 	}

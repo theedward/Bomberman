@@ -28,12 +28,18 @@ public class Position {
 		this.y = y;
 	}
 
-	//this method converts float x coordinate into an int
+	/**
+	 * Converts a float position into a discrete position.
+	 * @return the closest discrete x
+	 */
 	public int xToDiscrete() {
 		return (int) Math.round(x);
 	}
 
-	//this method converts float y coordinate into an int
+	/**
+	 * Converts a float position into a discrete position. The value .5 is rounded below
+	 * @return the closest discrete x
+	 */
 	public int yToDiscrete() {
 		return (int) Math.round(y);
 	}

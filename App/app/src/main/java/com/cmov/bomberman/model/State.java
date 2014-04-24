@@ -9,26 +9,38 @@ import java.util.List;
 
 
 public class State {
-	/*
-	* '-' stands for empty
-	* 'W' stands for wall
-	* 'M' stands for Bomberman
-	* 'R' stands for Robot
-	* 'O' stands for obstacle
-	* 'B' stands for bomb
-	* */
-	public char[][] map;
+	private char[][] map;
 	private List<Agent> agents;
 	private List<Bomberman> pausedCharacters;
+	private int mapWidth;
+	private int mapHeight;
 
 	public State() {
 		agents = new LinkedList<Agent>();
 		pausedCharacters = new LinkedList<Bomberman>();
 	}
 
+	public char[][] getMap() {
+		return map;
+	}
+
+	public void setMap(final char[][] map) {
+		this.map = map;
+		this.mapHeight = map.length;
+		this.mapWidth = (this.mapHeight > 0) ? map[0].length : 0;
+	}
+
+	public int getMapWidth() {
+		return mapWidth;
+	}
+
+	public int getMapHeight() {
+		return mapHeight;
+	}
+
 	/*
-	* This method returns the list of agents in the state
-	* */
+				* This method returns the list of agents in the state
+				* */
 	public List<Agent> getObjects() {
 		return agents;
 	}
@@ -40,8 +52,10 @@ public class State {
 	* */
 	public void playAll() {
 
+		// TODO verify when the bomberman has robots at distance 1
+
 		for (Agent agent : agents) {
-			agent.play(this);
+			agent.play(this, );
 			if (agent.isDestroyed()) {
 				destroyAgent(agent);
 			}

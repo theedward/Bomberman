@@ -1,69 +1,92 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
 import java.io.IOException;
 
 public class Bomberman extends MovableAgent {
-
 	private static final int MAX_MOVEMENT_STEP = 3;
 	private static final int MAX_DIE_STEP = 6;
 
-	private String ownerUsername = "";
-	private int explosionRange;
-	private int explosionTimeout;
+	private final Player owner;
+	private final int timeBetweenBombs;
+	private final int explosionRange;
+	private final int explosionTimeout;
+	/**
+	 * This is initialized with time between bombs because a player
+	 * is allowed to put a bomb right in the beginning.
+	 */
+	private long timeSinceLastBomb;
 	private int step;
-	private String currentAction = "";
-	private boolean isDestroyed;
+	private String currentAction;
+	private boolean destroyed;
 
-	public Bomberman(Position pos, Algorithm ai, int range, int speed, String type, int timeout) {
-		super(pos, ai, speed, type);
-		explosionRange = range;
-		explosionTimeout = timeout;
+	/**
+	 * @param pos the agent position
+	 * @param ai the agent algorithm
+	 * @param speed the agent speed
+	 * @param owner the player that controls this object
+	 * @param timeBetweenBombs time between bombs in milliseconds.
+	 * @param range the bomb range
+	 * @param timeout the bomb timeout
+	 */
+	public Bomberman(Position pos, Algorithm ai, int speed, Player owner, int timeBetweenBombs, int range, int timeout) {
+		super(pos, ai, speed);
+		this.owner = owner;
+		this.timeBetweenBombs = timeBetweenBombs * 1000;
+		this.timeSinceLastBomb = this.timeBetweenBombs;
+		this.explosionRange = range;
+		this.explosionTimeout = timeout;
+		this.step = 0;
+		this.currentAction = "";
+		this.destroyed = false;
 	}
 
-	public String getOwnerUsername() { return ownerUsername;}
-
-	public void setOwnerUsername(String username) { this.ownerUsername = username; }
-
-	public boolean hasOwnerWithUsername(String username) {
-		if (ownerUsername.equals(username)) {
-			return true;
-		} else {
-			return false;
-		}
+	/**
+	 * @return the player that controls this object
+	 */
+	public Player getOwner() {
+		return this.owner;
 	}
 
 	@Override
 	public boolean isDestroyed() {
-		return isDestroyed;
+		return destroyed;
 	}
 
 	@Override
-	public void play(State state) {
+	public void play(State state, final long dt) {
 		String nextAction = getAlgorithm().getNextActionName();
-		Move move = ActionToMove(nextAction);
-		move(state, move);
+		MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
+
+		// increase time since last bomb
+		this.timeSinceLastBomb += dt;
 
 		// when the action differs
 		if (!currentAction.equals(nextAction)) {
 			currentAction = nextAction;
 			step = 0;
-			if (nextAction.equals(BombermanActions.PUT_BOMB.toString())) {
-				state.addAgent(
-						new Bomb(this.getPosition(), explosionRange, Bomb.class.getSimpleName(), explosionTimeout));
-			}
-		} else if (currentAction.equals(AgentActions.DESTROY)) {
+		}
+
+		if (action != null) {
+			// The next action is moving
+			move(state, action, dt);
+			step = (step + 1) % MAX_MOVEMENT_STEP;
+		} else if (currentAction.equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
+			final Position bombPos = new Position(getPosition().xToDiscrete(), getPosition().yToDiscrete());
+			state.addAgent(new Bomb(bombPos, explosionRange, explosionTimeout));
+			this.timeSinceLastBomb = 0;
+		}
+
+		if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
 			if (step < MAX_DIE_STEP) {
 				step++;
 			} else if (step == MAX_DIE_STEP) {
-				isDestroyed = true;
+				destroyed = true;
 			}
-		} else {
-			// Cool effect, moves even when against a wall
-			step = (step + 1) % MAX_MOVEMENT_STEP;
 		}
 	}
 
@@ -84,11 +107,11 @@ public class Bomberman extends MovableAgent {
 			writer.endObject();
 		}
 		catch (IOException e) {
-
+			System.out.println("Bomberman#toJson: Error while serializing to json.");
 		}
 	}
 
-	private enum BombermanActions {
-		PUT_BOMB;
+	public enum Actions {
+		PUT_BOMB
 	}
 }

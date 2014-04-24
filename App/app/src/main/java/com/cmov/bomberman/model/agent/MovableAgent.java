@@ -1,49 +1,41 @@
 package com.cmov.bomberman.model.agent;
 
-import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
 abstract class MovableAgent extends Agent {
 	private static final float ROTATE_MARGIN = 0.25f;
-	int speed;
-	Axis lastAxis;
 
+	private final int speed;
+	private Axis lastAxis;
 
-	public MovableAgent(final Position pos, final Algorithm ai, final int sp, String type) {
-		super(pos, ai, type);
-		speed = sp;
-		lastAxis = null;
+	public MovableAgent(final Position pos, final Algorithm ai, final int speed) {
+		super(pos, ai);
+		this.speed = speed;
+		this.lastAxis = null;
 	}
 
-	protected Move ActionToMove(String action) {
-
-		if (action.equals(MovableAgentActions.MOVE_BOTTOM)) {
-			return Move.DOWN;
-		} else if (action.equals(MovableAgentActions.MOVE_TOP)) {
-			return Move.UP;
-		} else if (action.equals(MovableAgentActions.MOVE_LEFT)) {
-			return Move.LEFT;
-		} else if (action.equals(MovableAgentActions.MOVE_RIGHT)) {
-			return Move.RIGHT;
-		} else {
-			return null;
-		}
-	}
-
-	// Returns type of potential collision or null if there s none
-	public boolean move(State currentState, Move direction) {
-		/*
-			if it's the first move or it's in the same axis as the previous move (horizontal or vertical),
-			just move the agent.
-			if the agent wants to change direction, he needs to be near the middle (0 + margin < pos < 1 - margin)
-			in both axis, otherwise he won't move.
-		 */
-		final Axis moveAxis = (direction == Move.UP || direction == Move.DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
-		float x = getPosition().getX();
-		float y = getPosition().getY();
+	/**
+	 * The movement algorithm is divided in small steps.
+	 * In the first step, it verifies if it's possible to move.
+	 * In the second step, it calculates the new position.
+	 * In the third step, it handles the collisions.
+	 * At last, it updates the position and the state.
+	 *
+	 * @param currentState the current state
+	 * @param action the movement direction
+	 * @param dt the time passed since the last update
+	 */
+	public void move(State currentState, Actions action, long dt) {
+		final Axis moveAxis = (action == Actions.MOVE_UP || action == Actions.MOVE_DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
+		final Position oldPosition = getPosition();
+		float x = oldPosition.getX();
+		float y = oldPosition.getY();
 		boolean canMove = false;
-		if (lastAxis == null || lastAxis == moveAxis) {
+
+		// if it's the first move or it's in the same axis as the previous move (horizontal or vertical),
+		// the agent can move
+		if (this.lastAxis == null || this.lastAxis == moveAxis) {
 			canMove = true;
 		} else {
 			final Position topLeft = new Position((float) Math.floor(x) + ROTATE_MARGIN,
@@ -51,66 +43,53 @@ abstract class MovableAgent extends Agent {
 			final Position bottomRight = new Position((float) Math.ceil(x) - ROTATE_MARGIN,
 													  (float) Math.ceil(y) - ROTATE_MARGIN);
 
-			// Now the agent must be between these positions to change direction
+			// if the agent wants to change direction, he needs to be near the middle (0 + margin < pos < 1 - margin)
+			// in both axis, otherwise he won't move.
 			if (topLeft.getX() < x && x < bottomRight.getX() && topLeft.getY() < y && y < bottomRight.getY()) {
 				canMove = true;
 			}
 		}
 
-		// move if it's possible and update the last axis
 		if (canMove) {
-			lastAxis = moveAxis;
+			// calculate the new position
+			this.lastAxis = moveAxis;
 			if (moveAxis == Axis.HORIZONTAL) {
-				x += (direction == Move.LEFT) ? -speed : speed;
+				x += ((action == Actions.MOVE_LEFT) ? -speed : speed) * dt;
 			} else {
-				y += (direction == Move.UP) ? -speed : speed;
+				y += ((action == Actions.MOVE_DOWN) ? -speed : speed) * dt;
 			}
-		}
 
-		// handle collisions
-		// map coordinates
-		final Position curPos = new Position(x, y);
-		char character = currentState.map[curPos.xToDiscrete()][curPos.yToDiscrete()];
-		if (character == State.DrawingType.EMPTY.toChar()) {
-			currentState.setMapPosition(new Position(x, y), getPosition());
-			setPosition(new Position(x, y));
-			return true;
-		} else if (character == State.DrawingType.BOMB.toChar() || character == State.DrawingType.BOMBERMAN.toChar() ||
-				   character == State.DrawingType.ROBOT.toChar()) {
-			if (moveAxis == Axis.HORIZONTAL) {
-				x = (direction == Move.LEFT) ? (float) Math.floor(x) + 0.5f : (float) Math.ceil(x) - 0.5f;
-			} else {
-				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
-			}
-			currentState.setMapPosition(new Position(x, y), getPosition());
-			setPosition(new Position(x, y));
-			if (this.getType().equals("Bomberman")) {
-				handleEvent(Event.DESTROY);
-			}
-			return false;
-		} else if (character == State.DrawingType.OBSTACLE.toChar() || character == State.DrawingType.WALL.toChar()) {
-			// correct position
-			// set position in the opposite direction
-			if (moveAxis == Axis.HORIZONTAL) {
-				x = (direction == Move.LEFT) ? (float) Math.floor(x) + 0.5f : (float) Math.ceil(x) - 0.5f;
-			} else {
-				y = (direction == Move.UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
-			}
-			currentState.setMapPosition(new Position(x, y), getPosition());
-			setPosition(new Position(x, y));
-			return false;
-		}
+			// It's not needed to check if the position is valid because all the movable agents
+			// are surrounded by other agents.
 
-		// Should never happen
-		System.out.println("MovableAgent#move: Unhandled case.");
-		return false;
+			// handle collisions
+			Position newPosition = new Position(x, y);
+			char character = currentState.getMap()[newPosition.xToDiscrete()][newPosition.yToDiscrete()];
+			if (character != State.DrawingType.EMPTY.toChar()) {
+				// the new position will take into account the direction of the agent.
+				// ex: if the agent moved up and hit a wall, it must move down to the position
+				// right before hitting the wall.
+				if (moveAxis == Axis.HORIZONTAL) {
+					x = (action == Actions.MOVE_LEFT) ? (float) Math.floor(x) + 0.5f : (float) Math.ceil(x) - 0.5f;
+				} else {
+					y = (action == Actions.MOVE_UP) ? (float) Math.floor(y) + 0.5f : (float) Math.ceil(y) - 0.5f;
+				}
+				newPosition = new Position(x, y);
+			}
+
+			currentState.setMapPosition(newPosition, oldPosition);
+			setPosition(newPosition);
+		}
 	}
 
 	private enum Axis {
 		HORIZONTAL, VERTICAL
 	}
-
-	public enum Move {
-		UP, RIGHT, DOWN, LEFT
+	
+	public enum Actions {
+		MOVE_DOWN,
+		MOVE_UP,
+		MOVE_LEFT,
+		MOVE_RIGHT,
 	}
 }

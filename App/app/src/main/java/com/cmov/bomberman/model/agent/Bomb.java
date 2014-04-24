@@ -8,38 +8,49 @@ import java.io.IOException;
 
 public class Bomb extends Agent {
 	private static final int BOMB_MAX_STEP = 3;
-	private static final int EXPL_MAX_STEP = 4;
+	private static final int EXPLOSION_MAX_STEP = 4;
 
-	private int bombRange;
+	private final int range;
+
+	/**
+	 * Starts at -1 because it's always incremented before it's used.
+	 */
 	private int step;
-	private int incr;
+	private int explosionStepIncr;
 	private boolean explosion;
-	private String currentAction = "";
+	private String currentAction;
 	private boolean destroyed;
 
-	public Bomb(final Position startingPos, int bombRange, String type, int timeout) {
-		super(startingPos, new BombAlgorithm(System.currentTimeMillis(), timeout), type);
-		this.bombRange = bombRange;
+	public Bomb(final Position startingPos, int range, int timeout) {
+		super(startingPos, new BombAlgorithm(timeout));
+		this.range = range;
+		this.step = -1;
+		this.currentAction = "";
+		this.explosionStepIncr = 1;
 	}
 
 	@Override
-	public void play(State state) {
+	public void play(State state, final long dt) {
 		String nextAction = getAlgorithm().getNextActionName();
 
 		if (!currentAction.equals(nextAction)) {
+			// changed action, restart step
 			currentAction = nextAction;
-			step = 0;
-			incr = 1;
-			if (currentAction.equals(BombActions.EXPLODE.toString())) {
-				state.bombExplosion(bombRange, this);
+			step = -1;
+			if (currentAction.equals(Actions.EXPLODE.toString())) {
+				state.bombExplosion(range, this);
 				explosion = true;
 			}
-		} else if (explosion) {
-			if (step < EXPL_MAX_STEP) {
-				step += incr;
-			} else if (step == EXPL_MAX_STEP) {
-				incr = -1;
-			} else if (step == 0 && incr == -1) {
+		}
+
+		if (explosion) {
+			// during the explosion, the steps displayed should be [0 1 2 3 2 1 0]
+			if (step < EXPLOSION_MAX_STEP) {
+				step += explosionStepIncr;
+			} else if (step == EXPLOSION_MAX_STEP) {
+				explosionStepIncr = -1;
+				step--;
+			} else if (step == 0 && explosionStepIncr == -1) {
 				destroyed = true;
 			}
 		} else {
@@ -54,7 +65,6 @@ public class Bomb extends Agent {
 
 	@Override
 	public void toJson(JsonWriter writer) {
-
 		try {
 			writer.beginObject();
 			writer.name("type").value(getType());
@@ -70,12 +80,12 @@ public class Bomb extends Agent {
 			writer.endObject();
 		}
 		catch (IOException e) {
-
+			System.out.println("Bomb#toJson: Error while serializing to json.");
 		}
 	}
 
-	private enum BombActions {
-		EXPLODE;
+	public enum Actions {
+		EXPLODE
 	}
 
 }

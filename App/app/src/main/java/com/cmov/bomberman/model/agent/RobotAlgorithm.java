@@ -24,7 +24,7 @@ public class RobotAlgorithm implements Algorithm {
 					return MovableAgentActions.MOVE_RIGHT.toString();
 			}
 		} else {
-			return AgentActions.DESTROY.toString();
+			return Agent.Actions.DESTROY.toString();
 		}
 	}
 

@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 
 /**
  * This class provides utility functions that can be used by other classes.
@@ -57,17 +58,21 @@ public class GameUtils {
 
 		try {
 			BufferedReader rd = new BufferedReader(new InputStreamReader(CONTEXT.getAssets().open(filename)));
-			final int width = Integer.parseInt(rd.readLine());
-			final int height = Integer.parseInt(rd.readLine());
+			LinkedList<String> list = new LinkedList<String>();
 
-			char[][] map = new char[height][width];
-
-			for (int i = 0; i < height; i++) {
-				String line = rd.readLine();
-				for (int j = 0; j < width; j++) {
-					map[i][j] = line.charAt(j);
-				}
+			String line;
+			int width = 0;
+			while ((line = rd.readLine()) != null) {
+				list.add(line);
+				width = line.length();
 			}
+
+			String[] array = (String[]) list.toArray();
+			char[][] map = new char[array.length][width];
+			for (int i = 0; i < array.length; i++) {
+				map[i] = array[i].toCharArray();
+			}
+
 			return map;
 		}
 		catch (FileNotFoundException e) {
@@ -77,7 +82,7 @@ public class GameUtils {
 			System.out.println("Error while reading file: " + filename);
 		}
 
-		return new char[0][0];
+		return null;
 	}
 
 	/**

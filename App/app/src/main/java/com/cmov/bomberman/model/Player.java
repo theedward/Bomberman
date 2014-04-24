@@ -166,7 +166,9 @@ public class Player {
 			if (gameView.getHolder() != null) {
 				canvas = gameView.getHolder().lockCanvas();
 				synchronized (gameView.getHolder()) {
-					gameView.onDraw(canvas);
+					if (canvas != null) {
+						gameView.onDraw(canvas);
+					}
 				}
 			}
 		} finally {

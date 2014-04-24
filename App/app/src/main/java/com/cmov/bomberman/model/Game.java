@@ -46,15 +46,13 @@ public final class Game {
 		this.gameState.setMap(GameUtils.readLevelFromFile(level));
 		this.gameConfiguration = GameUtils.readConfigurationFile(level);
 		this.duration = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
-
-		populateGame();
 	}
 
 	/**
 	 * Creates all the objects and populates the game state.
 	 * Attributes each player a Bomberman.
 	 */
-	private void populateGame() {
+	public void populateGame() {
 		Player[] characterOwners = new Player[players.size()];
 		players.values().toArray(characterOwners);
 
@@ -94,6 +92,14 @@ public final class Game {
 	 */
 	public int getNumberUpdates() {
 		return this.gameConfiguration.getNumUpdatesPerSecond();
+	}
+
+	public int getMapWidth() {
+		return this.gameConfiguration.getMapWidth();
+	}
+
+	public int getMapHeight() {
+		return this.gameConfiguration.getMapHeight();
 	}
 
 	/**

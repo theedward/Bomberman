@@ -13,6 +13,8 @@ public class GameConfiguration {
 	private final Map<Integer, Position> characterPositions;
 	private final List<Drawing> fixedDrawings;
 
+	private int mapWidth;
+	private int mapHeight;
 	private int numUpdatesPerSecond;
 	private int maxNumPlayers;
 	private int timeLimit;
@@ -130,5 +132,21 @@ public class GameConfiguration {
 
 	public void setTimeBetweenBombs(final int timeBetweenBombs) {
 		this.timeBetweenBombs = timeBetweenBombs;
+	}
+
+	public int getMapWidth() {
+		return mapWidth;
+	}
+
+	public void setMapWidth(final int mapWidth) {
+		this.mapWidth = mapWidth;
+	}
+
+	public int getMapHeight() {
+		return mapHeight;
+	}
+
+	public void setMapHeight(final int mapHeight) {
+		this.mapHeight = mapHeight;
 	}
 }

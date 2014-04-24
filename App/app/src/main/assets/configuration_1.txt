@@ -1,4 +1,6 @@
 {
+	"MapWidth": "19",
+	"MapHeight": "13",
 	"NumUpdatesPerSecond": "5",
 	"MaxNumPlayers": "1",
 	"TimeLimit": "180",

@@ -14,7 +14,9 @@ import com.cmov.bomberman.model.agent.Controllable;
 public class GameActivity extends Activity {
 	private static final String DEFAULT_USERNAME = "Bomberman";
 
+	private Game game;
 	private GameThread gameThread;
+	private GameView gameView;
 	private Controllable playerController;
 	private int level;
 
@@ -23,25 +25,25 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
+		// Initialize the GameUtils context parameter needed in almost every method.
+		GameUtils.CONTEXT = this;
+
 		// Get the level
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			level = (Integer) extras.get("level");
 		}
 
-		// Initialize the GameUtils class
-		GameUtils.init(this);
-
-		// Create a player (currently SINGLE_PLAYER)
+		// TODO Create a player (currently SINGLE_PLAYER)
 		playerController = new Controllable();
 		Player player = new Player(DEFAULT_USERNAME, playerController);
 
-		GameView gameView = (GameView) findViewById(R.id.canvas);
-		player.setGameView(gameView);
-		gameView.setScreen(player.getScreen());
+		this.gameView = (GameView) findViewById(R.id.canvas);
+		player.setGameView(this.gameView);
+		this.gameView.setScreen(player.getScreen());
 
-		Game game = new Game(level);
-		game.addPlayer(DEFAULT_USERNAME, player);
+		this.game = new Game(level);
+		this.game.addPlayer(DEFAULT_USERNAME, player);
 
 		this.gameThread = new GameThread(game);
 	}
@@ -127,11 +129,18 @@ public class GameActivity extends Activity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		gameThread.setRunning(hasFocus);
+		this.gameThread.setRunning(hasFocus);
 
 		// Start thread if it's the first time
-		if (hasFocus && gameThread.getState() == Thread.State.NEW) {
-			gameThread.start();
+		if (hasFocus && this.gameThread.getState() == Thread.State.NEW) {
+			// Initialize the GameUtils image parameters
+			// This is used in the Game#populateGame
+			GameUtils.IMG_CANVAS_WIDTH = this.gameView.getWidth() / this.game.getMapWidth();
+			GameUtils.IMG_CANVAS_HEIGHT = this.gameView.getHeight() / this.game.getMapHeight();
+
+			this.game.populateGame();
+
+			this.gameThread.start();
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.cmov.bomberman.model;
 import android.graphics.Canvas;
 import android.util.JsonReader;
 import com.cmov.bomberman.controller.GameView;
+import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Controllable;
 import com.cmov.bomberman.model.drawing.BombermanDrawing;
 import com.cmov.bomberman.model.drawing.Drawing;
@@ -14,17 +15,31 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Player {
-	private GameView gameView;
+	private final String username;
+	private final Screen screen;
+	private final Controllable controller;
+	private Agent agent;
 
-	private String username;
-	private int currentScore;
-	private Screen myScreen;
-	private Controllable controller;
+	/**
+	 * This is needed to draw in the canvas in a synchronized manner.
+	 */
+	private GameView gameView;
+	private int score;
 
 	public Player(String username, Controllable controller) {
 		this.username = username;
 		this.controller = controller;
-		this.myScreen = new Screen();
+		this.screen = new Screen();
+		this.gameView = null;
+		this.score = 0;
+	}
+
+	public Agent getAgent() {
+		return agent;
+	}
+
+	public void setAgent(final Agent agent) {
+		this.agent = agent;
 	}
 
 	public void setGameView(final GameView gameView) {
@@ -39,33 +54,45 @@ public class Player {
 		return username;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public int getScore() {
+		return score;
 	}
 
-	public int getCurrentScore() {
-		return currentScore;
+	public void addScore(final int amount) {
+		this.score += amount;
 	}
 
-	public void setCurrentScore(int currentScore) {
-		this.currentScore = currentScore;
+	public Screen getScreen() {
+		return screen;
 	}
 
-	public Screen getMyScreen() {
-		return myScreen;
-	}
-
-	// This method will create all the characters and all the drawables
+	/**
+	 * This method is called when the game starts.
+	 * It adds all the fixed drawings to the screen. All the other drawings are added on Player#onUpdate.
+	 * @param initialConfig the initial game configuration
+	 */
 	void onGameStart(GameConfiguration initialConfig) {
-		myScreen.setFixedDrawings(initialConfig.getFixedDrawings());
+		screen.setFixedDrawings(initialConfig.getFixedDrawings());
 	}
 
-	// This method will be called when the game finishes. This can be useful to
-	// tell each player who is the winner. (if there's any winner)
+	// This method will be called when the game finishes.
+
+	/**
+	 * This method is called when the game finishes.
+	 * This can be useful to tell each player who is the winner. (if there's any winner)
+	 * @param finalConfig the final game configuration
+	 */
 	void onGameEnd(GameConfiguration finalConfig) {
-		//TODO:Implement this
+		// TODO
 	}
 
+	/**
+	 * Creates all the drawings from the json report sent by the game.
+	 * The fixed drawings are not included in the report.
+	 *
+	 * @param msg the json report.
+	 * @return the drawings existent in the game state.
+	 */
 	private List<Drawing> parseMessage(String msg) {
 		List<Drawing> drawings = new LinkedList<Drawing>();
 		JsonReader rd = new JsonReader(new StringReader(msg));
@@ -123,12 +150,15 @@ public class Player {
 		return drawings;
 	}
 
-	// this method will receive text containing the info needed to construct
-	// new drawings to be drawn on the client side
-	// signature must be changed
+	/**
+	 * This method will receive text containing the info needed to construct
+	 * new drawings on the client side.
+	 * It also draws everything on the canvas.
+	 * @param msg the json report
+	 */
 	void onUpdate(String msg) {
 		List<Drawing> drawings = parseMessage(msg);
-		myScreen.setObjects(drawings);
+		screen.setObjects(drawings);
 
 		Canvas canvas = null;
 		try {

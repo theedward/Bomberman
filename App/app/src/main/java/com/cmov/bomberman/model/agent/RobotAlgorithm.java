@@ -15,13 +15,13 @@ public class RobotAlgorithm implements Algorithm {
 			int nextMove = (int) (Math.random() * 4);
 			switch (nextMove) {
 				case 0:
-					return MovableAgentActions.MOVE_BOTTOM.toString();
+					return MovableAgent.Actions.MOVE_DOWN.toString();
 				case 1:
-					return MovableAgentActions.MOVE_TOP.toString();
+					return MovableAgent.Actions.MOVE_UP.toString();
 				case 2:
-					return MovableAgentActions.MOVE_LEFT.toString();
+					return MovableAgent.Actions.MOVE_LEFT.toString();
 				default:
-					return MovableAgentActions.MOVE_RIGHT.toString();
+					return MovableAgent.Actions.MOVE_RIGHT.toString();
 			}
 		} else {
 			return Agent.Actions.DESTROY.toString();

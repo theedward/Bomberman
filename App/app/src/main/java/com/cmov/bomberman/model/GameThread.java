@@ -1,11 +1,18 @@
 package com.cmov.bomberman.model;
 
+/**
+ * This is the class responsible for continuously running the game.
+ */
 public class GameThread extends Thread {
 	/**
 	 * Number of updates per second
 	 */
 	private final int numUpdates;
 	private Game game;
+
+	/**
+	 * If the game is running or it's paused
+	 */
 	private boolean running;
 
 	public GameThread(final Game game) {
@@ -14,6 +21,9 @@ public class GameThread extends Thread {
 		this.numUpdates = this.game.getNumberUpdates();
 	}
 
+	/**
+	 * @return if the game is running.
+	 */
 	public boolean isRunning() {
 		return running;
 	}
@@ -27,6 +37,13 @@ public class GameThread extends Thread {
 		}
 	}
 
+	/**
+	 * Performs updates until the game has finished.
+	 * Doesn't update when running is false.
+	 *
+	 * For better battery saving, the thread gets locked when running is false
+	 * and only gets unlocked when running is true.
+	 */
 	public void run() {
 		while (!game.hasFinished()) {
 			synchronized (this) {
@@ -46,7 +63,7 @@ public class GameThread extends Thread {
 				Thread.sleep(1000 / numUpdates);
 			}
 			catch (InterruptedException e) {
-				// No problem, just continue
+				// Empty on purpose
 			}
 		}
 	}

@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 public class GameConfiguration {
-	private Map<String, Integer> playerCharacterId;
-	private Map<String, Integer> playerScore;
-	private Map<Integer, Position> characterPositions;
-	private List<Drawing> fixedDrawings;
+	private final Map<String, Integer> playerCharacterId;
+	private final Map<String, Integer> playerScore;
+	private final Map<Integer, Position> characterPositions;
+	private final List<Drawing> fixedDrawings;
+
 	private int numUpdatesPerSecond;
 	private int maxNumPlayers;
 	private int timeLimit;
@@ -26,6 +27,7 @@ public class GameConfiguration {
 	private int timeToExplode;
 	private int explosionDuration;
 	private int explosionRange;
+	private int timeBetweenBombs;
 
 	// Points variables
 	private int pointRobot;
@@ -120,5 +122,13 @@ public class GameConfiguration {
 
 	public List<Drawing> getFixedDrawings() { return this.fixedDrawings;}
 
-	public void setFixedDrawings(final List<Drawing> wallDrawings) { this.fixedDrawings = wallDrawings; }
+	public void addFixedDrawings(final List<Drawing> wallDrawings) { this.fixedDrawings.addAll(wallDrawings); }
+
+	public int getTimeBetweenBombs() {
+		return timeBetweenBombs;
+	}
+
+	public void setTimeBetweenBombs(final int timeBetweenBombs) {
+		this.timeBetweenBombs = timeBetweenBombs;
+	}
 }

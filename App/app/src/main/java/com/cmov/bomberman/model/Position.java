@@ -48,10 +48,13 @@ public class Position {
 	public boolean equals(Object o) {
 		if (o == null) {
 			return false;
+		} else {
+			if (o instanceof Position) {
+				Position pos = (Position) o;
+				return (pos.getX() == this.getX()) && (pos.getY() == this.getY());
+			}
+			return false;
 		}
-		super.equals(o);
-		Position pos = (Position) o;
-		return (pos.getX() == this.getX()) && (pos.getY() == this.getY());
 	}
 
 	public String toString() {

@@ -38,7 +38,7 @@ public class GameActivity extends Activity {
 
 		GameView gameView = (GameView) findViewById(R.id.canvas);
 		player.setGameView(gameView);
-		gameView.setScreen(player.getMyScreen());
+		gameView.setScreen(player.getScreen());
 
 		Game game = new Game(level);
 		game.addPlayer(DEFAULT_USERNAME, player);

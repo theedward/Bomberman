@@ -3,8 +3,6 @@ package com.cmov.bomberman.model.drawing;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import com.cmov.bomberman.model.Position;
-import com.cmov.bomberman.model.agent.Agent;
-import com.cmov.bomberman.model.agent.MovableAgentActions;
 
 public class BombermanDrawing extends Drawing {
 
@@ -31,17 +29,6 @@ public class BombermanDrawing extends Drawing {
 
 	@Override
 	public void draw(Canvas canvas) {
-		Bitmap bitmap = null;
-		if (currentAction.equals(MovableAgentActions.MOVE_TOP.toString())) {
-			bitmap = spriteTop[step];
-		} else if (currentAction.equals(MovableAgentActions.MOVE_BOTTOM.toString())) {
-			bitmap = spriteBottom[step];
-		} else if (currentAction.equals(MovableAgentActions.MOVE_LEFT.toString())) {
-			bitmap = spriteLeft[step];
-		} else if (currentAction.equals(MovableAgentActions.MOVE_RIGHT.toString())) {
-			bitmap = spriteRight[step];
-		} else if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
-			bitmap = spriteDestroy[step];
-		}
+		// TODO
 	}
 }

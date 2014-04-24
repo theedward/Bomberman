@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -11,7 +10,6 @@ public class Bomberman extends MovableAgent {
 	private static final int MAX_MOVEMENT_STEP = 3;
 	private static final int MAX_DIE_STEP = 6;
 
-	private final Player owner;
 	private final int timeBetweenBombs;
 	private final int explosionRange;
 	private final int explosionTimeout;
@@ -28,14 +26,12 @@ public class Bomberman extends MovableAgent {
 	 * @param pos the agent position
 	 * @param ai the agent algorithm
 	 * @param speed the agent speed
-	 * @param owner the player that controls this object
 	 * @param timeBetweenBombs time between bombs in milliseconds.
 	 * @param range the bomb range
 	 * @param timeout the bomb timeout
 	 */
-	public Bomberman(Position pos, Algorithm ai, int speed, Player owner, int timeBetweenBombs, int range, int timeout) {
+	public Bomberman(Position pos, Algorithm ai, int speed, int timeBetweenBombs, int range, int timeout) {
 		super(pos, ai, speed);
-		this.owner = owner;
 		this.timeBetweenBombs = timeBetweenBombs * 1000;
 		this.timeSinceLastBomb = this.timeBetweenBombs;
 		this.explosionRange = range;
@@ -43,13 +39,6 @@ public class Bomberman extends MovableAgent {
 		this.step = 0;
 		this.currentAction = "";
 		this.destroyed = false;
-	}
-
-	/**
-	 * @return the player that controls this object
-	 */
-	public Player getOwner() {
-		return this.owner;
 	}
 
 	@Override

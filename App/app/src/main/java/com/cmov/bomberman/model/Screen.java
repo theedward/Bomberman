@@ -7,9 +7,11 @@ import com.cmov.bomberman.model.drawing.Drawing;
 import java.util.LinkedList;
 import java.util.List;
 
-// This class is responsible to draw everything in the canvas.
+/**
+ * This class is responsible to draw everything in the canvas.
+ */
 public class Screen {
-	List<Drawing> fixedDrawings; // with wallDrawings and the map drawing
+	List<Drawing> fixedDrawings; // all the walls
 	List<Drawing> objects;
 
 	public Screen() {
@@ -25,7 +27,6 @@ public class Screen {
 		this.objects = objects;
 	}
 
-	// Calls the method draw for all the objects
 	public void drawAll(Canvas canvas) {
 		// set background color
 		canvas.drawColor(Color.GREEN);

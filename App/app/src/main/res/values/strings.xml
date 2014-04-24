@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Bomberman</string>
-    <string name="hello_world">Hello World!</string>
     <string name="new_game">New Game</string>
     <string name="join_server">Join Server</string>
     <string name="create_server">Create Server</string>

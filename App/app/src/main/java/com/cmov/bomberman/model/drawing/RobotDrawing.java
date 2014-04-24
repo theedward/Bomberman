@@ -36,11 +36,11 @@ public class RobotDrawing extends Drawing {
 		final int y = (int) getPosition().getY() * spriteHeight;
 
 		if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
-			canvas.drawBitmap(spriteDie[step], x, y, null);
+			canvas.drawBitmap(spriteDie[step], y, x, null);
 		} else if (currentAction.equals(Robot.Actions.MOVE_LEFT.toString())) {
-			canvas.drawBitmap(spriteMove[0][step], x, y, null);
+			canvas.drawBitmap(spriteMove[0][step], y, x, null);
 		} else if (currentAction.equals(Robot.Actions.MOVE_RIGHT.toString())) {
-			canvas.drawBitmap(spriteMove[1][step], x, y, null);
+			canvas.drawBitmap(spriteMove[1][step], y, x, null);
 		}
 
 		// TODO needs to choose the previous image when it's stopped or when moving up or down.

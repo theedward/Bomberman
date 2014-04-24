@@ -26,6 +26,6 @@ public class ObstacleDrawing extends Drawing {
 		final int x = (int) getPosition().getX() * spriteWidth;
 		final int y = (int) getPosition().getY() * spriteHeight;
 
-		canvas.drawBitmap(sprite[step], x, y, null);
+		canvas.drawBitmap(sprite[step], y, x, null);
 	}
 }

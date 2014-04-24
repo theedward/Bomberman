@@ -32,15 +32,15 @@ public class BombermanDrawing extends Drawing {
 		final int y = (int) getPosition().getY() * spriteHeight;
 		
 		if (currentAction.equals(MovableAgent.Actions.MOVE_DOWN.toString())) {
-			canvas.drawBitmap(sprite[0][step], x, y, null);
+			canvas.drawBitmap(sprite[0][step], y, x, null);
 		} else if (currentAction.equals(MovableAgent.Actions.MOVE_LEFT.toString())) {
-			canvas.drawBitmap(sprite[1][step], x, y, null);
+			canvas.drawBitmap(sprite[1][step], y, x, null);
 		} else if (currentAction.equals(MovableAgent.Actions.MOVE_UP.toString())) {
-			canvas.drawBitmap(sprite[2][step], x, y, null);
+			canvas.drawBitmap(sprite[2][step], y, x, null);
 		} else if (currentAction.equals(MovableAgent.Actions.MOVE_RIGHT.toString())) {
-			canvas.drawBitmap(sprite[3][step], x, y, null);
+			canvas.drawBitmap(sprite[3][step], y, x, null);
 		} else if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
-			canvas.drawBitmap(sprite[5][step], x, y, null);
+			canvas.drawBitmap(sprite[5][step], y, x, null);
 		}
 
 		// TODO when the action is put bomb, must use the previous sprite.

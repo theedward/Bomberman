@@ -43,33 +43,33 @@ public class BombDrawing extends Drawing {
 			 */
 
 			// Left
-			canvas.drawBitmap(explosionSprite[step][0], x - range * spriteWidth, y, null);
+			canvas.drawBitmap(explosionSprite[step][0], y, x - range * spriteWidth, null);
 			// Up
-			canvas.drawBitmap(explosionSprite[step][1], x, y - range * spriteHeight, null);
+			canvas.drawBitmap(explosionSprite[step][1], y - range * spriteHeight, x, null);
 			// Right
-			canvas.drawBitmap(explosionSprite[step][2], x + range * spriteWidth, y, null);
+			canvas.drawBitmap(explosionSprite[step][2], y, x + range * spriteWidth, null);
 			// Down
-			canvas.drawBitmap(explosionSprite[step][3], x, y + range * spriteHeight, null);
+			canvas.drawBitmap(explosionSprite[step][3], y + range * spriteHeight, x, null);
 			// Center
-			canvas.drawBitmap(explosionSprite[step][4], x, y, null);
+			canvas.drawBitmap(explosionSprite[step][4], y, x, null);
 
 			// Vertical
 			for (int hy = y - (range-1)*spriteHeight; hy < y; hy += spriteWidth) {
-				canvas.drawBitmap(explosionSprite[step][5], x, hy, null);
+				canvas.drawBitmap(explosionSprite[step][5], hy, x, null);
 			}
 			for (int hy = y + (range-1)*spriteHeight; hy > y; hy -= spriteWidth) {
-				canvas.drawBitmap(explosionSprite[step][5], x, hy, null);
+				canvas.drawBitmap(explosionSprite[step][5], hy, x, null);
 			}
 
 			// Horizontal
 			for (int hx = x - (range-1)*spriteWidth; hx < x; hx += spriteWidth) {
-				canvas.drawBitmap(explosionSprite[step][6], hx, y, null);
+				canvas.drawBitmap(explosionSprite[step][6], y, hx, null);
 			}
 			for (int hx = x + (range-1)*spriteWidth; hx > x; hx -= spriteWidth) {
-				canvas.drawBitmap(explosionSprite[step][6], hx, y, null);
+				canvas.drawBitmap(explosionSprite[step][6], y, hx, null);
 			}
 		} else {
-			canvas.drawBitmap(sprite[step], x, y, null);
+			canvas.drawBitmap(sprite[step], y, x, null);
 		}
 	}
 }

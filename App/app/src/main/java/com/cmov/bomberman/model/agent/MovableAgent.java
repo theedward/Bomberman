@@ -3,7 +3,7 @@ package com.cmov.bomberman.model.agent;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
-abstract class MovableAgent extends Agent {
+public abstract class MovableAgent extends Agent {
 	private static final float ROTATE_MARGIN = 0.25f;
 
 	private final int speed;

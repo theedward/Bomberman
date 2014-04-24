@@ -27,18 +27,23 @@ public class Screen {
 		this.objects = objects;
 	}
 
+	/**
+	 * Draws the walls after the rest of the objects because when an explosion occurs,
+	 * it doesn't know what is in the other position.
+	 * @param canvas
+	 */
 	public void drawAll(Canvas canvas) {
 		// set background color
 		canvas.drawColor(Color.GREEN);
 
-		// draw fixedDrawings
-		for (Drawing wall : fixedDrawings) {
-			wall.draw(canvas);
-		}
-
 		// draw objects
 		for (Drawing obj : objects) {
 			obj.draw(canvas);
+		}
+
+		// draw fixedDrawings
+		for (Drawing wall : fixedDrawings) {
+			wall.draw(canvas);
 		}
 	}
 }

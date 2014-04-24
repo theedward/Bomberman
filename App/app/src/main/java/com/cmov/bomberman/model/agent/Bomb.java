@@ -75,8 +75,11 @@ public class Bomb extends Agent {
 			writer.value(getPosition().getY() - 0.5f);
 			writer.endArray();
 
-			writer.name("currentAction").value("");
-			writer.name("step").value(0);
+			writer.name("step").value(this.step);
+
+			writer.name("range").value(this.range);
+
+			writer.name("isExplosion").value(this.currentAction);
 			writer.endObject();
 		}
 		catch (IOException e) {

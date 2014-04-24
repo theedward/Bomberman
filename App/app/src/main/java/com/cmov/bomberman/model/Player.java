@@ -5,9 +5,7 @@ import android.util.JsonReader;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Controllable;
-import com.cmov.bomberman.model.drawing.BombermanDrawing;
-import com.cmov.bomberman.model.drawing.Drawing;
-import com.cmov.bomberman.model.drawing.ObstacleDrawing;
+import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -104,6 +102,7 @@ public class Player {
 				int step = 0;
 				String type = "";
 				String currentAction = "";
+				int range = 1;
 
 				// Parse object
 				rd.beginObject();
@@ -123,6 +122,8 @@ public class Player {
 							y = (float) rd.nextDouble();
 							position = new Position(x * GameUtils.IMG_WIDTH, y * GameUtils.IMG_HEIGHT);
 							rd.endArray();
+						} else if (name.equals("range")) {
+							range = rd.nextInt();
 						}
 					}
 				}
@@ -135,9 +136,9 @@ public class Player {
 					} else if (type.equals("Bomberman")) {
 						drawings.add(new BombermanDrawing(position, step, currentAction));
 					} else if (type.equals("Robot")) {
-						// TODO
+						drawings.add(new RobotDrawing(position, step, currentAction));
 					} else if (type.equals("Bomb")) {
-						// TODO
+						drawings.add(new BombDrawing(position, step, range, currentAction));
 					}
 				}
 			}

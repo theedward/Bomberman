@@ -81,8 +81,7 @@ public final class Game {
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
 				} else if (character == State.DrawingType.WALL.toChar()) {
-					fixedDrawings.add(new WallDrawing(new Position(i * GameUtils.IMG_WIDTH,
-																   j * GameUtils.IMG_HEIGHT)));
+					fixedDrawings.add(new WallDrawing(new Position(i, j)));
 				}
 			}
 		}

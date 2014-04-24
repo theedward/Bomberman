@@ -27,12 +27,24 @@ public class GameUtils {
 	public static final int IMG_HEIGHT = 30;
 
 	/**
+	 * The width any bitmap will occupy in the canvas.
+	 */
+	public static int IMG_CANVAS_WIDTH;
+
+	/**
+	 * The height any bitmap will occupy in the canvas.
+	 */
+	public static int IMG_CANVAS_HEIGHT;
+
+	/**
 	 * This is needed to access all the project resources like files.
 	 */
 	private static Context context;
 
-	public static void init(final Context context) {
+	public static void init(final Context context, final int width, final int height) {
 		GameUtils.context = context;
+		IMG_CANVAS_WIDTH = width;
+		IMG_CANVAS_HEIGHT = height;
 	}
 
 	/**
@@ -141,7 +153,8 @@ public class GameUtils {
 	 * has 30px width and 30px height.
 	 */
 	private static Bitmap getBitmap(final Bitmap src, final int row, final int column) {
-		return Bitmap.createBitmap(src, (column - 1) * IMG_WIDTH, (row - 1) * IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT);
+		Bitmap bm = Bitmap.createBitmap(src, (column - 1) * IMG_WIDTH, (row - 1) * IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT);
+		return Bitmap.createScaledBitmap(bm, IMG_CANVAS_WIDTH, IMG_CANVAS_HEIGHT, true);
 	}
 
 	/**

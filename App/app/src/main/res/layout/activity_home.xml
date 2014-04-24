@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/home_background"
+                tools:context="com.android.bomberman.InitialActivity"
+                tools:ignore="MergeRootFrame">
+
+    <Button
+        android:background="@drawable/red_button"
+        android:layout_width="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="@string/new_game"
+        style="@style/ButtonText"
+        android:id="@+id/newgamebtn"
+        android:onClick="newGame"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:background="@drawable/red_button"
+        android:id="@+id/multiplayerbtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/aboutbtn"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="142dp"
+        android:text="@string/multiplayer"
+        style="@style/ButtonText"
+        android:onClick="multiplayerGame"
+        />
+
+    <Button
+        android:background="@drawable/red_button"
+        android:id="@+id/aboutbtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/newgamebtn"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="38dp"
+        android:text="@string/about"
+        style="@style/ButtonText"
+        android:onClick="about"
+        />
+
+
+
+</RelativeLayout>

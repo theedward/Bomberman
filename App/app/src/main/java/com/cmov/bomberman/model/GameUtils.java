@@ -67,7 +67,7 @@ public class GameUtils {
 				width = line.length();
 			}
 
-			String[] array = (String[]) list.toArray();
+			String[] array = list.toArray(new String[list.size()]);
 			char[][] map = new char[array.length][width];
 			for (int i = 0; i < array.length; i++) {
 				map[i] = array[i].toCharArray();

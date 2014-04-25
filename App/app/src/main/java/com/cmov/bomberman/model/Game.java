@@ -60,15 +60,17 @@ public final class Game {
 		int playerCounter = 0;
 		final char[][] map = gameState.getMap();
 
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[i].length; j++) {
-				char character = map[i][j];
+		for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
+			for (int colIdx = 0; colIdx < map[rowIdx].length; colIdx++) {
+				char character = map[rowIdx][colIdx];
 
 				// the position will be right in the middle
-				final Position pos = new Position(i + 0.5f, j + 0.5f);
+				final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
 					gameState.addAgent(new Obstacle(pos));
 				} else if (character == State.DrawingType.BOMBERMAN.toChar()) {
+					// TODO The bombermans are represented in the map as numbers
+					// implement that
 					Agent bomberman = new Bomberman(pos, characterOwners[playerCounter].getController(),
 													 gameConfiguration.getbSpeed(),
 													 gameConfiguration.getTimeBetweenBombs(),
@@ -79,7 +81,7 @@ public final class Game {
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
 				} else if (character == State.DrawingType.WALL.toChar()) {
-					fixedDrawings.add(new WallDrawing(new Position(i, j)));
+					fixedDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
 				}
 			}
 		}
@@ -190,7 +192,7 @@ public final class Game {
 		}
 
 		// Update the state
-		//		gameState.playAll();
+		//gameState.playAll();
 		updatePlayers();
 		this.duration--;
 

@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Position;
-import com.cmov.bomberman.model.agent.Agent;
-import com.cmov.bomberman.model.agent.Robot;
 
 public class RobotDrawing extends Drawing {
 	private static Bitmap[][] spriteMove;
@@ -35,13 +33,18 @@ public class RobotDrawing extends Drawing {
 		final int x = (int) getPosition().getX() * spriteWidth;
 		final int y = (int) getPosition().getY() * spriteHeight;
 
+		canvas.drawBitmap(spriteMove[0][step], x, y, null);
+		return;
+
+		/*
 		if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
-			canvas.drawBitmap(spriteDie[step], y, x, null);
+			canvas.drawBitmap(spriteDie[step], x, y, null);
 		} else if (currentAction.equals(Robot.Actions.MOVE_LEFT.toString())) {
-			canvas.drawBitmap(spriteMove[0][step], y, x, null);
+			canvas.drawBitmap(spriteMove[0][step], x, y, null);
 		} else if (currentAction.equals(Robot.Actions.MOVE_RIGHT.toString())) {
-			canvas.drawBitmap(spriteMove[1][step], y, x, null);
+			canvas.drawBitmap(spriteMove[1][step], x, y, null);
 		}
+		*/
 
 		// TODO needs to choose the previous image when it's stopped or when moving up or down.
 	}

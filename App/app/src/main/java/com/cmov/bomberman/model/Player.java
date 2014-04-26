@@ -5,10 +5,8 @@ import android.util.JsonReader;
 import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
-import com.cmov.bomberman.model.agent.Bomberman;
 import com.cmov.bomberman.model.agent.Controllable;
-import com.cmov.bomberman.model.agent.Robot;
-import com.cmov.bomberman.model.drawing.*;
+import com.cmov.bomberman.model.drawing.Drawing;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -158,8 +156,6 @@ public class Player {
 		catch (IOException e) {
 			System.out.println("Player#onUpdate: Error while parsing the message.");
 		}
-
-		return drawings;
 	}
 
 	/**

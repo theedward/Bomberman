@@ -64,6 +64,7 @@ public class Obstacle extends Agent {
 			writer.name("step").value(step);
             writer.name("lastStep").value(this.getLastStep());
             writer.name("id").value(this.getId());
+            writer.name("isDestroyed").value(isDestroyed());
 
 			writer.endObject();
 		}

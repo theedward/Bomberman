@@ -88,6 +88,7 @@ public class Bomb extends Agent {
 			writer.name("currentAction").value(this.getCurrentAction());
             writer.name("lastAction").value(this.getLastAction());
             writer.name("id").value(this.getId());
+            writer.name("isDestroyed").value(isDestroyed());
 			writer.endObject();
 		}
 		catch (IOException e) {

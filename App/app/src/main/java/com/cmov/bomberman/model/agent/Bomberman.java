@@ -118,6 +118,7 @@ public class Bomberman extends MovableAgent {
             writer.name("lastStep").value(this.getLastStep());
             writer.name("id").value(getId());
             writer.name("score").value(score);
+            writer.name("isDestroyed").value(isDestroyed());
 			writer.endObject();
 
 		}

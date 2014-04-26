@@ -65,6 +65,7 @@ public class Robot extends MovableAgent {
 			writer.name("step").value(this.getStep());
             writer.name("lastStep").value(this.getLastStep());
             writer.name("id").value(this.getId());
+            writer.name("isDestroyed").value(isDestroyed());
 			writer.endObject();
 		}
 		catch (IOException e) {

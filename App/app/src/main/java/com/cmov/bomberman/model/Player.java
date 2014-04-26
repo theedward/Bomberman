@@ -2,6 +2,7 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import android.util.JsonReader;
+import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Controllable;
@@ -21,14 +22,14 @@ public class Player {
 	/**
 	 * This is needed to draw in the canvas in a synchronized manner.
 	 */
-	private GameView gameView;
+	private GameActivity gameActivity;
 	private int score;
 
 	public Player(String username, Controllable controller) {
 		this.username = username;
 		this.controller = controller;
 		this.screen = new Screen();
-		this.gameView = null;
+		this.gameActivity = null;
 		this.score = 0;
 	}
 
@@ -40,8 +41,8 @@ public class Player {
 		this.agent = agent;
 	}
 
-	public void setGameView(final GameView gameView) {
-		this.gameView = gameView;
+	public void setGameView(final GameActivity gameActivity) {
+		this.gameActivity = gameActivity;
 	}
 
 	public Controllable getController() {
@@ -161,6 +162,7 @@ public class Player {
 		List<Drawing> drawings = parseMessage(msg);
 		screen.setObjects(drawings);
 
+		final GameView gameView = gameActivity.getGameView();
 		Canvas canvas = null;
 		try {
 			if (gameView.getHolder() != null) {

@@ -39,13 +39,17 @@ public class GameActivity extends Activity {
 		Player player = new Player(DEFAULT_USERNAME, playerController);
 
 		this.gameView = (GameView) findViewById(R.id.canvas);
-		player.setGameView(this.gameView);
+		player.setGameView(this);
 		this.gameView.setScreen(player.getScreen());
 
 		this.game = new Game(level);
 		this.game.addPlayer(DEFAULT_USERNAME, player);
 
 		this.gameThread = new GameThread(game);
+	}
+
+	public GameView getGameView() {
+		return gameView;
 	}
 
 	/**

@@ -52,6 +52,7 @@ public class State {
  	public void playAll() {
 		final long now = System.currentTimeMillis();
 		final long dt = now - lastUpdate;
+        Position bombermanPosition;
 
 		for (Agent agent : agents) {
 			agent.play(this, dt);
@@ -61,6 +62,27 @@ public class State {
 		}
 
 		// TODO verify when the bomberman has robots at distance 1
+        for (Agent agent : agents) {
+            if(agent.getType().equals("Bomberman")) {
+                bombermanPosition = agent.getPosition();
+                //verify up
+                if(map[bombermanPosition.yToDiscrete()+1][bombermanPosition.xToDiscrete()] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+                else
+                //verify down
+                if(map[bombermanPosition.yToDiscrete()-1][bombermanPosition.xToDiscrete()] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+                else
+                //verify left
+                if(map[bombermanPosition.yToDiscrete()][bombermanPosition.xToDiscrete()-1] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+                else
+                //verify right
+                if(map[bombermanPosition.yToDiscrete()][bombermanPosition.xToDiscrete()+1] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+
+            }
+        }
 	}
 
 	public void addAgent(Agent object) {
@@ -68,9 +90,9 @@ public class State {
 	}
 
 	public void setMapPosition(Position newPosition, Position oldPosition) {
-		char c = map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()];
-		map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()] = DrawingType.EMPTY.toChar();
-		map[newPosition.yToDiscrete()][newPosition.yToDiscrete()] = c;
+		char c = map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()];
+		map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()] = DrawingType.EMPTY.toChar();
+		map[newPosition.yToDiscrete()][newPosition.xToDiscrete()] = c;
 	}
 
 	public void pauseCharacter(Player player) {

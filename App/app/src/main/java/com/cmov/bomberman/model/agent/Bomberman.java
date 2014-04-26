@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+
+import com.cmov.bomberman.model.GameConfiguration;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -18,9 +20,10 @@ public class Bomberman extends MovableAgent {
 	 * is allowed to put a bomb right in the beginning.
 	 */
 	private long timeSinceLastBomb;
-	private int step;
-	private String currentAction;
 	private boolean destroyed;
+    private int score = 0;
+    private int robotScore;
+    private int oponentScore;
 
 	/**
 	 * @param pos the agent position
@@ -30,16 +33,31 @@ public class Bomberman extends MovableAgent {
 	 * @param range the bomb range
 	 * @param timeout the bomb timeout
 	 */
-	public Bomberman(Position pos, Algorithm ai, int speed, int timeBetweenBombs, int range, int timeout) {
-		super(pos, ai, speed);
+	public Bomberman(Position pos, Algorithm ai, int id, int speed, int timeBetweenBombs, int range, int timeout, int robotScore, int oponentScore) {
+		super(pos, ai, id, speed);
 		this.timeBetweenBombs = timeBetweenBombs * 1000;
 		this.timeSinceLastBomb = this.timeBetweenBombs;
 		this.explosionRange = range;
 		this.explosionTimeout = timeout;
-		this.step = 0;
-		this.currentAction = "";
+		this.setStep(0);
+        this.setLastStep(0);
 		this.destroyed = false;
-	}
+        this.robotScore = robotScore;
+        this.oponentScore = oponentScore;
+     }
+
+
+    public void addScore(int score){
+        this.score += score;
+    }
+
+    public int getRobotScore(){
+        return this.robotScore;
+    }
+
+    public int getOponentScore(){
+        return this.oponentScore;
+    }
 
 	@Override
 	public boolean isDestroyed() {
@@ -55,25 +73,28 @@ public class Bomberman extends MovableAgent {
 		this.timeSinceLastBomb += dt;
 
 		// when the action differs
-		if (!currentAction.equals(nextAction)) {
-			currentAction = nextAction;
-			step = 0;
+		if (! this.getCurrentAction().equals(nextAction)) {
+            this.setLastAction(this.getCurrentAction());
+			this.setCurrentAction(nextAction);
+			this.setLastStep(this.getStep());
+            this.setStep(0);
 		}
 
 		if (action != null) {
 			// The next action is moving
 			move(state, action, dt);
-			step = (step + 1) % MAX_MOVEMENT_STEP;
-		} else if (currentAction.equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
+			setStep((this.getStep()+ 1) % MAX_MOVEMENT_STEP);
+		} else if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
 			final Position bombPos = new Position(getPosition().xToDiscrete(), getPosition().yToDiscrete());
-			state.addAgent(new Bomb(bombPos, explosionRange, explosionTimeout));
+            int id = state.incObjectsIdCounter();
+			state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
 			this.timeSinceLastBomb = 0;
 		}
 
-		if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
-			if (step < MAX_DIE_STEP) {
-				step++;
-			} else if (step == MAX_DIE_STEP) {
+		if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
+			if (this.getStep() < MAX_DIE_STEP) {
+				setStep(this.getStep()+1);
+			} else if (this.getStep() == MAX_DIE_STEP) {
 				destroyed = true;
 			}
 		}
@@ -91,9 +112,15 @@ public class Bomberman extends MovableAgent {
 			writer.value(getPosition().getY() - 0.5f);
 			writer.endArray();
 
-			writer.name("currentAction").value(currentAction);
-			writer.name("step").value(step);
+			writer.name("currentAction").value(this.getCurrentAction());
+            writer.name("lastAction").value(this.getLastAction());
+			writer.name("step").value(this.getStep());
+            writer.name("lastStep").value(this.getLastStep());
+            writer.name("id").value(getId());
+            writer.name("score").value(score);
+            writer.name("isDestroyed").value(isDestroyed());
 			writer.endObject();
+
 		}
 		catch (IOException e) {
 			System.out.println("Bomberman#toJson: Error while serializing to json.");

@@ -5,11 +5,11 @@ import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Bomberman;
 import com.cmov.bomberman.model.agent.Obstacle;
 import com.cmov.bomberman.model.agent.Robot;
-import com.cmov.bomberman.model.drawing.Drawing;
-import com.cmov.bomberman.model.drawing.WallDrawing;
+import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +29,7 @@ public final class Game {
 	 */
 	private int duration;
 	private boolean hasStarted;
+    private int totalScore = 0;
 
 	/**
 	 * This constructor performs all the necessary steps to start the game right next.
@@ -56,37 +57,49 @@ public final class Game {
 		Player[] characterOwners = new Player[players.size()];
 		players.values().toArray(characterOwners);
 
-		List<Drawing> fixedDrawings = new LinkedList<Drawing>();
+		List<WallDrawing> wallDrawings = new LinkedList<WallDrawing>();
+        Map<Integer, Drawing> drawings = new HashMap<Integer, Drawing>();
+        int idDrawings = 0;
+
 		int playerCounter = 0;
 		final char[][] map = gameState.getMap();
 
 		for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
 			for (int colIdx = 0; colIdx < map[rowIdx].length; colIdx++) {
 				char character = map[rowIdx][colIdx];
-
 				// the position will be right in the middle
 				final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
-					gameState.addAgent(new Obstacle(pos));
+					gameState.addAgent(new Obstacle(pos, idDrawings));
+                    drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx,rowIdx), 0));
 				} else if (character == State.DrawingType.BOMBERMAN.toChar()) {
 					// TODO The bombermans are represented in the map as numbers
 					// implement that
 					Agent bomberman = new Bomberman(pos, characterOwners[playerCounter].getController(),
+                                                     idDrawings,
 													 gameConfiguration.getbSpeed(),
 													 gameConfiguration.getTimeBetweenBombs(),
 													 gameConfiguration.getExplosionRange(),
-													 gameConfiguration.getExplosionDuration());
+													 gameConfiguration.getExplosionDuration(),
+                                                     gameConfiguration.getPointRobot(),
+                                                     gameConfiguration.getPointOpponent());
 					gameState.addAgent(bomberman);
 					characterOwners[playerCounter].setAgent(bomberman);
+                    drawings.put(idDrawings,new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
-					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
+					gameState.addAgent(new Robot(pos, idDrawings, gameConfiguration.getrSpeed()));
+                    drawings.put(idDrawings,new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.WALL.toChar()) {
-					fixedDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
+					wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
 				}
+                idDrawings++;
 			}
 		}
 
-		gameConfiguration.addFixedDrawings(fixedDrawings);
+        gameConfiguration.setWallDrawings(wallDrawings);
+        gameConfiguration.setMutableDrawings(drawings);
+        // must pass counter id to game state for posterior object creations, such as bombs
+        gameState.setObjectsIdCounter(idDrawings);
 	}
 
 	/**
@@ -179,9 +192,20 @@ public final class Game {
 			p.onGameEnd(gameConfiguration);
 		}
 
-		// TODO: compute scores, statistics, etc...
 	}
 
+    public int[] checkWinner(){
+        int numberPlayers = players.size();
+        int[] scores = new int[numberPlayers];
+        for(Player p : players.values()) {
+            for(int i = 0; i < scores.length; i++)
+                scores[i] = p.getScore();
+            totalScore += p.getScore();
+        }
+        Arrays.sort(scores);
+        return scores;
+
+    }
 	/**
 	 * Updates the state (new frame).
 	 */
@@ -194,6 +218,7 @@ public final class Game {
 		// Update the state
 		//gameState.playAll();
 		updatePlayers();
+        gameState.removeDestroyedAgents();
 		this.duration--;
 
 		if (this.hasFinished()) {

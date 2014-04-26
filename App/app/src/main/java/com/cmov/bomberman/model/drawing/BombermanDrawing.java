@@ -4,23 +4,39 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Position;
+import com.cmov.bomberman.model.agent.Agent;
+import com.cmov.bomberman.model.agent.Bomberman;
+import com.cmov.bomberman.model.agent.MovableAgent;
 
 public class BombermanDrawing extends Drawing {
 	private static Bitmap[][] sprite;
 
-	private int step;
-	private String currentAction;
-
 	public BombermanDrawing(final Position position, final int step, final String currentAction) {
 		super(position);
-		this.step = step;
-		this.currentAction = currentAction;
+		this.setStep(step);
+		this.setCurrentAction(currentAction);
 
 		if (sprite == null) {
 			sprite = GameUtils.readBombermanSprite();
 		}
 	}
 
+    private int getIndexByAction(String action) {
+
+        if (action.equals(MovableAgent.Actions.MOVE_DOWN.toString())) {
+            return 0;
+        } else if (action.equals(MovableAgent.Actions.MOVE_LEFT.toString())) {
+            return 1;
+        } else if (action.equals(MovableAgent.Actions.MOVE_UP.toString())) {
+            return 2;
+        } else if (action.equals(MovableAgent.Actions.MOVE_RIGHT.toString())) {
+            return 3;
+        } else if (action.equals(Agent.Actions.DESTROY.toString())) {
+            return 5;    // estava 5 no codigo anterior , e' mesmo pa tar 5?
+        }
+
+        return 0;
+    }
 
 	@Override
 	public void draw(Canvas canvas) {
@@ -28,26 +44,13 @@ public class BombermanDrawing extends Drawing {
 		final int spriteHeight = sprite[0][0].getHeight();
 		final int x = (int) getPosition().getX() * spriteWidth;
 		final int y = (int) getPosition().getY() * spriteHeight;
+        int spriteIndex = getIndexByAction(this.getCurrentAction());
+        int drawStep = this.getStep();
 
-		canvas.drawBitmap(sprite[0][step], x, y, null);
-		return;
-
-		/*
-
-		if (currentAction.equals(MovableAgent.Actions.MOVE_DOWN.toString())) {
-			canvas.drawBitmap(sprite[0][step], x, y, null);
-		} else if (currentAction.equals(MovableAgent.Actions.MOVE_LEFT.toString())) {
-			canvas.drawBitmap(sprite[1][step], x, y, null);
-		} else if (currentAction.equals(MovableAgent.Actions.MOVE_UP.toString())) {
-			canvas.drawBitmap(sprite[2][step], x, y, null);
-		} else if (currentAction.equals(MovableAgent.Actions.MOVE_RIGHT.toString())) {
-			canvas.drawBitmap(sprite[3][step], x, y, null);
-		} else if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
-			canvas.drawBitmap(sprite[5][step], x, y, null);
-		}
-
-		*/
-
-		// TODO when the action is put bomb, must use the previous sprite.
+        if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString())) {
+            spriteIndex = getIndexByAction(getLastAction());
+            drawStep = this.getLastStep();
+        }
+        canvas.drawBitmap(sprite[spriteIndex][drawStep], x, y, null);
 	}
 }

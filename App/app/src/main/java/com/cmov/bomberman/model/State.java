@@ -2,6 +2,7 @@ package com.cmov.bomberman.model;
 
 import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Bomb;
+import com.cmov.bomberman.model.agent.Bomberman;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class State {
 	private char[][] map;
 	private List<Agent> agents;
 	private List<Agent> pausedCharacters;
+    private int objectsIdCounter;
 
 	/**
 	 * The timestamp of the last update.
@@ -30,7 +32,15 @@ public class State {
 		this.lastUpdate = System.currentTimeMillis();
 	}
 
-	public char[][] getMap() {
+    public void setObjectsIdCounter(int objectsIdCounter) {
+        this.objectsIdCounter = objectsIdCounter;
+    }
+
+    public int incObjectsIdCounter() {
+        return objectsIdCounter++;
+    }
+
+    public char[][] getMap() {
 		return map;
 	}
 
@@ -52,25 +62,53 @@ public class State {
  	public void playAll() {
 		final long now = System.currentTimeMillis();
 		final long dt = now - lastUpdate;
+        Position bombermanPosition;
 
 		for (Agent agent : agents) {
 			agent.play(this, dt);
-			if (agent.isDestroyed()) {
-				destroyAgent(agent);
-			}
 		}
 
-		// TODO verify when the bomberman has robots at distance 1
+
+        for (Agent agent : agents) {
+            if(agent.getType().equals("Bomberman")) {
+                bombermanPosition = agent.getPosition();
+                //verify up
+                if(map[bombermanPosition.yToDiscrete()+1][bombermanPosition.xToDiscrete()] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+                else
+                //verify down
+                if(map[bombermanPosition.yToDiscrete()-1][bombermanPosition.xToDiscrete()] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+                else
+                //verify left
+                if(map[bombermanPosition.yToDiscrete()][bombermanPosition.xToDiscrete()-1] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+                else
+                //verify right
+                if(map[bombermanPosition.yToDiscrete()][bombermanPosition.xToDiscrete()+1] == 'R')
+                    agent.handleEvent(Event.DESTROY);
+
+            }
+        }
 	}
+
+    public void removeDestroyedAgents() {
+
+        for (Agent agent : agents) {
+            if (agent.isDestroyed()) {
+                destroyAgent(agent);
+            }
+        }
+    }
 
 	public void addAgent(Agent object) {
 		agents.add(object);
 	}
 
 	public void setMapPosition(Position newPosition, Position oldPosition) {
-		char c = map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()];
-		map[oldPosition.yToDiscrete()][oldPosition.yToDiscrete()] = DrawingType.EMPTY.toChar();
-		map[newPosition.yToDiscrete()][newPosition.yToDiscrete()] = c;
+		char c = map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()];
+		map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()] = DrawingType.EMPTY.toChar();
+		map[newPosition.yToDiscrete()][newPosition.xToDiscrete()] = c;
 	}
 
 	public void pauseCharacter(Player player) {
@@ -109,12 +147,17 @@ public class State {
 		int i;
 		float bombPosX = bomb.getPosition().getX();
 		float bombPosY = bomb.getPosition().getY();
+        Bomberman bombOwner = bomb.getOwner();
 
 		//destroy character in position bomb.pos.line + i
 		for (i = 0; i < explosionRange; i++) {
 			Position pos = new Position(bombPosX, bombPosY + i);
 			Agent agent = getAgentByPosition(pos);
 			if (agent != null) {
+                if(agent.getType().equals("Robot"))
+                    bombOwner.addScore(bombOwner.getRobotScore());
+                else if(!agent.equals(bombOwner)) //TODO: Possivelmente esta nao é a melhor verificaçao
+                    bombOwner.addScore(bombOwner.getOponentScore());
 				agent.handleEvent(Event.DESTROY);
 			}
 		}
@@ -123,6 +166,10 @@ public class State {
 			Position pos = new Position(bombPosX + i, bombPosY);
 			Agent agent = getAgentByPosition(pos);
 			if (agent != null) {
+                if(agent.getType().equals("Robot"))
+                    bombOwner.addScore(bombOwner.getRobotScore());
+                else if(!agent.equals(bombOwner))
+                    bombOwner.addScore(bombOwner.getOponentScore());
 				agent.handleEvent(Event.DESTROY);
 			}
 		}
@@ -131,6 +178,10 @@ public class State {
 			Position pos = new Position(bombPosX, bombPosY - i);
 			Agent agent = getAgentByPosition(pos);
 			if (agent != null) {
+                if(agent.getType().equals("Robot"))
+                    bombOwner.addScore(bombOwner.getRobotScore());
+                else if(!agent.equals(bombOwner))
+                    bombOwner.addScore(bombOwner.getOponentScore());
 				agent.handleEvent(Event.DESTROY);
 			}
 		}
@@ -139,6 +190,10 @@ public class State {
 			Position pos = new Position(bombPosX - i, bombPosY);
 			Agent agent = getAgentByPosition(pos);
 			if (agent != null) {
+                if(agent.getType().equals("Robot"))
+                    bombOwner.addScore(bombOwner.getRobotScore());
+                else if(!agent.equals(bombOwner))
+                    bombOwner.addScore(bombOwner.getOponentScore());
 				agent.handleEvent(Event.DESTROY);
 			}
 		}

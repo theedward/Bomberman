@@ -19,8 +19,8 @@ public class Obstacle extends Agent {
 	 */
 	private boolean destroyed;
 
-	public Obstacle(final Position startingPos) {
-		super(startingPos, new ObstacleAlgorithm());
+	public Obstacle(final Position startingPos, int id) {
+		super(startingPos, new ObstacleAlgorithm(), id);
 		this.step = 0;
 		this.destroyed = false;
 	}
@@ -60,7 +60,12 @@ public class Obstacle extends Agent {
 			writer.endArray();
 
 			writer.name("currentAction").value(getAlgorithm().getNextActionName());
+            writer.name("lastAction").value("");
 			writer.name("step").value(step);
+            writer.name("lastStep").value(this.getLastStep());
+            writer.name("id").value(this.getId());
+            writer.name("isDestroyed").value(isDestroyed());
+
 			writer.endObject();
 		}
 		catch (IOException e) {

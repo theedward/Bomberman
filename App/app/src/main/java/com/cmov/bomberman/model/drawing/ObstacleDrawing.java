@@ -8,11 +8,9 @@ import com.cmov.bomberman.model.Position;
 public class ObstacleDrawing extends Drawing {
 	private static Bitmap[] sprite;
 
-	private int step;
-
 	public ObstacleDrawing(final Position position, final int step) {
 		super(position);
-		this.step = step;
+		this.setStep(step);
 
 		if (sprite == null) {
 			sprite = GameUtils.readObstacleSprite();
@@ -26,6 +24,6 @@ public class ObstacleDrawing extends Drawing {
 		final int x = (int) getPosition().getX() * spriteWidth;
 		final int y = (int) getPosition().getY() * spriteHeight;
 
-		canvas.drawBitmap(sprite[step], x, y, null);
+		canvas.drawBitmap(sprite[this.getStep()], x, y, null);
 	}
 }

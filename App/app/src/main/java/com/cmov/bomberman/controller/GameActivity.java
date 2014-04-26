@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.GameThread;
@@ -17,6 +19,7 @@ public class GameActivity extends Activity {
 	private Game game;
 	private GameThread gameThread;
 	private GameView gameView;
+    private TextView scoreView;
 	private Controllable playerController;
 	private int level;
 
@@ -39,6 +42,7 @@ public class GameActivity extends Activity {
 		Player player = new Player(DEFAULT_USERNAME, playerController);
 
 		this.gameView = (GameView) findViewById(R.id.canvas);
+        this.scoreView = (TextView) findViewById(R.id.playerScore);
 		player.setGameView(this);
 		this.gameView.setScreen(player.getScreen());
 
@@ -52,6 +56,7 @@ public class GameActivity extends Activity {
 		return gameView;
 	}
 
+    public TextView getScoreView() {return scoreView; }
 	/**
 	 * The user pressed the pause button.
 	 * Pauses the game if the game is running or continues the game if the game is paused.

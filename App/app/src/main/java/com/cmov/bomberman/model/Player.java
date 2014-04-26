@@ -2,6 +2,8 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import android.util.JsonReader;
+import android.widget.TextView;
+
 import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
@@ -169,6 +171,7 @@ public class Player {
 
         //TODO: Print Score on screen
 		final GameView gameView = gameActivity.getGameView();
+        final TextView scoreView = gameActivity.getScoreView();
 		Canvas canvas = null;
 		try {
 			if (gameView.getHolder() != null) {
@@ -184,6 +187,8 @@ public class Player {
 				gameView.getHolder().unlockCanvasAndPost(canvas);
 			}
 		}
+
+        scoreView.setText("Score: " + getScore());
 	}
 
 }

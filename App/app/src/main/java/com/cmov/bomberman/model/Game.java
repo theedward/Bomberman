@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This is where all the game will be processed.
@@ -194,15 +195,11 @@ public final class Game {
 
 	}
 
-    public int[] checkWinner(){
-        int numberPlayers = players.size();
-        int[] scores = new int[numberPlayers];
+    public TreeMap<String, Integer> checkWinner(){
+        TreeMap<String,Integer> scores = new TreeMap<String, Integer>();
         for(Player p : players.values()) {
-            for(int i = 0; i < scores.length; i++)
-                scores[i] = p.getScore();
-            totalScore += p.getScore();
+            scores.put(p.getUsername(), p.getScore());
         }
-        Arrays.sort(scores);
         return scores;
 
     }

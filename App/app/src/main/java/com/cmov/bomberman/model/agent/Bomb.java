@@ -19,13 +19,19 @@ public class Bomb extends Agent {
 	private int explosionStepIncr;
 	private boolean explosion;
 	private boolean destroyed;
+    private Bomberman owner;
 
-	public Bomb(final Position startingPos, int range, int timeout) {
+	public Bomb(final Position startingPos, int range, int timeout, Bomberman owner) {
 		super(startingPos, new BombAlgorithm(timeout));
 		this.range = range;
 		this.step = -1;
 		this.explosionStepIncr = 1;
+        this.owner = owner;
 	}
+
+    public Bomberman getOwner(){
+        return this.owner;
+    }
 
 	@Override
 	public void play(State state, final long dt) {

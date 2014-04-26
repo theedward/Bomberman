@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+
+import com.cmov.bomberman.model.GameConfiguration;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -20,6 +22,9 @@ public class Bomberman extends MovableAgent {
 	private long timeSinceLastBomb;
 	private int step;
 	private boolean destroyed;
+    private int score = 0;
+    private int robotScore;
+    private int oponentScore;
 
 	/**
 	 * @param pos the agent position
@@ -29,7 +34,7 @@ public class Bomberman extends MovableAgent {
 	 * @param range the bomb range
 	 * @param timeout the bomb timeout
 	 */
-	public Bomberman(Position pos, Algorithm ai, int speed, int timeBetweenBombs, int range, int timeout) {
+	public Bomberman(Position pos, Algorithm ai, int speed, int timeBetweenBombs, int range, int timeout, int robotScore, int oponentScore) {
 		super(pos, ai, speed);
 		this.timeBetweenBombs = timeBetweenBombs * 1000;
 		this.timeSinceLastBomb = this.timeBetweenBombs;
@@ -37,7 +42,22 @@ public class Bomberman extends MovableAgent {
 		this.explosionTimeout = timeout;
 		this.step = 0;
 		this.destroyed = false;
-	}
+        this.robotScore = robotScore;
+        this.oponentScore = oponentScore;
+     }
+
+
+    public void addScore(int score){
+        this.score += score;
+    }
+
+    public int getRobotScore(){
+        return this.robotScore;
+    }
+
+    public int getOponentScore(){
+        return this.oponentScore;
+    }
 
 	@Override
 	public boolean isDestroyed() {
@@ -65,7 +85,7 @@ public class Bomberman extends MovableAgent {
 			step = (step + 1) % MAX_MOVEMENT_STEP;
 		} else if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
 			final Position bombPos = new Position(getPosition().xToDiscrete(), getPosition().yToDiscrete());
-			state.addAgent(new Bomb(bombPos, explosionRange, explosionTimeout));
+			state.addAgent(new Bomb(bombPos, explosionRange, explosionTimeout, this));
 			this.timeSinceLastBomb = 0;
 		}
 
@@ -93,7 +113,10 @@ public class Bomberman extends MovableAgent {
 			writer.name("currentAction").value(this.getCurrentAction());
             writer.name("lastAction").value(this.getLastAction());
 			writer.name("step").value(step);
+            writer.name("bombermanId").value(id);
+            writer.name("score").value(score);
 			writer.endObject();
+
 		}
 		catch (IOException e) {
 			System.out.println("Bomberman#toJson: Error while serializing to json.");

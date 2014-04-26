@@ -9,6 +9,7 @@ import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,7 +79,9 @@ public final class Game {
 													 gameConfiguration.getbSpeed(),
 													 gameConfiguration.getTimeBetweenBombs(),
 													 gameConfiguration.getExplosionRange(),
-													 gameConfiguration.getExplosionDuration());
+													 gameConfiguration.getExplosionDuration(),
+                                                     gameConfiguration.getPointRobot(),
+                                                     gameConfiguration.getPointOpponent());
 					gameState.addAgent(bomberman);
 					characterOwners[playerCounter].setAgent(bomberman);
                     drawings.put(idDrawings,new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
@@ -191,6 +194,18 @@ public final class Game {
 		// TODO: compute scores, statistics, etc...
 	}
 
+    public void checkWinner(){
+        int numberPlayers = players.size();
+        int totalScore = 0;
+        int[] scores = new int[numberPlayers];
+        for(Player p : players.values()) {
+            for(int i = 0; i < scores.length; i++)
+                scores[i] = p.getScore();
+            totalScore += p.getScore();
+        }
+        Arrays.sort(scores);
+
+    }
 	/**
 	 * Updates the state (new frame).
 	 */

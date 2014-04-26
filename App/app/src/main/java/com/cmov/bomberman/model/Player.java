@@ -4,7 +4,9 @@ import android.graphics.Canvas;
 import android.util.JsonReader;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
+import com.cmov.bomberman.model.agent.Bomberman;
 import com.cmov.bomberman.model.agent.Controllable;
+import com.cmov.bomberman.model.agent.Robot;
 import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
@@ -70,7 +72,8 @@ public class Player {
 	 * @param initialConfig the initial game configuration
 	 */
 	void onGameStart(GameConfiguration initialConfig) {
-		screen.setFixedDrawings(initialConfig.getFixedDrawings());
+		screen.setWallDrawings(initialConfig.getWallDrawings());
+        screen.setDrawings(initialConfig.getMutableDrawings());
 	}
 
 	// This method will be called when the game finishes.
@@ -85,13 +88,13 @@ public class Player {
 	}
 
 	/**
-	 * Creates all the drawings from the json report sent by the game.
+	 * Updates creates or destroys the drawings from the json report sent by the game.
 	 * The fixed drawings are not included in the report.
 	 *
 	 * @param msg the json report.
 	 * @return the drawings existent in the game state.
 	 */
-	private List<Drawing> parseMessage(String msg) {
+	private void parseMessage(String msg) {
 		List<Drawing> drawings = new LinkedList<Drawing>();
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
@@ -100,22 +103,30 @@ public class Player {
 			while (rd.hasNext()) {
 				Position position = null;
 				int step = 0;
+                int lastStep = 0;
 				String type = "";
 				String currentAction = "";
+                String lastAction = "";
 				int range = 1;
+                int drawingId = 0;
+                boolean isDestroyed = false;
 
 				// Parse object
 				rd.beginObject();
 				while (rd.hasNext()) {
 					String name = rd.nextName();
 					if (name != null) {
-						if (name.equals("type")) {
-							type = rd.nextString();
-						} else if (name.equals("currentAction")) {
-							currentAction = rd.nextString();
-						} else if (name.equals("step")) {
+                        if (name.equals("type")) {
+                            type = rd.nextString();
+                        } else if (name.equals("currentAction")) {
+                            currentAction = rd.nextString();
+                        } else if (name.equals("lastAction")) {
+                            lastAction = rd.nextString();
+                        } else if (name.equals("step")) {
 							step = rd.nextInt();
-						} else if (name.equals("position")) {
+						} else if (name.equals("lastStep")) {
+                            lastStep = rd.nextInt();
+                        } else if (name.equals("position")) {
 							float x, y;
 							rd.beginArray();
 							x = (float) rd.nextDouble();
@@ -124,22 +135,18 @@ public class Player {
 							rd.endArray();
 						} else if (name.equals("range")) {
 							range = rd.nextInt();
-						}
+						} else if (name.equals("id")) {
+                            drawingId = rd.nextInt();
+                        } else if (name.equals("isDestroyed")) {
+                            isDestroyed = rd.nextBoolean();
+                        }
 					}
 				}
 				rd.endObject();
 
-				// Create object instance
+				// updates object
 				if (type != null) {
-					if (type.equals("Obstacle")) {
-						drawings.add(new ObstacleDrawing(position, step));
-					} else if (type.equals("Bomberman")) {
-						drawings.add(new BombermanDrawing(position, step, currentAction));
-					} else if (type.equals("Robot")) {
-						drawings.add(new RobotDrawing(position, step, currentAction));
-					} else if (type.equals("Bomb")) {
-						drawings.add(new BombDrawing(position, step, range, currentAction));
-					}
+                    screen.updateDrawing(type, drawingId, position, currentAction, lastAction, step, lastStep, range, isDestroyed);
 				}
 			}
 			rd.endArray();
@@ -147,8 +154,6 @@ public class Player {
 		catch (IOException e) {
 			System.out.println("Player#onUpdate: Error while parsing the message.");
 		}
-
-		return drawings;
 	}
 
 	/**
@@ -158,8 +163,7 @@ public class Player {
 	 * @param msg the json report
 	 */
 	void onUpdate(String msg) {
-		List<Drawing> drawings = parseMessage(msg);
-		screen.setObjects(drawings);
+		parseMessage(msg);
 
 		Canvas canvas = null;
 		try {

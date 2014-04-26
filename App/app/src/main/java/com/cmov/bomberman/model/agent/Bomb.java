@@ -18,14 +18,12 @@ public class Bomb extends Agent {
 	private int step;
 	private int explosionStepIncr;
 	private boolean explosion;
-	private String currentAction;
 	private boolean destroyed;
 
 	public Bomb(final Position startingPos, int range, int timeout) {
 		super(startingPos, new BombAlgorithm(timeout));
 		this.range = range;
 		this.step = -1;
-		this.currentAction = "";
 		this.explosionStepIncr = 1;
 	}
 
@@ -33,11 +31,12 @@ public class Bomb extends Agent {
 	public void play(State state, final long dt) {
 		String nextAction = getAlgorithm().getNextActionName();
 
-		if (!currentAction.equals(nextAction)) {
+		if (! this.getCurrentAction().equals(nextAction)) {
 			// changed action, restart step
-			currentAction = nextAction;
+            this.setLastAction(this.getCurrentAction());
+			this.setCurrentAction(nextAction);
 			step = -1;
-			if (currentAction.equals(Actions.EXPLODE.toString())) {
+			if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
 				state.bombExplosion(range, this);
 				explosion = true;
 			}
@@ -79,7 +78,8 @@ public class Bomb extends Agent {
 
 			writer.name("range").value(this.range);
 
-			writer.name("isExplosion").value(this.currentAction);
+			writer.name("isExplosion").value(this.getCurrentAction());
+            writer.name("lastAction").value(this.getLastAction());
 			writer.endObject();
 		}
 		catch (IOException e) {

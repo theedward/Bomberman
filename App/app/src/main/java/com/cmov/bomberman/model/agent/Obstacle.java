@@ -60,6 +60,7 @@ public class Obstacle extends Agent {
 			writer.endArray();
 
 			writer.name("currentAction").value(getAlgorithm().getNextActionName());
+            writer.name("lastAction").value("");
 			writer.name("step").value(step);
 			writer.endObject();
 		}

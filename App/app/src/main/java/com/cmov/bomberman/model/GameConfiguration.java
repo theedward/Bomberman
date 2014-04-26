@@ -1,6 +1,12 @@
 package com.cmov.bomberman.model;
 
+import com.cmov.bomberman.model.agent.Obstacle;
+import com.cmov.bomberman.model.drawing.BombDrawing;
+import com.cmov.bomberman.model.drawing.BombermanDrawing;
 import com.cmov.bomberman.model.drawing.Drawing;
+import com.cmov.bomberman.model.drawing.ObstacleDrawing;
+import com.cmov.bomberman.model.drawing.RobotDrawing;
+import com.cmov.bomberman.model.drawing.WallDrawing;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,7 +17,8 @@ public class GameConfiguration {
 	private final Map<String, Integer> playerCharacterId;
 	private final Map<String, Integer> playerScore;
 	private final Map<Integer, Position> characterPositions;
-	private final List<Drawing> fixedDrawings;
+	private final List<WallDrawing> wallDrawings;
+    private final Map<Integer, Drawing> mutableDrawings;
 
 	private int mapWidth;
 	private int mapHeight;
@@ -39,7 +46,8 @@ public class GameConfiguration {
 		playerCharacterId = new HashMap<String, Integer>();
 		playerScore = new HashMap<String, Integer>();
 		characterPositions = new HashMap<Integer, Position>();
-		fixedDrawings = new LinkedList<Drawing>();
+		wallDrawings = new LinkedList<WallDrawing>();
+        mutableDrawings = new HashMap<Integer, Drawing>();
 	}
 
 	public int getNumUpdatesPerSecond() {
@@ -122,10 +130,6 @@ public class GameConfiguration {
 		this.pointOpponent = pointOpponent;
 	}
 
-	public List<Drawing> getFixedDrawings() { return this.fixedDrawings;}
-
-	public void addFixedDrawings(final List<Drawing> wallDrawings) { this.fixedDrawings.addAll(wallDrawings); }
-
 	public int getTimeBetweenBombs() {
 		return timeBetweenBombs;
 	}
@@ -149,4 +153,17 @@ public class GameConfiguration {
 	public void setMapHeight(final int mapHeight) {
 		this.mapHeight = mapHeight;
 	}
+
+    public Map<Integer, Drawing> getMutableDrawings() { return mutableDrawings; }
+
+    public List<WallDrawing> getWallDrawings() { return wallDrawings; }
+
+    public void setWallDrawings(final List<WallDrawing> walls) {
+        this.wallDrawings.addAll(walls);
+    }
+
+    public void setMutableDrawings(final Map<Integer, Drawing> mutableDrawings) {
+        this.mutableDrawings.putAll(mutableDrawings);
+    }
+
 }

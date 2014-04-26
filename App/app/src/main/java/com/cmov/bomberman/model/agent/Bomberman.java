@@ -19,7 +19,6 @@ public class Bomberman extends MovableAgent {
 	 */
 	private long timeSinceLastBomb;
 	private int step;
-	private String currentAction;
 	private boolean destroyed;
 
 	/**
@@ -37,7 +36,6 @@ public class Bomberman extends MovableAgent {
 		this.explosionRange = range;
 		this.explosionTimeout = timeout;
 		this.step = 0;
-		this.currentAction = "";
 		this.destroyed = false;
 	}
 
@@ -55,8 +53,9 @@ public class Bomberman extends MovableAgent {
 		this.timeSinceLastBomb += dt;
 
 		// when the action differs
-		if (!currentAction.equals(nextAction)) {
-			currentAction = nextAction;
+		if (! this.getCurrentAction().equals(nextAction)) {
+            this.setLastAction(this.getCurrentAction());
+			this.setCurrentAction(nextAction);
 			step = 0;
 		}
 
@@ -64,13 +63,13 @@ public class Bomberman extends MovableAgent {
 			// The next action is moving
 			move(state, action, dt);
 			step = (step + 1) % MAX_MOVEMENT_STEP;
-		} else if (currentAction.equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
+		} else if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
 			final Position bombPos = new Position(getPosition().xToDiscrete(), getPosition().yToDiscrete());
 			state.addAgent(new Bomb(bombPos, explosionRange, explosionTimeout));
 			this.timeSinceLastBomb = 0;
 		}
 
-		if (currentAction.equals(Agent.Actions.DESTROY.toString())) {
+		if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
 			if (step < MAX_DIE_STEP) {
 				step++;
 			} else if (step == MAX_DIE_STEP) {
@@ -91,7 +90,8 @@ public class Bomberman extends MovableAgent {
 			writer.value(getPosition().getY() - 0.5f);
 			writer.endArray();
 
-			writer.name("currentAction").value(currentAction);
+			writer.name("currentAction").value(this.getCurrentAction());
+            writer.name("lastAction").value(this.getLastAction());
 			writer.name("step").value(step);
 			writer.endObject();
 		}

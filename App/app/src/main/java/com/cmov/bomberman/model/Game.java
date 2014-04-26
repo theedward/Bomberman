@@ -5,8 +5,7 @@ import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Bomberman;
 import com.cmov.bomberman.model.agent.Obstacle;
 import com.cmov.bomberman.model.agent.Robot;
-import com.cmov.bomberman.model.drawing.Drawing;
-import com.cmov.bomberman.model.drawing.WallDrawing;
+import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -56,18 +55,22 @@ public final class Game {
 		Player[] characterOwners = new Player[players.size()];
 		players.values().toArray(characterOwners);
 
-		List<Drawing> fixedDrawings = new LinkedList<Drawing>();
+		List<WallDrawing> wallDrawings = new LinkedList<WallDrawing>();
+        Map<Integer, Drawing> drawings = new HashMap<Integer, Drawing>();
+        int idDrawings = 0; // this must be changed
+        // attribution of bomberman id must be changed
+
 		int playerCounter = 0;
 		final char[][] map = gameState.getMap();
 
 		for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
 			for (int colIdx = 0; colIdx < map[rowIdx].length; colIdx++) {
 				char character = map[rowIdx][colIdx];
-
 				// the position will be right in the middle
 				final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
 					gameState.addAgent(new Obstacle(pos));
+                    drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx,rowIdx), 0));
 				} else if (character == State.DrawingType.BOMBERMAN.toChar()) {
 					// TODO The bombermans are represented in the map as numbers
 					// implement that
@@ -78,15 +81,21 @@ public final class Game {
 													 gameConfiguration.getExplosionDuration());
 					gameState.addAgent(bomberman);
 					characterOwners[playerCounter].setAgent(bomberman);
+                    drawings.put(idDrawings,new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
+                    drawings.put(idDrawings,new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.WALL.toChar()) {
-					fixedDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
+					wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
 				}
+                idDrawings++;
 			}
 		}
 
-		gameConfiguration.addFixedDrawings(fixedDrawings);
+        gameConfiguration.setWallDrawings(wallDrawings);
+        gameConfiguration.setMutableDrawings(drawings);
+        // must pass counter id to game state for posterior object creations, such as bombs
+        gameState.setObjectsIdCounter(idDrawings);
 	}
 
 	/**
@@ -194,6 +203,7 @@ public final class Game {
 		// Update the state
 		//gameState.playAll();
 		updatePlayers();
+        gameState.removeDestroyedAgents();
 		this.duration--;
 
 		if (this.hasFinished()) {

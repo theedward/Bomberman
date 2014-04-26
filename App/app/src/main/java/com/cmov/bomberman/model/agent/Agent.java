@@ -8,10 +8,15 @@ import com.cmov.bomberman.model.State;
 public abstract class Agent {
 	private final Algorithm ai;
 	private Position position;
+    private String lastAction;
+    private String currentAction;
+    private int id;
 
 	public Agent(Position startingPos, Algorithm ai) {
 		position = startingPos;
 		this.ai = ai;
+        this.lastAction = "";
+        this.currentAction = "";
 	}
 
 	/**
@@ -41,7 +46,31 @@ public abstract class Agent {
 		return ai;
 	}
 
-	/**
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(String lastAction) {
+        this.lastAction = lastAction;
+    }
+
+    public String getCurrentAction() {
+        return currentAction;
+    }
+
+    public void setCurrentAction(String currentAction) {
+        this.currentAction = currentAction;
+    }
+
+    /**
 	 * Performs an action based on the algorithm. Must update the state with the new position.
 	 * @param state the game state
 	 * @param dt the time since the last update

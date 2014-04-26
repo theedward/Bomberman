@@ -11,6 +11,7 @@ public class State {
 	private char[][] map;
 	private List<Agent> agents;
 	private List<Agent> pausedCharacters;
+    private int objectsIdCounter;
 
 	/**
 	 * The timestamp of the last update.
@@ -30,7 +31,11 @@ public class State {
 		this.lastUpdate = System.currentTimeMillis();
 	}
 
-	public char[][] getMap() {
+    public void setObjectsIdCounter(int objectsIdCounter) {
+        this.objectsIdCounter = objectsIdCounter;
+    }
+
+    public char[][] getMap() {
 		return map;
 	}
 
@@ -55,13 +60,19 @@ public class State {
 
 		for (Agent agent : agents) {
 			agent.play(this, dt);
-			if (agent.isDestroyed()) {
-				destroyAgent(agent);
-			}
 		}
 
 		// TODO verify when the bomberman has robots at distance 1
 	}
+
+    public void removeDestroyedAgents() {
+
+        for (Agent agent : agents) {
+            if (agent.isDestroyed()) {
+                destroyAgent(agent);
+            }
+        }
+    }
 
 	public void addAgent(Agent object) {
 		agents.add(object);

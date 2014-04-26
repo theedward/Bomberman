@@ -29,6 +29,7 @@ public final class Game {
 	 */
 	private int duration;
 	private boolean hasStarted;
+    private int totalScore = 0;
 
 	/**
 	 * This constructor performs all the necessary steps to start the game right next.
@@ -191,12 +192,10 @@ public final class Game {
 			p.onGameEnd(gameConfiguration);
 		}
 
-		// TODO: compute scores, statistics, etc...
 	}
 
-    public void checkWinner(){
+    public int[] checkWinner(){
         int numberPlayers = players.size();
-        int totalScore = 0;
         int[] scores = new int[numberPlayers];
         for(Player p : players.values()) {
             for(int i = 0; i < scores.length; i++)
@@ -204,6 +203,7 @@ public final class Game {
             totalScore += p.getScore();
         }
         Arrays.sort(scores);
+        return scores;
 
     }
 	/**

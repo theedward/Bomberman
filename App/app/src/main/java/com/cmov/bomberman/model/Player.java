@@ -25,6 +25,7 @@ public class Player {
 	 */
 	private GameView gameView;
 	private int score;
+    private int bombarmanId;
 
 	public Player(String username, Controllable controller) {
 		this.username = username;
@@ -137,6 +138,8 @@ public class Player {
 							range = rd.nextInt();
 						} else if (name.equals("id")) {
                             drawingId = rd.nextInt();
+                        }else if (name.equals("score")) {
+                            score = rd.nextInt();
                         } else if (name.equals("isDestroyed")) {
                             isDestroyed = rd.nextBoolean();
                         }
@@ -165,6 +168,7 @@ public class Player {
 	void onUpdate(String msg) {
 		parseMessage(msg);
 
+        //TODO: Print Score on screen
 		Canvas canvas = null;
 		try {
 			if (gameView.getHolder() != null) {

@@ -9,8 +9,8 @@ public abstract class MovableAgent extends Agent {
 	private final int speed;
 	private Axis lastAxis;
 
-	public MovableAgent(final Position pos, final Algorithm ai, final int speed) {
-		super(pos, ai);
+	public MovableAgent(final Position pos, final Algorithm ai, int id, final int speed) {
+		super(pos, ai, id);
 		this.speed = speed;
 		this.lastAxis = null;
 	}

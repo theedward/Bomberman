@@ -10,12 +10,11 @@ public class Robot extends MovableAgent {
 	private static final int MAX_DIE_STEP = 5;
 
 	private boolean destroyed;
-	private int step;
 
-	public Robot(final Position position, final int speed) {
-		super(position, new RobotAlgorithm(), speed);
+	public Robot(final Position position, int id, final int speed) {
+		super(position, new RobotAlgorithm(), id, speed);
 		this.destroyed = false;
-		this.step = 0;
+		this.setStep(0);
 	}
 
 	@Override
@@ -31,12 +30,13 @@ public class Robot extends MovableAgent {
 		if (! this.getCurrentAction().equals(nextAction)) {
             this.setLastAction(this.getCurrentAction());
 			this.setCurrentAction(nextAction);
-			step = 0;
+			this.setLastStep(this.getStep());
+            this.setStep(0);
 		}
 
 		if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
-			if (step < MAX_DIE_STEP) {
-				step++;
+			if (this.getStep() < MAX_DIE_STEP) {
+				this.setStep(this.getStep() + 1);
 			} else {
 				destroyed = true;
 			}
@@ -62,7 +62,9 @@ public class Robot extends MovableAgent {
 
 			writer.name("currentAction").value(this.getCurrentAction());
             writer.name("lastAction").value(this.getLastAction());
-			writer.name("step").value(0);
+			writer.name("step").value(this.getStep());
+            writer.name("lastStep").value(this.getLastStep());
+            writer.name("id").value(this.getId());
 			writer.endObject();
 		}
 		catch (IOException e) {

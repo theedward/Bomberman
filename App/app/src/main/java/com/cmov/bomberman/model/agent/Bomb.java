@@ -15,16 +15,15 @@ public class Bomb extends Agent {
 	/**
 	 * Starts at -1 because it's always incremented before it's used.
 	 */
-	private int step;
 	private int explosionStepIncr;
 	private boolean explosion;
 	private boolean destroyed;
     private Bomberman owner;
 
-	public Bomb(final Position startingPos, int range, int timeout, Bomberman owner) {
-		super(startingPos, new BombAlgorithm(timeout));
+	public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
+		super(startingPos, new BombAlgorithm(timeout), id);
 		this.range = range;
-		this.step = -1;
+		this.setStep(-1);
 		this.explosionStepIncr = 1;
         this.owner = owner;
 	}
@@ -41,7 +40,8 @@ public class Bomb extends Agent {
 			// changed action, restart step
             this.setLastAction(this.getCurrentAction());
 			this.setCurrentAction(nextAction);
-			step = -1;
+            this.setLastStep(this.getStep());
+			this.setStep(-1);
 			if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
 				state.bombExplosion(range, this);
 				explosion = true;
@@ -50,16 +50,16 @@ public class Bomb extends Agent {
 
 		if (explosion) {
 			// during the explosion, the steps displayed should be [0 1 2 3 2 1 0]
-			if (step < EXPLOSION_MAX_STEP) {
-				step += explosionStepIncr;
-			} else if (step == EXPLOSION_MAX_STEP) {
+			if (this.getStep() < EXPLOSION_MAX_STEP) {
+                this.setStep(this.getStep()+explosionStepIncr);
+			} else if (this.getStep() == EXPLOSION_MAX_STEP) {
 				explosionStepIncr = -1;
-				step--;
-			} else if (step == 0 && explosionStepIncr == -1) {
+				this.setStep(this.getStep()-1);
+			} else if (this.getStep() == 0 && explosionStepIncr == -1) {
 				destroyed = true;
 			}
 		} else {
-			step = (step + 1) % BOMB_MAX_STEP;
+            this.setStep((this.getStep()+1) % BOMB_MAX_STEP);
 		}
 	}
 
@@ -80,12 +80,14 @@ public class Bomb extends Agent {
 			writer.value(getPosition().getY() - 0.5f);
 			writer.endArray();
 
-			writer.name("step").value(this.step);
+			writer.name("step").value(this.getStep());
+            writer.name("lastStep").value(this.getLastStep());
 
 			writer.name("range").value(this.range);
 
-			writer.name("isExplosion").value(this.getCurrentAction());
+			writer.name("currentAction").value(this.getCurrentAction());
             writer.name("lastAction").value(this.getLastAction());
+            writer.name("id").value(this.getId());
 			writer.endObject();
 		}
 		catch (IOException e) {

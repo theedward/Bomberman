@@ -58,8 +58,7 @@ public final class Game {
 
 		List<WallDrawing> wallDrawings = new LinkedList<WallDrawing>();
         Map<Integer, Drawing> drawings = new HashMap<Integer, Drawing>();
-        int idDrawings = 0; // this must be changed
-        // attribution of bomberman id must be changed
+        int idDrawings = 0;
 
 		int playerCounter = 0;
 		final char[][] map = gameState.getMap();
@@ -70,12 +69,13 @@ public final class Game {
 				// the position will be right in the middle
 				final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
-					gameState.addAgent(new Obstacle(pos));
+					gameState.addAgent(new Obstacle(pos, idDrawings));
                     drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx,rowIdx), 0));
 				} else if (character == State.DrawingType.BOMBERMAN.toChar()) {
 					// TODO The bombermans are represented in the map as numbers
 					// implement that
 					Agent bomberman = new Bomberman(pos, characterOwners[playerCounter].getController(),
+                                                     idDrawings,
 													 gameConfiguration.getbSpeed(),
 													 gameConfiguration.getTimeBetweenBombs(),
 													 gameConfiguration.getExplosionRange(),
@@ -86,7 +86,7 @@ public final class Game {
 					characterOwners[playerCounter].setAgent(bomberman);
                     drawings.put(idDrawings,new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
-					gameState.addAgent(new Robot(pos, gameConfiguration.getrSpeed()));
+					gameState.addAgent(new Robot(pos, idDrawings, gameConfiguration.getrSpeed()));
                     drawings.put(idDrawings,new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.WALL.toChar()) {
 					wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));

@@ -36,6 +36,10 @@ public class State {
         this.objectsIdCounter = objectsIdCounter;
     }
 
+    public int incObjectsIdCounter() {
+        return objectsIdCounter++;
+    }
+
     public char[][] getMap() {
 		return map;
 	}

@@ -20,7 +20,6 @@ public class Bomberman extends MovableAgent {
 	 * is allowed to put a bomb right in the beginning.
 	 */
 	private long timeSinceLastBomb;
-	private int step;
 	private boolean destroyed;
     private int score = 0;
     private int robotScore;
@@ -34,13 +33,14 @@ public class Bomberman extends MovableAgent {
 	 * @param range the bomb range
 	 * @param timeout the bomb timeout
 	 */
-	public Bomberman(Position pos, Algorithm ai, int speed, int timeBetweenBombs, int range, int timeout, int robotScore, int oponentScore) {
-		super(pos, ai, speed);
+	public Bomberman(Position pos, Algorithm ai, int id, int speed, int timeBetweenBombs, int range, int timeout, int robotScore, int oponentScore) {
+		super(pos, ai, id, speed);
 		this.timeBetweenBombs = timeBetweenBombs * 1000;
 		this.timeSinceLastBomb = this.timeBetweenBombs;
 		this.explosionRange = range;
 		this.explosionTimeout = timeout;
-		this.step = 0;
+		this.setStep(0);
+        this.setLastStep(0);
 		this.destroyed = false;
         this.robotScore = robotScore;
         this.oponentScore = oponentScore;
@@ -76,23 +76,25 @@ public class Bomberman extends MovableAgent {
 		if (! this.getCurrentAction().equals(nextAction)) {
             this.setLastAction(this.getCurrentAction());
 			this.setCurrentAction(nextAction);
-			step = 0;
+			this.setLastStep(this.getStep());
+            this.setStep(0);
 		}
 
 		if (action != null) {
 			// The next action is moving
 			move(state, action, dt);
-			step = (step + 1) % MAX_MOVEMENT_STEP;
+			setStep((this.getStep()+ 1) % MAX_MOVEMENT_STEP);
 		} else if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
 			final Position bombPos = new Position(getPosition().xToDiscrete(), getPosition().yToDiscrete());
-			state.addAgent(new Bomb(bombPos, explosionRange, explosionTimeout, this));
+            int id = state.incObjectsIdCounter();
+			state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
 			this.timeSinceLastBomb = 0;
 		}
 
 		if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
-			if (step < MAX_DIE_STEP) {
-				step++;
-			} else if (step == MAX_DIE_STEP) {
+			if (this.getStep() < MAX_DIE_STEP) {
+				setStep(this.getStep()+1);
+			} else if (this.getStep() == MAX_DIE_STEP) {
 				destroyed = true;
 			}
 		}
@@ -112,8 +114,9 @@ public class Bomberman extends MovableAgent {
 
 			writer.name("currentAction").value(this.getCurrentAction());
             writer.name("lastAction").value(this.getLastAction());
-			writer.name("step").value(step);
-            writer.name("bombermanId").value(id);
+			writer.name("step").value(this.getStep());
+            writer.name("lastStep").value(this.getLastStep());
+            writer.name("id").value(getId());
             writer.name("score").value(score);
 			writer.endObject();
 

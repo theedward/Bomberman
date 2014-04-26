@@ -10,11 +10,14 @@ public abstract class Agent {
 	private Position position;
     private String lastAction;
     private String currentAction;
+    private int step;
+    private int lastStep;
     private int id;
 
-	public Agent(Position startingPos, Algorithm ai) {
+	public Agent(Position startingPos, Algorithm ai, int id) {
 		position = startingPos;
 		this.ai = ai;
+        this.id = id;
         this.lastAction = "";
         this.currentAction = "";
 	}
@@ -97,7 +100,24 @@ public abstract class Agent {
 	 */
 	abstract public void toJson(JsonWriter writer);
 
-	/**
+    public int getLastStep() {
+        return lastStep;
+    }
+
+    public void setLastStep(int lastStep) {
+        this.lastStep = lastStep;
+    }
+
+    public int getStep() {
+
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
+    }
+
+    /**
 	 * The possible actions for the most abstract agent.
 	 */
 	public enum Actions {

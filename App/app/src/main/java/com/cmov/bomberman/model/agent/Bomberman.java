@@ -63,7 +63,7 @@ public class Bomberman extends MovableAgent {
 	}
 
 	@Override
-	public void play(State state, final long dt) {
+	public void play(State state, final float dt) {
 		// increase time since last bomb
 		this.timeSinceLastBomb += dt;
 

@@ -11,6 +11,8 @@ public class RobotAlgorithm implements Algorithm {
 
 	@Override
 	public String getNextActionName() {
+		return MovableAgent.Actions.MOVE_LEFT.toString();
+		/*
 		if (!destroyMode) {
 			int nextMove = (int) (Math.random() * 4);
 			switch (nextMove) {
@@ -26,6 +28,7 @@ public class RobotAlgorithm implements Algorithm {
 		} else {
 			return Agent.Actions.DESTROY.toString();
 		}
+		*/
 	}
 
 	@Override

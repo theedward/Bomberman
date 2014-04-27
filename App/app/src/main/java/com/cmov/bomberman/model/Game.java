@@ -211,6 +211,7 @@ public final class Game {
 	 */
 	public void update() {
 		if (!this.hasStarted) {
+			this.hasStarted = true;
 			this.begin();
 			this.gameState.startCountingNow();
 		}
@@ -219,6 +220,7 @@ public final class Game {
 		gameState.playAll();
 		updatePlayers();
         gameState.removeDestroyedAgents();
+
 		this.duration--;
 
 		if (this.hasFinished()) {

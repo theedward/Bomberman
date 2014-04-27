@@ -26,7 +26,7 @@ public class Obstacle extends Agent {
 	}
 
 	@Override
-	public void play(final State state, final long dt) {
+	public void play(final State state, final float dt) {
 		if (step > 0 && step < MAX_STEP) {
 			// increase step until it reaches MAX_STEP
 			step++;

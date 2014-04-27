@@ -61,13 +61,15 @@ public class State {
  	 */
  	public void playAll() {
 		final long now = System.currentTimeMillis();
-		final long dt = now - lastUpdate;
+		final float dt = (now - lastUpdate) / 1000.0f;
         Position bombermanPosition;
 
 		for (Agent agent : agents) {
 			agent.play(this, dt);
 		}
 
+		final int maxY = map.length;
+		final int maxX = map[0].length;
 
         for (Agent agent : agents) {
             if(agent.getType().equals("Bomberman")) {
@@ -90,6 +92,8 @@ public class State {
 
             }
         }
+
+		this.lastUpdate = now;
 	}
 
     public void removeDestroyedAgents() {

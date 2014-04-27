@@ -26,7 +26,7 @@ public abstract class MovableAgent extends Agent {
 	 * @param action the movement direction
 	 * @param dt the time passed since the last update
 	 */
-	public void move(State currentState, Actions action, long dt) {
+	public void move(State currentState, Actions action, float dt) {
 		final Axis moveAxis = (action == Actions.MOVE_UP || action == Actions.MOVE_DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
 		final Position oldPosition = getPosition();
 		float x = oldPosition.getX();
@@ -65,7 +65,7 @@ public abstract class MovableAgent extends Agent {
 			// handle collisions
 			Position newPosition = new Position(x, y);
 			char character = currentState.getMap()[newPosition.yToDiscrete()][newPosition.xToDiscrete()];
-			if (character != State.DrawingType.EMPTY.toChar()) {
+			if (character == State.DrawingType.WALL.toChar() || character == State.DrawingType.OBSTACLE.toChar()) {
 				// the new position will take into account the direction of the agent.
 				// ex: if the agent moved up and hit a wall, it must move down to the position
 				// right before hitting the wall.

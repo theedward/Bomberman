@@ -63,7 +63,7 @@ public class GameThread extends Thread {
 				Thread.sleep(1000 / numUpdates);
 			}
 			catch (InterruptedException e) {
-				// Empty on purpose
+				e.printStackTrace();
 			}
 		}
 	}

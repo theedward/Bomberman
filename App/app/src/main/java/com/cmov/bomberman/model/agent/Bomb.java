@@ -33,7 +33,7 @@ public class Bomb extends Agent {
     }
 
 	@Override
-	public void play(State state, final long dt) {
+	public void play(State state, final float dt) {
 		String nextAction = getAlgorithm().getNextActionName();
 
 		if (! this.getCurrentAction().equals(nextAction)) {

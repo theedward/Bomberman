@@ -18,7 +18,7 @@ public class Robot extends MovableAgent {
 	}
 
 	@Override
-	public void play(State state, final long dt) {
+	public void play(State state, final float dt) {
 		String nextAction = getAlgorithm().getNextActionName();
 
 		if (!nextAction.equals(Agent.Actions.DESTROY.toString())) {

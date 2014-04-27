@@ -42,8 +42,8 @@ public class BombermanDrawing extends Drawing {
 	public void draw(Canvas canvas) {
 		final int spriteWidth = sprite[0][0].getWidth();
 		final int spriteHeight = sprite[0][0].getHeight();
-		final int x = (int) getPosition().getX() * spriteWidth;
-		final int y = (int) getPosition().getY() * spriteHeight;
+		final int x = (int) (getPosition().getX() * spriteWidth);
+		final int y = (int) (getPosition().getY() * spriteHeight);
         int spriteIndex = getSpriteByAction(this.getCurrentAction());
         int drawStep = this.getStep();
 

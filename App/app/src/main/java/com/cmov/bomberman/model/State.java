@@ -62,7 +62,6 @@ public class State {
  	public void playAll() {
 		final long now = System.currentTimeMillis();
 		final float dt = (now - lastUpdate) / 1000.0f;
-        Position bombermanPosition;
 
 		for (Agent agent : agents) {
 			agent.play(this, dt);
@@ -72,27 +71,24 @@ public class State {
 		final int maxX = map[0].length;
 
         for (Agent agent : agents) {
-            if(agent.getType().equals("Bomberman")) {
-                bombermanPosition = agent.getPosition();
-                //verify up
-                if(map[bombermanPosition.yToDiscrete()+1][bombermanPosition.xToDiscrete()] == 'R')
-                    agent.handleEvent(Event.DESTROY);
-                else
-                //verify down
-                if(map[bombermanPosition.yToDiscrete()-1][bombermanPosition.xToDiscrete()] == 'R')
-                    agent.handleEvent(Event.DESTROY);
-                else
-                //verify left
-                if(map[bombermanPosition.yToDiscrete()][bombermanPosition.xToDiscrete()-1] == 'R')
-                    agent.handleEvent(Event.DESTROY);
-                else
-                //verify right
-                if(map[bombermanPosition.yToDiscrete()][bombermanPosition.xToDiscrete()+1] == 'R')
-                    agent.handleEvent(Event.DESTROY);
-
+            if (agent.getType().equals("Bomberman")) {
+                final int mapX = Position.toDiscrete(agent.getPosition().getX());
+				final int mapY = Position.toDiscrete(agent.getPosition().getY());
+                if (map[mapY + 1][mapX] == 'R') {
+					//verify up
+					agent.handleEvent(Event.DESTROY);
+				} else if (map[mapY - 1][mapX] == 'R') {
+					//verify down
+					agent.handleEvent(Event.DESTROY);
+				} else if (map[mapY][mapX - 1] == 'R') {
+					//verify left
+					agent.handleEvent(Event.DESTROY);
+				} else if (map[mapY][mapX + 1] == 'R') {
+					//verify right
+					agent.handleEvent(Event.DESTROY);
+				}
             }
         }
-
 		this.lastUpdate = now;
 	}
 

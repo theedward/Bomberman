@@ -19,8 +19,8 @@ public class WallDrawing extends Drawing {
 	public void draw(final Canvas canvas) {
 		final int spriteWidth = sprite.getWidth();
 		final int spriteHeight = sprite.getHeight();
-		final int x = (int) getPosition().getX() * spriteWidth;
-		final int y = (int) getPosition().getY() * spriteHeight;
+		final int x = (int) (getPosition().getX() * spriteWidth);
+		final int y = (int) (getPosition().getY() * spriteHeight);
 		canvas.drawBitmap(sprite, x, y, null);
 	}
 }

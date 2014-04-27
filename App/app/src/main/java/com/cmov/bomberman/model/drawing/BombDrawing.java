@@ -31,8 +31,8 @@ public class BombDrawing extends Drawing {
 	public void draw(final Canvas canvas) {
 		final int spriteWidth = sprite[0].getWidth();
 		final int spriteHeight = sprite[0].getHeight();
-		final int x = (int) getPosition().getX() * spriteWidth;
-		final int y = (int) getPosition().getY() * spriteHeight;
+		final int x = (int) (getPosition().getX() * spriteWidth);
+		final int y = (int) (getPosition().getY() * spriteHeight);
         int drawStep = this.getStep();
 
 		if (this.getCurrentAction().equals(Bomb.Actions.EXPLODE.toString())) {

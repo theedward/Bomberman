@@ -39,8 +39,8 @@ public class RobotDrawing extends Drawing {
 	public void draw(Canvas canvas) {
 		final int spriteWidth = spriteDie[0].getWidth();
 		final int spriteHeight = spriteDie[0].getHeight();
-		final int x = (int) getPosition().getX() * spriteWidth;
-		final int y = (int) getPosition().getY() * spriteHeight;
+		final int x = (int) (getPosition().getX() * spriteWidth);
+		final int y = (int) (getPosition().getY() * spriteHeight);
         int spriteIndex = getIndexByAction(this.getCurrentAction());
         int drawStep = this.getStep();
 

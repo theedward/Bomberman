@@ -6,6 +6,9 @@ import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
 public abstract class Agent {
+	public static final float WIDTH = 1f;
+	public static final float HEIGHT = 1f;
+
 	private final Algorithm ai;
 	private Position position;
     private String lastAction;
@@ -116,6 +119,22 @@ public abstract class Agent {
     public void setStep(int step) {
         this.step = step;
     }
+
+	public Position getLeftCorner() {
+		return new Position(position.getX() - WIDTH/2, getPosition().getY());
+	}
+
+	public Position getRightCorner() {
+		return new Position(position.getX() + WIDTH/2, getPosition().getY());
+	}
+
+	public Position getTopCorner() {
+		return new Position(getPosition().getX(), position.getY() - HEIGHT/2);
+	}
+
+	public Position getBottomCorner() {
+		return new Position(getPosition().getX(), position.getY() + HEIGHT/2);
+	}
 
     /**
 	 * The possible actions for the most abstract agent.

@@ -1,47 +1,35 @@
 package com.cmov.bomberman.model;
 
 public class Position {
-	private float x;
-	private float y;
-
-	public Position() {
-	}
+	private final float x;
+	private final float y;
 
 	public Position(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public float getX() {
-		return x;
+	/**
+	 * Converts a float position into a discrete position.
+	 */
+	public static int toDiscrete(float value) {
+		return (int) Math.floor(value);
 	}
 
-	public void setX(final float x) {
-		this.x = x;
+	public float getX() {
+		return x;
 	}
 
 	public float getY() {
 		return y;
 	}
 
-	public void setY(final float y) {
-		this.y = y;
-	}
-
-	/**
-	 * Converts a float position into a discrete position.
-	 * @return the closest discrete x
-	 */
 	public int xToDiscrete() {
-		return (int) Math.round(x);
+		return (int) Math.floor(this.x);
 	}
 
-	/**
-	 * Converts a float position into a discrete position. The value .5 is rounded below
-	 * @return the closest discrete x
-	 */
 	public int yToDiscrete() {
-		return (int) Math.round(y);
+		return (int) Math.floor(this.y);
 	}
 
 	@Override

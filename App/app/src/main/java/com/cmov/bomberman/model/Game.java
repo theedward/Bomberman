@@ -216,7 +216,7 @@ public final class Game {
 		}
 
 		// Update the state
-		//gameState.playAll();
+		gameState.playAll();
 		updatePlayers();
         gameState.removeDestroyedAgents();
 		this.duration--;

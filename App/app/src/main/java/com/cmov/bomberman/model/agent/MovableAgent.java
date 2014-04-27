@@ -64,7 +64,7 @@ public abstract class MovableAgent extends Agent {
 
 			// handle collisions
 			Position newPosition = new Position(x, y);
-			char character = currentState.getMap()[newPosition.xToDiscrete()][newPosition.yToDiscrete()];
+			char character = currentState.getMap()[newPosition.yToDiscrete()][newPosition.xToDiscrete()];
 			if (character != State.DrawingType.EMPTY.toChar()) {
 				// the new position will take into account the direction of the agent.
 				// ex: if the agent moved up and hit a wall, it must move down to the position

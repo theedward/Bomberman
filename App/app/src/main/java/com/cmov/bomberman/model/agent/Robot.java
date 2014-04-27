@@ -20,14 +20,14 @@ public class Robot extends MovableAgent {
 	@Override
 	public void play(State state, final long dt) {
 		String nextAction = getAlgorithm().getNextActionName();
-		MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
 
-		if (action != null) {
+		if (!nextAction.equals(Agent.Actions.DESTROY.toString())) {
 			// The next action is moving
+			MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
 			move(state, action, dt);
 		}
 
-		if (! this.getCurrentAction().equals(nextAction)) {
+		if (!this.getCurrentAction().equals(nextAction)) {
             this.setLastAction(this.getCurrentAction());
 			this.setCurrentAction(nextAction);
 			this.setLastStep(this.getStep());

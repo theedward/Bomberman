@@ -1,8 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-
-import com.cmov.bomberman.model.GameConfiguration;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -66,11 +64,10 @@ public class Bomberman extends MovableAgent {
 
 	@Override
 	public void play(State state, final long dt) {
-		String nextAction = getAlgorithm().getNextActionName();
-		MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
-
 		// increase time since last bomb
 		this.timeSinceLastBomb += dt;
+
+		String nextAction = getAlgorithm().getNextActionName();
 
 		// when the action differs
 		if (! this.getCurrentAction().equals(nextAction)) {
@@ -80,8 +77,12 @@ public class Bomberman extends MovableAgent {
             this.setStep(0);
 		}
 
-		if (action != null) {
+		if (nextAction.equals(MovableAgent.Actions.MOVE_LEFT.toString()) ||
+				nextAction.equals(MovableAgent.Actions.MOVE_UP.toString()) ||
+				nextAction.equals(MovableAgent.Actions.MOVE_RIGHT.toString()) ||
+				nextAction.equals(MovableAgent.Actions.MOVE_DOWN.toString())) {
 			// The next action is moving
+			MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
 			move(state, action, dt);
 			setStep((this.getStep()+ 1) % MAX_MOVEMENT_STEP);
 		} else if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {

@@ -160,7 +160,7 @@ public class GameActivity extends Activity {
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				scoreView.setText(Integer.toString(score));
+				scoreView.setText("Score: " + score);
 			}
 		});
 	}

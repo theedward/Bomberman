@@ -65,12 +65,12 @@ public final class Game {
 				final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
 					gameState.addAgent(new Obstacle(pos, idDrawings));
-					idDrawings++;
                     drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx,rowIdx), 0));
+					idDrawings++;
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, idDrawings, gameConfiguration.getrSpeed()));
-					idDrawings++;
                     drawings.put(idDrawings,new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
+					idDrawings++;
 				} else if (character == State.DrawingType.WALL.toChar()) {
 					wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
 				} else {
@@ -87,10 +87,10 @@ public final class Game {
 															gameConfiguration.getExplosionDuration(),
 															gameConfiguration.getPointRobot(),
 															gameConfiguration.getPointOpponent());
-							idDrawings++;
 							gameState.addAgent(bomberman);
 							characterOwners[bombermanId].setAgent(bomberman);
 							drawings.put(idDrawings, new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
+							idDrawings++;
 						}
 					}
 					catch (NumberFormatException e) {

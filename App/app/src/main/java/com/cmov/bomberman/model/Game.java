@@ -9,12 +9,7 @@ import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * This is where all the game will be processed.
@@ -61,8 +56,6 @@ public final class Game {
 		List<WallDrawing> wallDrawings = new LinkedList<WallDrawing>();
         Map<Integer, Drawing> drawings = new HashMap<Integer, Drawing>();
         int idDrawings = 0;
-
-		int playerCounter = 0;
 		final char[][] map = gameState.getMap();
 
 		for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
@@ -72,28 +65,38 @@ public final class Game {
 				final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
 					gameState.addAgent(new Obstacle(pos, idDrawings));
+					idDrawings++;
                     drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx,rowIdx), 0));
-				} else if (character == State.DrawingType.BOMBERMAN.toChar()) {
-					// TODO The bombermans are represented in the map as numbers
-					// implement that
-					Agent bomberman = new Bomberman(pos, characterOwners[playerCounter].getController(),
-                                                     idDrawings,
-													 gameConfiguration.getbSpeed(),
-													 gameConfiguration.getTimeBetweenBombs(),
-													 gameConfiguration.getExplosionRange(),
-													 gameConfiguration.getExplosionDuration(),
-                                                     gameConfiguration.getPointRobot(),
-                                                     gameConfiguration.getPointOpponent());
-					gameState.addAgent(bomberman);
-					characterOwners[playerCounter].setAgent(bomberman);
-                    drawings.put(idDrawings,new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, idDrawings, gameConfiguration.getrSpeed()));
+					idDrawings++;
                     drawings.put(idDrawings,new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
 				} else if (character == State.DrawingType.WALL.toChar()) {
 					wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
+				} else {
+					// Bomberman
+					try {
+						// starts at 1
+						int bombermanId = Integer.parseInt(Character.toString(character)) - 1;
+						// the number of players must be greater or equal than the number of this bomberman
+						if (bombermanId < characterOwners.length) {
+							Agent bomberman = new Bomberman(pos, characterOwners[bombermanId].getController(),
+															idDrawings, gameConfiguration.getbSpeed(),
+															gameConfiguration.getTimeBetweenBombs(),
+															gameConfiguration.getExplosionRange(),
+															gameConfiguration.getExplosionDuration(),
+															gameConfiguration.getPointRobot(),
+															gameConfiguration.getPointOpponent());
+							idDrawings++;
+							gameState.addAgent(bomberman);
+							characterOwners[bombermanId].setAgent(bomberman);
+							drawings.put(idDrawings, new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
+						}
+					}
+					catch (NumberFormatException e) {
+						// Not a Bomberman
+					}
 				}
-                idDrawings++;
 			}
 		}
 

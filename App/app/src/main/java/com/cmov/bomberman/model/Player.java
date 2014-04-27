@@ -2,18 +2,13 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import android.util.JsonReader;
-import android.widget.TextView;
-
 import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Controllable;
-import com.cmov.bomberman.model.drawing.Drawing;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Player {
 	private final String username;
@@ -26,7 +21,6 @@ public class Player {
 	 */
 	private GameActivity gameActivity;
 	private int score;
-    private int bombarmanId;
 
 	public Player(String username, Controllable controller) {
 		this.username = username;
@@ -94,10 +88,8 @@ public class Player {
 	 * The fixed drawings are not included in the report.
 	 *
 	 * @param msg the json report.
-	 * @return the drawings existent in the game state.
 	 */
 	private void parseMessage(String msg) {
-		List<Drawing> drawings = new LinkedList<Drawing>();
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
 		try {
@@ -140,7 +132,7 @@ public class Player {
 						} else if (name.equals("id")) {
                             drawingId = rd.nextInt();
                         }else if (name.equals("score")) {
-                            score = rd.nextInt();
+                            this.score = rd.nextInt();
                         } else if (name.equals("isDestroyed")) {
                             isDestroyed = rd.nextBoolean();
                         }
@@ -169,9 +161,8 @@ public class Player {
 	void onUpdate(String msg) {
 		parseMessage(msg);
 
-        //TODO: Print Score on screen
+		// update canvas
 		final GameView gameView = gameActivity.getGameView();
-        final TextView scoreView = gameActivity.getScoreView();
 		Canvas canvas = null;
 		try {
 			if (gameView.getHolder() != null) {
@@ -188,7 +179,7 @@ public class Player {
 			}
 		}
 
-        scoreView.setText("Score: " + getScore());
+		// update score
+		gameActivity.updateScoreView(this.score);
 	}
-
 }

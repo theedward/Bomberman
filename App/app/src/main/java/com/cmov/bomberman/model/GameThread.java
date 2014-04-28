@@ -1,5 +1,7 @@
 package com.cmov.bomberman.model;
 
+import com.cmov.bomberman.controller.GameActivity;
+
 /**
  * This is the class responsible for continuously running the game.
  */
@@ -8,14 +10,16 @@ public class GameThread extends Thread {
 	 * Number of updates per second
 	 */
 	private final int numUpdates;
-	private Game game;
+	private final Game game;
+	private final GameActivity activity;
 
 	/**
 	 * If the game is running or it's paused
 	 */
 	private boolean running;
 
-	public GameThread(final Game game) {
+	public GameThread(final GameActivity activity, final Game game) {
+		this.activity = activity;
 		this.game = game;
 		this.running = false;
 		this.numUpdates = this.game.getNumberUpdates();
@@ -52,7 +56,7 @@ public class GameThread extends Thread {
 						this.wait();
 					}
 					catch (InterruptedException e) {
-						// Empty on purpose
+						return;
 					}
 				}
 			}
@@ -66,5 +70,8 @@ public class GameThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+
+		// game has finished
+		activity.gameFinished();
 	}
 }

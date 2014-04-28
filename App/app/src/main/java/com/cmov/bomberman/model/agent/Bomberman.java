@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Bomberman extends MovableAgent {
 	private static final int MAX_MOVEMENT_STEP = 3;
-	private static final int MAX_DIE_STEP = 6;
+	private static final int MAX_DIE_STEP = 3;
 
 	private final int timeBetweenBombs;
 	private final int explosionRange;
@@ -98,7 +98,9 @@ public class Bomberman extends MovableAgent {
 		} else if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
 			if (this.getStep() < MAX_DIE_STEP) {
 				setStep(this.getStep() + 1);
-			} else if (this.getStep() == MAX_DIE_STEP) {
+			}
+
+			if (this.getStep() == MAX_DIE_STEP) {
 				destroyed = true;
 			}
 		}

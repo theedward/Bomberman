@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import android.util.Log;
+
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -92,7 +94,7 @@ public class Bomberman extends MovableAgent {
 			final Position bombPos = new Position(Position.toDiscrete(curPos.getX()) + Agent.WIDTH / 2,
 												  Position.toDiscrete(curPos.getY()) + Agent.HEIGHT / 2);
 			final int id = state.incObjectsIdCounter();
-			state.addAgentDuringUpdate(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
+			state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
 
 			this.timeSinceLastBomb = 0;
 		} else if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
@@ -100,8 +102,9 @@ public class Bomberman extends MovableAgent {
 				setStep(this.getStep() + 1);
 			}
 
-			if (this.getStep() == MAX_DIE_STEP) {
+            if (this.getStep() == MAX_DIE_STEP) {
 				destroyed = true;
+                Log.i("Bomberman", "was destroyed");
 			}
 		}
 	}
@@ -127,6 +130,7 @@ public class Bomberman extends MovableAgent {
 			writer.name("isDestroyed").value(isDestroyed());
 			writer.endObject();
 
+            Log.i("Bomberman", "toJson " + destroyed);
 		}
 		catch (IOException e) {
 			System.out.println("Bomberman#toJson: Error while serializing to json.");

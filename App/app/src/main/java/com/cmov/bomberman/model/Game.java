@@ -221,7 +221,9 @@ public final class Game {
 		// Update the state
 		gameState.playAll();
 		updatePlayers();
-		gameState.removeDestroyedAgents();
+
+        //isdestroyed must be sent on the Player#onUpdate
+        gameState.removeDestroyedAgents();
 
 		this.duration--;
 

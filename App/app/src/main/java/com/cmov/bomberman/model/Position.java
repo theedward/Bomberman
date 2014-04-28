@@ -39,7 +39,7 @@ public class Position {
 		} else {
 			if (o instanceof Position) {
 				Position pos = (Position) o;
-				return (pos.getX() == this.getX()) && (pos.getY() == this.getY());
+				return (pos.xToDiscrete() == this.xToDiscrete()) && (pos.yToDiscrete() == this.yToDiscrete());
 			}
 			return false;
 		}

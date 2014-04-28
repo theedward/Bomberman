@@ -2,6 +2,8 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
+
 import com.cmov.bomberman.model.drawing.BombDrawing;
 import com.cmov.bomberman.model.drawing.Drawing;
 import com.cmov.bomberman.model.drawing.WallDrawing;
@@ -35,6 +37,7 @@ public class Screen {
 	public void updateDrawing(String type, int id, Position pos, String currentAction, String lastAction, int step,
 							  int lastStep, int range, boolean isDestroyed) {
 		if (isDestroyed) {
+            Log.i("Screen", type + " " + id + " was destroyed");
 			drawings.remove(id);
 		} else if (!drawings.containsKey(id)) {
 			if (type.equals("Bomb")) {

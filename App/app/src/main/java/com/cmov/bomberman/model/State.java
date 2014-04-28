@@ -15,6 +15,11 @@ public class State {
 	private List<Agent> agentsToRemove;
 	private List<Agent> pausedCharacters;
 	private int objectsIdCounter;
+    private int bombLimitLeft = 1;
+    private int bombLimitRight = 1;
+    private int bombLimitUp = 1;
+    private int bombLimitDown = 1;
+
 
 	/**
 	 * The timestamp of the last update.
@@ -52,6 +57,21 @@ public class State {
 		this.map = map;
 	}
 
+    public void setBombLimitRight(int bombLimitRight) { this.bombLimitRight = bombLimitRight; }
+
+    public void setBombLimitLeft(int bombLimitLeft){ this.bombLimitLeft = bombLimitLeft; }
+
+    public void setBombLimitUp (int bombLimitUp) { this.bombLimitUp = bombLimitUp; }
+
+    public void setBombLimitDown (int bombLimitDown) { this.bombLimitDown = bombLimitDown; }
+
+    public int getBombLimitRight () { return this.bombLimitRight; }
+
+    public int getBombLimitLeft () { return this.bombLimitLeft; }
+
+    public int getBombLimitUp () { return this.bombLimitUp; }
+
+    public int getBombLimitDown () { return this.bombLimitDown; }
 	/**
 	 * @return the list of active agents in the state.
 	 */
@@ -168,7 +188,7 @@ public class State {
 	 * this method will clear all fields that are in the bomb's path
 	 */
 	public void bombExplosion(int explosionRange, Bomb bomb) {
-		float bombPosX = bomb.getPosition().getX();
+        float bombPosX = bomb.getPosition().getX();
 		float bombPosY = bomb.getPosition().getY();
 		Bomberman bombOwner = bomb.getOwner();
 
@@ -188,6 +208,11 @@ public class State {
 		int i;
 		for (i = 0; i < explosionRange; i++) {
 			pos = new Position(bombPosX, bombPosY + i);
+            if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitRight(i + 1);
+                break;
+            }
+            setBombLimitRight(explosionRange);
 			agent = getAgentByPosition(pos);
 			if (agent != null) {
 				if (agent.getType().equals("Robot")) {
@@ -201,6 +226,11 @@ public class State {
 		//destroy character in position bomb.pos.column + i
 		for (i = 0; i < explosionRange; i++) {
 			pos = new Position(bombPosX + i, bombPosY);
+            if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitUp(i + 1);
+                break;
+            }
+            setBombLimitUp(explosionRange);
 			agent = getAgentByPosition(pos);
 			if (agent != null) {
 				if (agent.getType().equals("Robot")) {
@@ -214,6 +244,11 @@ public class State {
 		//destroy character in position bomb.pos.line - i
 		for (i = 0; i < explosionRange; i++) {
 			pos = new Position(bombPosX, bombPosY - i);
+            if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitLeft(i + 1);
+                break;
+            }
+            setBombLimitLeft(explosionRange);
 			agent = getAgentByPosition(pos);
 			if (agent != null) {
 				if (agent.getType().equals("Robot")) {
@@ -227,6 +262,11 @@ public class State {
 		//destroy character in position bomb.pos.column - i
 		for (i = 0; i < explosionRange; i++) {
 			pos = new Position(bombPosX - i, bombPosY);
+            if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitDown(i + 1);
+                break;
+            }
+            setBombLimitDown(explosionRange);
 			agent = getAgentByPosition(pos);
 			if (agent != null) {
 				if (agent.getType().equals("Robot")) {

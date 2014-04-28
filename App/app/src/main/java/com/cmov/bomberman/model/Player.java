@@ -103,7 +103,10 @@ public class Player {
 				String type = "";
 				String currentAction = "";
 				String lastAction = "";
-				int range = 1;
+				int rangeRight = 1;
+                int rangeLeft = 1;
+                int rangeUp = 1;
+                int rangeDown = 1;
 				int drawingId = 0;
 				boolean isDestroyed = false;
 
@@ -129,9 +132,15 @@ public class Player {
 							y = (float) rd.nextDouble();
 							position = new Position(x, y);
 							rd.endArray();
-						} else if (name.equals("range")) {
-							range = rd.nextInt();
-						} else if (name.equals("id")) {
+						} else if (name.equals("rangeRight")) {
+							rangeRight = rd.nextInt();
+						} else if (name.equals("rangeLeft")) {
+                            rangeLeft = rd.nextInt();
+                        } else if (name.equals("rangeUp")) {
+                            rangeUp = rd.nextInt();
+                        } else if (name.equals("rangeDown")) {
+                            rangeDown = rd.nextInt();
+                        } else if (name.equals("id")) {
 							drawingId = rd.nextInt();
 						} else if (name.equals("score")) {
 							this.score = rd.nextInt();
@@ -144,7 +153,7 @@ public class Player {
 
 				// updates object
 				if (type != null) {
-					screen.updateDrawing(type, drawingId, position, currentAction, lastAction, step, lastStep, range,
+					screen.updateDrawing(type, drawingId, position, currentAction, lastAction, step, lastStep, rangeRight, rangeLeft, rangeUp, rangeDown,
 										 isDestroyed);
 				}
 			}

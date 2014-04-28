@@ -11,6 +11,10 @@ public class Bomb extends Agent {
 	private static final int EXPLOSION_MAX_STEP = 4;
 
 	private final int range;
+    private int rangeRight;
+    private int rangeLeft;
+    private int rangeUp;
+    private int rangeDown;
 
 	private int explosionStepIncr;
 	private boolean explosion;
@@ -29,6 +33,14 @@ public class Bomb extends Agent {
 		return this.owner;
 	}
 
+    public void setRangeRight(int rangeRight){ this.rangeRight = rangeRight; }
+
+    public void setRangeLeft (int rangeLeft) { this.rangeLeft = rangeLeft; }
+
+    public void setRangeUp (int rangeUp) { this.rangeUp = rangeUp; }
+
+    public void setRangeDown (int rangeDown) {this.rangeDown = rangeDown; }
+
 	@Override
 	public void play(State state, final float dt) {
 		String nextAction = getAlgorithm().getNextActionName();
@@ -41,6 +53,10 @@ public class Bomb extends Agent {
 			this.setStep(-1);
 			if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
 				state.bombExplosion(range, this);
+                setRangeRight(state.getBombLimitRight());
+                setRangeLeft(state.getBombLimitLeft());
+                setRangeUp(state.getBombLimitUp());
+                setRangeDown(state.getBombLimitDown());
 				explosion = true;
 			}
 		}
@@ -82,7 +98,10 @@ public class Bomb extends Agent {
 			writer.name("step").value(this.getStep());
 			writer.name("lastStep").value(this.getLastStep());
 
-			writer.name("range").value(this.range);
+			writer.name("rangeRight").value(this.rangeRight);
+            writer.name("rangeLeft").value(this.rangeLeft);
+            writer.name("rangeUp").value(this.rangeUp);
+            writer.name("rangeDown").value(this.rangeDown);
 
 			writer.name("currentAction").value(this.getCurrentAction());
 			writer.name("lastAction").value(this.getLastAction());

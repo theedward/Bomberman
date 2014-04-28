@@ -36,10 +36,8 @@ public class BombDrawing extends Drawing {
         int drawStep = this.getStep();
 
 		if (this.getCurrentAction().equals(Bomb.Actions.EXPLODE.toString())) {
-			/*
-				TODO: verify that when drawing the position is valid.. This only matters in this drawing
-				because it's the only one that occupies more than a position
-			 */
+//				TODO: verify that when drawing the position is valid.. This only matters in this drawing
+//				because it's the only one that occupies more than a position
 
 			// Left
 			canvas.drawBitmap(explosionSprite[drawStep][0], x - range * spriteWidth, y, null);

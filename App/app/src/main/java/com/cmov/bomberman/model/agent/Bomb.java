@@ -12,9 +12,6 @@ public class Bomb extends Agent {
 
 	private final int range;
 
-	/**
-	 * Starts at -1 because it's always incremented before it's used.
-	 */
 	private int explosionStepIncr;
 	private boolean explosion;
 	private boolean destroyed;

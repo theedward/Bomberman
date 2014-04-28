@@ -78,17 +78,10 @@ public class State {
             if (agent.getType().equals("Bomberman")) {
                 final int mapX = Position.toDiscrete(agent.getPosition().getX());
 				final int mapY = Position.toDiscrete(agent.getPosition().getY());
-                if (mapY + 1 < maxY && map[mapY + 1][mapX] == 'R') {
-					//verify up
-					agent.handleEvent(Event.DESTROY);
-				} else if (mapY - 1 >= 0 && map[mapY - 1][mapX] == 'R') {
-					//verify down
-					agent.handleEvent(Event.DESTROY);
-				} else if (mapX - 1 >= 0 && map[mapY][mapX - 1] == 'R') {
-					//verify left
-					agent.handleEvent(Event.DESTROY);
-				} else if (mapX + 1 < maxX && map[mapY][mapX + 1] == 'R') {
-					//verify right
+                if ((mapY + 1 < maxY && map[mapY + 1][mapX] == 'R') ||
+						(mapY - 1 >= 0 && map[mapY - 1][mapX] == 'R') ||
+						(mapX - 1 >= 0 && map[mapY][mapX - 1] == 'R') ||
+						(mapX + 1 < maxX && map[mapY][mapX + 1] == 'R')) {
 					agent.handleEvent(Event.DESTROY);
 				}
             }
@@ -105,6 +98,10 @@ public class State {
 		this.lastUpdate = now;
 	}
 
+	public void addAgent(Agent object) {
+		agents.add(object);
+	}
+
 	public void addAgentDuringUpdate(Agent a) {
 		this.agentsToAdd.add(a);
 	}
@@ -117,17 +114,30 @@ public class State {
         }
     }
 
-	public void addAgent(Agent object) {
-		agents.add(object);
+	/**
+	 * Adds an agent to be removed from the state in the end of the update
+	 * @param object the agent to be removed from the state
+	 */
+	public void destroyAgent(Agent object) {
+		Position pos = object.getPosition();
+		this.map[pos.yToDiscrete()][pos.xToDiscrete()] = DrawingType.EMPTY.toChar();
+		this.agentsToRemove.add(object);
 	}
 
+	/**
+	 * Moves the content of one position to the other position in the map.
+	 */
 	public void setMapPosition(Position newPosition, Position oldPosition) {
 		char c = map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()];
 		map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()] = DrawingType.EMPTY.toChar();
 		map[newPosition.yToDiscrete()][newPosition.xToDiscrete()] = c;
 	}
 
-	public void pauseCharacter(Player player) {
+	/**
+	 * Adds the agent of the player to the pause list.
+	 * @param player the player whose agent is going to be paused
+	 */
+	public void pauseAgent(Player player) {
 		Agent agent = player.getAgent();
 		if (agent != null) {
 			agents.remove(agent);
@@ -136,7 +146,11 @@ public class State {
 		}
 	}
 
-	public void unPauseCharacter(Player player) {
+	/**
+	 * Moves the agent of the player to the agent list.
+	 * The player must be in pause before.
+	 */
+	public void unpauseAgent(Player player) {
 		Agent agent = player.getAgent();
 		if (agent != null) {
 			pausedCharacters.remove(agent);
@@ -145,76 +159,86 @@ public class State {
 		}
 	}
 
-	/*
-	* This method removes the given agent from the state
-	* */
-	public void destroyAgent(Agent object) {
-		Position pos = object.getPosition();
-		this.map[pos.yToDiscrete()][pos.xToDiscrete()] = DrawingType.EMPTY.toChar();
-		this.agentsToRemove.add(object);
-	}
-
-	/*
-	* Given a certain explosion range,
-	* this method will clear all fields that are in the bomb's path
-	* */
+	/**
+	 * TODO: move this to the bomb class
+	 *
+	 * Given a certain explosion range,
+	 * this method will clear all fields that are in the bomb's path
+	 */
 	public void bombExplosion(int explosionRange, Bomb bomb) {
-		int i;
 		float bombPosX = bomb.getPosition().getX();
 		float bombPosY = bomb.getPosition().getY();
         Bomberman bombOwner = bomb.getOwner();
 
-		//destroy character in position bomb.pos.line + i
+		// destroy character in position bomb.pos
+		Position pos = new Position(bombPosX, bombPosY);
+		Agent agent = getAgentByPosition(pos);
+		if (agent != null) {
+			if (agent.getType().equals("Robot")) {
+				bombOwner.addScore(bombOwner.getRobotScore());
+			} else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
+				bombOwner.addScore(bombOwner.getOponentScore());
+			}
+			agent.handleEvent(Event.DESTROY);
+		}
+
+		// destroy character in position bomb.pos.line + i
+		int i;
 		for (i = 0; i < explosionRange; i++) {
-			Position pos = new Position(bombPosX, bombPosY + i);
-			Agent agent = getAgentByPosition(pos);
+			pos = new Position(bombPosX, bombPosY + i);
+			agent = getAgentByPosition(pos);
 			if (agent != null) {
-                if(agent.getType().equals("Robot"))
-                    bombOwner.addScore(bombOwner.getRobotScore());
-                else if(!agent.equals(bombOwner)) //TODO: Possivelmente esta nao é a melhor verificaçao
-                    bombOwner.addScore(bombOwner.getOponentScore());
+                if (agent.getType().equals("Robot")) {
+					bombOwner.addScore(bombOwner.getRobotScore());
+				} else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
+					bombOwner.addScore(bombOwner.getOponentScore());
+				}
 				agent.handleEvent(Event.DESTROY);
 			}
 		}
 		//destroy character in position bomb.pos.column + i
 		for (i = 0; i < explosionRange; i++) {
-			Position pos = new Position(bombPosX + i, bombPosY);
-			Agent agent = getAgentByPosition(pos);
+			pos = new Position(bombPosX + i, bombPosY);
+			agent = getAgentByPosition(pos);
 			if (agent != null) {
-                if(agent.getType().equals("Robot"))
-                    bombOwner.addScore(bombOwner.getRobotScore());
-                else if(!agent.equals(bombOwner))
-                    bombOwner.addScore(bombOwner.getOponentScore());
+				if (agent.getType().equals("Robot")) {
+					bombOwner.addScore(bombOwner.getRobotScore());
+				} else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
+					bombOwner.addScore(bombOwner.getOponentScore());
+				}
 				agent.handleEvent(Event.DESTROY);
 			}
 		}
 		//destroy character in position bomb.pos.line - i
 		for (i = 0; i < explosionRange; i++) {
-			Position pos = new Position(bombPosX, bombPosY - i);
-			Agent agent = getAgentByPosition(pos);
+			pos = new Position(bombPosX, bombPosY - i);
+			agent = getAgentByPosition(pos);
 			if (agent != null) {
-                if(agent.getType().equals("Robot"))
-                    bombOwner.addScore(bombOwner.getRobotScore());
-                else if(!agent.equals(bombOwner))
-                    bombOwner.addScore(bombOwner.getOponentScore());
+				if (agent.getType().equals("Robot")) {
+					bombOwner.addScore(bombOwner.getRobotScore());
+				} else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
+					bombOwner.addScore(bombOwner.getOponentScore());
+				}
 				agent.handleEvent(Event.DESTROY);
 			}
 		}
 		//destroy character in position bomb.pos.column - i
 		for (i = 0; i < explosionRange; i++) {
-			Position pos = new Position(bombPosX - i, bombPosY);
-			Agent agent = getAgentByPosition(pos);
+			pos = new Position(bombPosX - i, bombPosY);
+			agent = getAgentByPosition(pos);
 			if (agent != null) {
-                if(agent.getType().equals("Robot"))
-                    bombOwner.addScore(bombOwner.getRobotScore());
-                else if(!agent.equals(bombOwner))
-                    bombOwner.addScore(bombOwner.getOponentScore());
+				if (agent.getType().equals("Robot")) {
+					bombOwner.addScore(bombOwner.getRobotScore());
+				} else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
+					bombOwner.addScore(bombOwner.getOponentScore());
+				}
 				agent.handleEvent(Event.DESTROY);
 			}
 		}
 	}
 
 	/**
+	 * TODO: More than one agent can be in the same position!
 	 * @param pos the position
 	 * @return the agent in that position if exists, null otherwise.
 	 */

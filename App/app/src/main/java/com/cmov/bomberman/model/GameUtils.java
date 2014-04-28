@@ -182,8 +182,8 @@ public class GameUtils {
 
 		// These images are all in the first column and are separated by an empty position
 		for (int i = 0; i < numBitmaps; i++) {
-			// 1st row, 1 + 2*i column
-			bombImg[i] = getBitmap(bombSprite, 1, 1 + 2*i);
+			// 1 + 2*i row, 1st column
+			bombImg[i] = getBitmap(bombSprite, 1 + 2*i, 1);
 		}
 
 		return bombImg;

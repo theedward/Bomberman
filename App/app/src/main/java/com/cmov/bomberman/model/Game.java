@@ -165,7 +165,7 @@ public final class Game {
 	 * @param username the player's username
 	 */
 	public void pause(String username) {
-		gameState.pauseCharacter(players.get(username));
+		gameState.pauseAgent(players.get(username));
 		pausePlayer(username);
 	}
 
@@ -174,7 +174,7 @@ public final class Game {
 	 * @param username the player's username
 	 */
 	public void unpause(String username) {
-		gameState.unPauseCharacter(playersOnPause.get(username));
+		gameState.unpauseAgent(playersOnPause.get(username));
 		unpausePlayer(username);
 	}
 

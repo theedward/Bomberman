@@ -8,7 +8,7 @@ public class BombAlgorithm implements Algorithm {
 
 	public BombAlgorithm(int timeout) {
 		initialTime = System.currentTimeMillis();
-		explosionTimeout = timeout;
+		explosionTimeout = timeout * 1000;
 	}
 
 	@Override

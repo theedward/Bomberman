@@ -86,13 +86,14 @@ public class Bomberman extends MovableAgent {
 			move(state, action, dt);
 			setStep((this.getStep()+ 1) % MAX_MOVEMENT_STEP);
 		} else if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) && this.timeSinceLastBomb >= this.timeBetweenBombs) {
-			final Position bombPos = new Position(getPosition().xToDiscrete(), getPosition().yToDiscrete());
-            int id = state.incObjectsIdCounter();
-			state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
-			this.timeSinceLastBomb = 0;
-		}
+			final Position curPos = getPosition();
+			final Position bombPos = new Position(Position.toDiscrete(curPos.getX()) + Agent.WIDTH/2,
+												  Position.toDiscrete(curPos.getY()) + Agent.HEIGHT/2);
+            final int id = state.incObjectsIdCounter();
+			state.addAgentDuringUpdate(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
 
-		if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
+			this.timeSinceLastBomb = 0;
+		} else if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
 			if (this.getStep() < MAX_DIE_STEP) {
 				setStep(this.getStep()+1);
 			} else if (this.getStep() == MAX_DIE_STEP) {

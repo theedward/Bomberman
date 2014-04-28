@@ -11,6 +11,8 @@ import java.util.List;
 public class State {
 	private char[][] map;
 	private List<Agent> agents;
+	private List<Agent> agentsToAdd;
+	private List<Agent> agentsToRemove;
 	private List<Agent> pausedCharacters;
     private int objectsIdCounter;
 
@@ -21,6 +23,8 @@ public class State {
 
 	public State() {
 		agents = new LinkedList<Agent>();
+		agentsToAdd = new LinkedList<Agent>();
+		agentsToRemove = new LinkedList<Agent>();
 		pausedCharacters = new LinkedList<Agent>();
 	}
 
@@ -67,33 +71,45 @@ public class State {
 			agent.play(this, dt);
 		}
 
+		// Check if any robot is in an adjacent position to a Bomberman
 		final int maxY = map.length;
 		final int maxX = map[0].length;
-
         for (Agent agent : agents) {
             if (agent.getType().equals("Bomberman")) {
                 final int mapX = Position.toDiscrete(agent.getPosition().getX());
 				final int mapY = Position.toDiscrete(agent.getPosition().getY());
-                if (map[mapY + 1][mapX] == 'R') {
+                if (mapY + 1 < maxY && map[mapY + 1][mapX] == 'R') {
 					//verify up
 					agent.handleEvent(Event.DESTROY);
-				} else if (map[mapY - 1][mapX] == 'R') {
+				} else if (mapY - 1 >= 0 && map[mapY - 1][mapX] == 'R') {
 					//verify down
 					agent.handleEvent(Event.DESTROY);
-				} else if (map[mapY][mapX - 1] == 'R') {
+				} else if (mapX - 1 >= 0 && map[mapY][mapX - 1] == 'R') {
 					//verify left
 					agent.handleEvent(Event.DESTROY);
-				} else if (map[mapY][mapX + 1] == 'R') {
+				} else if (mapX + 1 < maxX && map[mapY][mapX + 1] == 'R') {
 					//verify right
 					agent.handleEvent(Event.DESTROY);
 				}
             }
         }
+
+		// remove new agents in the other agents list
+		agents.removeAll(agentsToRemove);
+		agentsToRemove.clear();
+
+		// insert new agents in the other agents list
+		agents.addAll(agentsToAdd);
+		agentsToAdd.clear();
+
 		this.lastUpdate = now;
 	}
 
-    public void removeDestroyedAgents() {
+	public void addAgentDuringUpdate(Agent a) {
+		this.agentsToAdd.add(a);
+	}
 
+    public void removeDestroyedAgents() {
         for (Agent agent : agents) {
             if (agent.isDestroyed()) {
                 destroyAgent(agent);
@@ -134,9 +150,8 @@ public class State {
 	* */
 	public void destroyAgent(Agent object) {
 		Position pos = object.getPosition();
-
-		agents.remove(object);
-		map[pos.yToDiscrete()][pos.xToDiscrete()] = DrawingType.EMPTY.toChar();
+		this.map[pos.yToDiscrete()][pos.xToDiscrete()] = DrawingType.EMPTY.toChar();
+		this.agentsToRemove.add(object);
 	}
 
 	/*

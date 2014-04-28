@@ -23,9 +23,9 @@ public class Bomb extends Agent {
 	public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
 		super(startingPos, new BombAlgorithm(timeout), id);
 		this.range = range;
-		this.setStep(-1);
 		this.explosionStepIncr = 1;
-        this.owner = owner;
+		this.owner = owner;
+		setStep(0);
 	}
 
     public Bomberman getOwner(){
@@ -52,7 +52,9 @@ public class Bomb extends Agent {
 			// during the explosion, the steps displayed should be [0 1 2 3 2 1 0]
 			if (this.getStep() < EXPLOSION_MAX_STEP) {
                 this.setStep(this.getStep()+explosionStepIncr);
-			} else if (this.getStep() == EXPLOSION_MAX_STEP) {
+			}
+
+			if (this.getStep() == EXPLOSION_MAX_STEP) {
 				explosionStepIncr = -1;
 				this.setStep(this.getStep()-1);
 			} else if (this.getStep() == 0 && explosionStepIncr == -1) {

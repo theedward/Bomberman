@@ -21,22 +21,22 @@ public class BombermanDrawing extends Drawing {
 		}
 	}
 
-    private int getSpriteByAction(String action) {
-        if (action.equals(MovableAgent.Actions.MOVE_DOWN.toString())) {
-            return 0;
-        } else if (action.equals(MovableAgent.Actions.MOVE_LEFT.toString())) {
-            return 1;
-        } else if (action.equals(MovableAgent.Actions.MOVE_UP.toString())) {
-            return 2;
-        } else if (action.equals(MovableAgent.Actions.MOVE_RIGHT.toString())) {
-            return 3;
-        } else if (action.equals(Agent.Actions.DESTROY.toString())) {
-            return 5;
-        }
+	private int getSpriteByAction(String action) {
+		if (action.equals(MovableAgent.Actions.MOVE_DOWN.toString())) {
+			return 0;
+		} else if (action.equals(MovableAgent.Actions.MOVE_LEFT.toString())) {
+			return 1;
+		} else if (action.equals(MovableAgent.Actions.MOVE_UP.toString())) {
+			return 2;
+		} else if (action.equals(MovableAgent.Actions.MOVE_RIGHT.toString())) {
+			return 3;
+		} else if (action.equals(Agent.Actions.DESTROY.toString())) {
+			return 5;
+		}
 
 		// Default sprite
-        return 0;
-    }
+		return 0;
+	}
 
 	@Override
 	public void draw(Canvas canvas) {
@@ -44,13 +44,13 @@ public class BombermanDrawing extends Drawing {
 		final int spriteHeight = sprite[0][0].getHeight();
 		final int x = (int) (getPosition().getX() * spriteWidth);
 		final int y = (int) (getPosition().getY() * spriteHeight);
-        int spriteIndex = getSpriteByAction(this.getCurrentAction());
-        int drawStep = this.getStep();
+		int spriteIndex = getSpriteByAction(this.getCurrentAction());
+		int drawStep = this.getStep();
 
-        if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString())) {
-            spriteIndex = getSpriteByAction(getLastAction());
-            drawStep = this.getLastStep();
-        }
-        canvas.drawBitmap(sprite[spriteIndex][drawStep], x, y, null);
+		if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString())) {
+			spriteIndex = getSpriteByAction(getLastAction());
+			drawStep = this.getLastStep();
+		}
+		canvas.drawBitmap(sprite[spriteIndex][drawStep], x, y, null);
 	}
 }

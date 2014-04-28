@@ -23,21 +23,22 @@ public abstract class MovableAgent extends Agent {
 	 * At last, it updates the position and the state.
 	 *
 	 * @param currentState the current state
-	 * @param action the movement direction
-	 * @param dt the time passed since the last update
+	 * @param action       the movement direction
+	 * @param dt           the time passed since the last update
 	 */
 	public void move(State currentState, Actions action, float dt) {
 		// DEBUG
-//		action = Actions.MOVE_LEFT;
+		//		action = Actions.MOVE_LEFT;
 
-		final Axis moveAxis = (action == Actions.MOVE_UP || action == Actions.MOVE_DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
+		final Axis moveAxis =
+				(action == Actions.MOVE_UP || action == Actions.MOVE_DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
 		final Position oldPosition = getPosition();
 		float curX = oldPosition.getX();
 		float curY = oldPosition.getY();
 		boolean canMove = false;
 
 		// DEBUG
-//		dt = 0.5f;
+		//		dt = 0.5f;
 
 		// if it's the first move or it's in the same axis as the previous move (horizontal or vertical),
 		// the agent can move
@@ -51,7 +52,8 @@ public abstract class MovableAgent extends Agent {
 
 			// if the agent wants to change direction, he needs to be near the middle (0 + margin < pos < 1 - margin)
 			// in both axis, otherwise he won't move.
-			if (topLeft.getX() < curX && curX < bottomRight.getX() && topLeft.getY() < curY && curY < bottomRight.getY()) {
+			if (topLeft.getX() < curX && curX < bottomRight.getX() && topLeft.getY() < curY &&
+				curY < bottomRight.getY()) {
 				canMove = true;
 				if (this.lastAxis == Axis.HORIZONTAL) {
 					// Center the x position
@@ -80,44 +82,44 @@ public abstract class MovableAgent extends Agent {
 
 			if (action == Actions.MOVE_LEFT) {
 				// left corner
-				final float leftX = curX - Agent.WIDTH/2;
+				final float leftX = curX - Agent.WIDTH / 2;
 				final int mapLeftX = Position.toDiscrete(leftX);
 
 				char c = map[mapY][mapLeftX];
 				if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
 					// move right
-					curX = (float) (Math.ceil(leftX) + Agent.WIDTH/2);
+					curX = (float) (Math.ceil(leftX) + Agent.WIDTH / 2);
 				}
 			} else if (action == Actions.MOVE_UP) {
 				// top corner
-				final float topY = curY - Agent.HEIGHT/2;
+				final float topY = curY - Agent.HEIGHT / 2;
 				final int mapTopY = Position.toDiscrete(topY);
 
 				char c = map[mapTopY][mapX];
 				if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
 					// move bottom
-					curY = (float) (Math.ceil(topY) + Agent.HEIGHT/2);
+					curY = (float) (Math.ceil(topY) + Agent.HEIGHT / 2);
 				}
 			} else if (action == Actions.MOVE_RIGHT) {
 				// right corner
-				final float rightX = curX + Agent.WIDTH/2;
+				final float rightX = curX + Agent.WIDTH / 2;
 				final int mapRightX = Position.toDiscrete(rightX);
 
 				char c = map[mapY][mapRightX];
 				if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
 					// move left
-					curX = (float) (Math.floor(rightX) - Agent.WIDTH/2);
+					curX = (float) (Math.floor(rightX) - Agent.WIDTH / 2);
 				}
 
 			} else if (action == Actions.MOVE_DOWN) {
 				// bottom corner
-				final float bottomY = curY + Agent.HEIGHT/2;
+				final float bottomY = curY + Agent.HEIGHT / 2;
 				final int mapTopY = Position.toDiscrete(bottomY);
 
 				char c = map[mapTopY][mapX];
 				if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
 					// move bottom
-					curY = (float) (Math.floor(bottomY) - Agent.HEIGHT/2);
+					curY = (float) (Math.floor(bottomY) - Agent.HEIGHT / 2);
 				}
 			}
 
@@ -129,7 +131,7 @@ public abstract class MovableAgent extends Agent {
 	private enum Axis {
 		HORIZONTAL, VERTICAL
 	}
-	
+
 	public enum Actions {
 		MOVE_DOWN,
 		MOVE_UP,

@@ -25,7 +25,7 @@ public final class Game {
 	 */
 	private int duration;
 	private boolean hasStarted;
-    private int totalScore = 0;
+	private int totalScore = 0;
 
 	/**
 	 * This constructor performs all the necessary steps to start the game right next.
@@ -54,8 +54,8 @@ public final class Game {
 		players.values().toArray(characterOwners);
 
 		List<WallDrawing> wallDrawings = new LinkedList<WallDrawing>();
-        Map<Integer, Drawing> drawings = new HashMap<Integer, Drawing>();
-        int idDrawings = 0;
+		Map<Integer, Drawing> drawings = new HashMap<Integer, Drawing>();
+		int idDrawings = 0;
 		final char[][] map = gameState.getMap();
 
 		for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
@@ -65,11 +65,11 @@ public final class Game {
 				final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
 					gameState.addAgent(new Obstacle(pos, idDrawings));
-                    drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx,rowIdx), 0));
+					drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx, rowIdx), 0));
 					idDrawings++;
 				} else if (character == State.DrawingType.ROBOT.toChar()) {
 					gameState.addAgent(new Robot(pos, idDrawings, gameConfiguration.getrSpeed()));
-                    drawings.put(idDrawings,new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
+					drawings.put(idDrawings, new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
 					idDrawings++;
 				} else if (character == State.DrawingType.WALL.toChar()) {
 					wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
@@ -100,10 +100,10 @@ public final class Game {
 			}
 		}
 
-        gameConfiguration.setWallDrawings(wallDrawings);
-        gameConfiguration.setMutableDrawings(drawings);
-        // must pass counter id to game state for posterior object creations, such as bombs
-        gameState.setObjectsIdCounter(idDrawings);
+		gameConfiguration.setWallDrawings(wallDrawings);
+		gameConfiguration.setMutableDrawings(drawings);
+		// must pass counter id to game state for posterior object creations, such as bombs
+		gameState.setObjectsIdCounter(idDrawings);
 	}
 
 	/**
@@ -171,6 +171,7 @@ public final class Game {
 
 	/**
 	 * Unpauses the game for the player with the given username
+	 *
 	 * @param username the player's username
 	 */
 	public void unpause(String username) {
@@ -198,14 +199,15 @@ public final class Game {
 
 	}
 
-    public TreeMap<String, Integer> checkWinner(){
-        TreeMap<String,Integer> scores = new TreeMap<String, Integer>();
-        for(Player p : players.values()) {
-            scores.put(p.getUsername(), p.getScore());
-        }
-        return scores;
+	public TreeMap<String, Integer> checkWinner() {
+		TreeMap<String, Integer> scores = new TreeMap<String, Integer>();
+		for (Player p : players.values()) {
+			scores.put(p.getUsername(), p.getScore());
+		}
+		return scores;
 
-    }
+	}
+
 	/**
 	 * Updates the state (new frame).
 	 */
@@ -219,7 +221,7 @@ public final class Game {
 		// Update the state
 		gameState.playAll();
 		updatePlayers();
-        gameState.removeDestroyedAgents();
+		gameState.removeDestroyedAgents();
 
 		this.duration--;
 
@@ -269,8 +271,7 @@ public final class Game {
 		final char[][] map = gameState.getMap();
 		for (char[] line : map) {
 			for (char c : line) {
-				if (c == State.DrawingType.BOMBERMAN.toChar() ||
-					c == State.DrawingType.ROBOT.toChar()) {
+				if (c == State.DrawingType.BOMBERMAN.toChar() || c == State.DrawingType.ROBOT.toChar()) {
 					numMovableAgents++;
 				}
 			}

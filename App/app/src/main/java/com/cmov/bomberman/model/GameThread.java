@@ -40,7 +40,7 @@ public class GameThread extends Thread {
 	/**
 	 * Performs updates until the game has finished.
 	 * Doesn't update when running is false.
-	 *
+	 * <p/>
 	 * For better battery saving, the thread gets locked when running is false
 	 * and only gets unlocked when running is true.
 	 */

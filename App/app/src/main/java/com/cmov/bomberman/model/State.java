@@ -14,7 +14,7 @@ public class State {
 	private List<Agent> agentsToAdd;
 	private List<Agent> agentsToRemove;
 	private List<Agent> pausedCharacters;
-    private int objectsIdCounter;
+	private int objectsIdCounter;
 
 	/**
 	 * The timestamp of the last update.
@@ -36,15 +36,15 @@ public class State {
 		this.lastUpdate = System.currentTimeMillis();
 	}
 
-    public void setObjectsIdCounter(int objectsIdCounter) {
-        this.objectsIdCounter = objectsIdCounter;
-    }
+	public void setObjectsIdCounter(int objectsIdCounter) {
+		this.objectsIdCounter = objectsIdCounter;
+	}
 
-    public int incObjectsIdCounter() {
-        return objectsIdCounter++;
-    }
+	public int incObjectsIdCounter() {
+		return objectsIdCounter++;
+	}
 
-    public char[][] getMap() {
+	public char[][] getMap() {
 		return map;
 	}
 
@@ -62,8 +62,8 @@ public class State {
 	/**
 	 * This method calls the method play of each agent.
 	 * Also cleans every object that should be destroyed (isDestroyed == true).
- 	 */
- 	public void playAll() {
+	 */
+	public void playAll() {
 		final long now = System.currentTimeMillis();
 		final float dt = (now - lastUpdate) / 1000.0f;
 
@@ -74,18 +74,18 @@ public class State {
 		// Check if any robot is in an adjacent position to a Bomberman
 		final int maxY = map.length;
 		final int maxX = map[0].length;
-        for (Agent agent : agents) {
-            if (agent.getType().equals("Bomberman")) {
-                final int mapX = Position.toDiscrete(agent.getPosition().getX());
+		for (Agent agent : agents) {
+			if (agent.getType().equals("Bomberman")) {
+				final int mapX = Position.toDiscrete(agent.getPosition().getX());
 				final int mapY = Position.toDiscrete(agent.getPosition().getY());
-                if ((mapY + 1 < maxY && map[mapY + 1][mapX] == 'R') ||
-						(mapY - 1 >= 0 && map[mapY - 1][mapX] == 'R') ||
-						(mapX - 1 >= 0 && map[mapY][mapX - 1] == 'R') ||
-						(mapX + 1 < maxX && map[mapY][mapX + 1] == 'R')) {
+				if ((mapY + 1 < maxY && map[mapY + 1][mapX] == 'R') ||
+					(mapY - 1 >= 0 && map[mapY - 1][mapX] == 'R') ||
+					(mapX - 1 >= 0 && map[mapY][mapX - 1] == 'R') ||
+					(mapX + 1 < maxX && map[mapY][mapX + 1] == 'R')) {
 					agent.handleEvent(Event.DESTROY);
 				}
-            }
-        }
+			}
+		}
 
 		// remove new agents in the other agents list
 		agents.removeAll(agentsToRemove);
@@ -106,16 +106,17 @@ public class State {
 		this.agentsToAdd.add(a);
 	}
 
-    public void removeDestroyedAgents() {
-        for (Agent agent : agents) {
-            if (agent.isDestroyed()) {
-                destroyAgent(agent);
-            }
-        }
-    }
+	public void removeDestroyedAgents() {
+		for (Agent agent : agents) {
+			if (agent.isDestroyed()) {
+				destroyAgent(agent);
+			}
+		}
+	}
 
 	/**
 	 * Adds an agent to be removed from the state in the end of the update
+	 *
 	 * @param object the agent to be removed from the state
 	 */
 	public void destroyAgent(Agent object) {
@@ -135,6 +136,7 @@ public class State {
 
 	/**
 	 * Adds the agent of the player to the pause list.
+	 *
 	 * @param player the player whose agent is going to be paused
 	 */
 	public void pauseAgent(Player player) {
@@ -161,14 +163,14 @@ public class State {
 
 	/**
 	 * TODO: move this to the bomb class
-	 *
+	 * <p/>
 	 * Given a certain explosion range,
 	 * this method will clear all fields that are in the bomb's path
 	 */
 	public void bombExplosion(int explosionRange, Bomb bomb) {
 		float bombPosX = bomb.getPosition().getX();
 		float bombPosY = bomb.getPosition().getY();
-        Bomberman bombOwner = bomb.getOwner();
+		Bomberman bombOwner = bomb.getOwner();
 
 		// destroy character in position bomb.pos
 		Position pos = new Position(bombPosX, bombPosY);
@@ -188,7 +190,7 @@ public class State {
 			pos = new Position(bombPosX, bombPosY + i);
 			agent = getAgentByPosition(pos);
 			if (agent != null) {
-                if (agent.getType().equals("Robot")) {
+				if (agent.getType().equals("Robot")) {
 					bombOwner.addScore(bombOwner.getRobotScore());
 				} else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
 					bombOwner.addScore(bombOwner.getOponentScore());
@@ -239,7 +241,9 @@ public class State {
 
 	/**
 	 * TODO: More than one agent can be in the same position!
+	 *
 	 * @param pos the position
+	 *
 	 * @return the agent in that position if exists, null otherwise.
 	 */
 	private Agent getAgentByPosition(Position pos) {

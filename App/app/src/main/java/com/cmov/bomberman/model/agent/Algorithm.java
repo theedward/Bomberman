@@ -14,6 +14,7 @@ public interface Algorithm {
 
 	/**
 	 * This method provides support for the algorithm to change considering game events.
+	 *
 	 * @param e the event
 	 */
 	public void handleEvent(Event e);

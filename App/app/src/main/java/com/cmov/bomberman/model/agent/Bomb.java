@@ -15,7 +15,7 @@ public class Bomb extends Agent {
 	private int explosionStepIncr;
 	private boolean explosion;
 	private boolean destroyed;
-    private Bomberman owner;
+	private Bomberman owner;
 
 	public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
 		super(startingPos, new BombAlgorithm(timeout), id);
@@ -25,19 +25,19 @@ public class Bomb extends Agent {
 		setStep(0);
 	}
 
-    public Bomberman getOwner(){
-        return this.owner;
-    }
+	public Bomberman getOwner() {
+		return this.owner;
+	}
 
 	@Override
 	public void play(State state, final float dt) {
 		String nextAction = getAlgorithm().getNextActionName();
 
-		if (! this.getCurrentAction().equals(nextAction)) {
+		if (!this.getCurrentAction().equals(nextAction)) {
 			// changed action, restart step
-            this.setLastAction(this.getCurrentAction());
+			this.setLastAction(this.getCurrentAction());
 			this.setCurrentAction(nextAction);
-            this.setLastStep(this.getStep());
+			this.setLastStep(this.getStep());
 			this.setStep(-1);
 			if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
 				state.bombExplosion(range, this);
@@ -48,17 +48,17 @@ public class Bomb extends Agent {
 		if (explosion) {
 			// during the explosion, the steps displayed should be [0 1 2 3 2 1 0]
 			if (this.getStep() < EXPLOSION_MAX_STEP) {
-                this.setStep(this.getStep()+explosionStepIncr);
+				this.setStep(this.getStep() + explosionStepIncr);
 			}
 
 			if (this.getStep() == EXPLOSION_MAX_STEP) {
 				explosionStepIncr = -1;
-				this.setStep(this.getStep()-1);
+				this.setStep(this.getStep() - 1);
 			} else if (this.getStep() == 0 && explosionStepIncr == -1) {
 				destroyed = true;
 			}
 		} else {
-            this.setStep((this.getStep()+1) % BOMB_MAX_STEP);
+			this.setStep((this.getStep() + 1) % BOMB_MAX_STEP);
 		}
 	}
 
@@ -80,14 +80,14 @@ public class Bomb extends Agent {
 			writer.endArray();
 
 			writer.name("step").value(this.getStep());
-            writer.name("lastStep").value(this.getLastStep());
+			writer.name("lastStep").value(this.getLastStep());
 
 			writer.name("range").value(this.range);
 
 			writer.name("currentAction").value(this.getCurrentAction());
-            writer.name("lastAction").value(this.getLastAction());
-            writer.name("id").value(this.getId());
-            writer.name("isDestroyed").value(isDestroyed());
+			writer.name("lastAction").value(this.getLastAction());
+			writer.name("id").value(this.getId());
+			writer.name("isDestroyed").value(isDestroyed());
 			writer.endObject();
 		}
 		catch (IOException e) {

@@ -33,11 +33,11 @@ public class BombDrawing extends Drawing {
 		final int spriteHeight = sprite[0].getHeight();
 		final int x = (int) (getPosition().getX() * spriteWidth);
 		final int y = (int) (getPosition().getY() * spriteHeight);
-        int drawStep = this.getStep();
+		int drawStep = this.getStep();
 
 		if (this.getCurrentAction().equals(Bomb.Actions.EXPLODE.toString())) {
-//				TODO: verify that when drawing the position is valid.. This only matters in this drawing
-//				because it's the only one that occupies more than a position
+			//				TODO: verify that when drawing the position is valid.. This only matters in this drawing
+			//				because it's the only one that occupies more than a position
 
 			// Left
 			canvas.drawBitmap(explosionSprite[drawStep][0], x - range * spriteWidth, y, null);
@@ -51,18 +51,18 @@ public class BombDrawing extends Drawing {
 			canvas.drawBitmap(explosionSprite[drawStep][4], x, y, null);
 
 			// Vertical
-			for (int hy = y - (range-1)*spriteHeight; hy < y; hy += spriteWidth) {
+			for (int hy = y - (range - 1) * spriteHeight; hy < y; hy += spriteWidth) {
 				canvas.drawBitmap(explosionSprite[drawStep][5], x, hy, null);
 			}
-			for (int hy = y + (range-1)*spriteHeight; hy > y; hy -= spriteWidth) {
+			for (int hy = y + (range - 1) * spriteHeight; hy > y; hy -= spriteWidth) {
 				canvas.drawBitmap(explosionSprite[drawStep][5], x, hy, null);
 			}
 
 			// Horizontal
-			for (int hx = x - (range-1)*spriteWidth; hx < x; hx += spriteWidth) {
+			for (int hx = x - (range - 1) * spriteWidth; hx < x; hx += spriteWidth) {
 				canvas.drawBitmap(explosionSprite[drawStep][6], hx, y, null);
 			}
-			for (int hx = x + (range-1)*spriteWidth; hx > x; hx -= spriteWidth) {
+			for (int hx = x + (range - 1) * spriteWidth; hx > x; hx -= spriteWidth) {
 				canvas.drawBitmap(explosionSprite[drawStep][6], hx, y, null);
 			}
 		} else {

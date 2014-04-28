@@ -1,11 +1,6 @@
 package com.cmov.bomberman.model;
 
-import com.cmov.bomberman.model.agent.Obstacle;
-import com.cmov.bomberman.model.drawing.BombDrawing;
-import com.cmov.bomberman.model.drawing.BombermanDrawing;
 import com.cmov.bomberman.model.drawing.Drawing;
-import com.cmov.bomberman.model.drawing.ObstacleDrawing;
-import com.cmov.bomberman.model.drawing.RobotDrawing;
 import com.cmov.bomberman.model.drawing.WallDrawing;
 
 import java.util.HashMap;
@@ -18,7 +13,7 @@ public class GameConfiguration {
 	private final Map<String, Integer> playerScore;
 	private final Map<Integer, Position> characterPositions;
 	private final List<WallDrawing> wallDrawings;
-    private final Map<Integer, Drawing> mutableDrawings;
+	private final Map<Integer, Drawing> mutableDrawings;
 
 	private int mapWidth;
 	private int mapHeight;
@@ -47,7 +42,7 @@ public class GameConfiguration {
 		playerScore = new HashMap<String, Integer>();
 		characterPositions = new HashMap<Integer, Position>();
 		wallDrawings = new LinkedList<WallDrawing>();
-        mutableDrawings = new HashMap<Integer, Drawing>();
+		mutableDrawings = new HashMap<Integer, Drawing>();
 	}
 
 	public int getNumUpdatesPerSecond() {
@@ -154,16 +149,16 @@ public class GameConfiguration {
 		this.mapHeight = mapHeight;
 	}
 
-    public Map<Integer, Drawing> getMutableDrawings() { return mutableDrawings; }
+	public Map<Integer, Drawing> getMutableDrawings() { return mutableDrawings; }
 
-    public List<WallDrawing> getWallDrawings() { return wallDrawings; }
+	public void setMutableDrawings(final Map<Integer, Drawing> mutableDrawings) {
+		this.mutableDrawings.putAll(mutableDrawings);
+	}
 
-    public void setWallDrawings(final List<WallDrawing> walls) {
-        this.wallDrawings.addAll(walls);
-    }
+	public List<WallDrawing> getWallDrawings() { return wallDrawings; }
 
-    public void setMutableDrawings(final Map<Integer, Drawing> mutableDrawings) {
-        this.mutableDrawings.putAll(mutableDrawings);
-    }
+	public void setWallDrawings(final List<WallDrawing> walls) {
+		this.wallDrawings.addAll(walls);
+	}
 
 }

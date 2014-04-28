@@ -28,10 +28,10 @@ public class Robot extends MovableAgent {
 		}
 
 		if (!this.getCurrentAction().equals(nextAction)) {
-            this.setLastAction(this.getCurrentAction());
+			this.setLastAction(this.getCurrentAction());
 			this.setCurrentAction(nextAction);
 			this.setLastStep(this.getStep());
-            this.setStep(0);
+			this.setStep(0);
 		}
 
 		if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
@@ -61,11 +61,11 @@ public class Robot extends MovableAgent {
 			writer.endArray();
 
 			writer.name("currentAction").value(this.getCurrentAction());
-            writer.name("lastAction").value(this.getLastAction());
+			writer.name("lastAction").value(this.getLastAction());
 			writer.name("step").value(this.getStep());
-            writer.name("lastStep").value(this.getLastStep());
-            writer.name("id").value(this.getId());
-            writer.name("isDestroyed").value(isDestroyed());
+			writer.name("lastStep").value(this.getLastStep());
+			writer.name("id").value(this.getId());
+			writer.name("isDestroyed").value(isDestroyed());
 			writer.endObject();
 		}
 		catch (IOException e) {

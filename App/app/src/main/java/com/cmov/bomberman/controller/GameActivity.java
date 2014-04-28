@@ -45,7 +45,7 @@ public class GameActivity extends Activity {
 		Player player = new Player(DEFAULT_USERNAME, playerController);
 
 		this.gameView = (GameView) findViewById(R.id.canvas);
-        this.scoreView = (TextView) findViewById(R.id.playerScore);
+		this.scoreView = (TextView) findViewById(R.id.playerScore);
 		player.setGameView(this);
 		this.gameView.setScreen(player.getScreen());
 

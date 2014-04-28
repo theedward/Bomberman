@@ -25,6 +25,7 @@ public class Controllable implements Algorithm {
 
 	/**
 	 * A constructor with a custom keymap.
+	 *
 	 * @param keymap the keymap
 	 */
 	public Controllable(Map<Character, String> keymap) {
@@ -33,6 +34,7 @@ public class Controllable implements Algorithm {
 
 	/**
 	 * Changes the last key pressed when the character is in the keymap.
+	 *
 	 * @return if the character is in the keymap.
 	 */
 	public boolean keyPressed(char c) {
@@ -61,6 +63,7 @@ public class Controllable implements Algorithm {
 	/**
 	 * The agents that are controllable can override the Agent#handleEvent method to pass the events
 	 * to the algorithm.
+	 *
 	 * @param e the event
 	 */
 	@Override

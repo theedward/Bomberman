@@ -7,60 +7,60 @@ import com.cmov.bomberman.model.Position;
 // interface.
 public abstract class Drawing {
 	private Position position;
-    private int id;
-    private String lastAction;
-    private String currentAction;
-    private int step;
-    private int lastStep;
+	private int id;
+	private String lastAction;
+	private String currentAction;
+	private int step;
+	private int lastStep;
 
 	protected Drawing(final Position position) {
-        this.position = position;
-        this.lastAction = "";
-        this.currentAction = "";
+		this.position = position;
+		this.lastAction = "";
+		this.currentAction = "";
 	}
 
 	public Position getPosition() {
 		return position;
 	}
 
-    public void setPosition(Position position) { this.position = position; }
+	public void setPosition(Position position) { this.position = position; }
 
-    public int getId() { return id;}
+	public int getId() { return id;}
 
-    public void setId(int idDrawing) { this.id = idDrawing; }
+	public void setId(int idDrawing) { this.id = idDrawing; }
 
-    public String getLastAction() {
-        return lastAction;
-    }
+	public String getLastAction() {
+		return lastAction;
+	}
 
-    public void setLastAction(String lastAction) {
-        this.lastAction = lastAction;
-    }
+	public void setLastAction(String lastAction) {
+		this.lastAction = lastAction;
+	}
 
-    public String getCurrentAction() { return currentAction; }
+	public String getCurrentAction() { return currentAction; }
 
-    public void setCurrentAction(String currentAction) { this.currentAction = currentAction; }
+	public void setCurrentAction(String currentAction) { this.currentAction = currentAction; }
 
-    public int getStep() { return step; }
+	public int getStep() { return step; }
 
-    public void setStep(int step) { this.step = step; }
+	public void setStep(int step) { this.step = step; }
 
-    public int getLastStep() { return lastStep; }
+	public int getLastStep() { return lastStep; }
 
-    public void setLastStep(int lastStep) { this.lastStep = lastStep; }
+	public void setLastStep(int lastStep) { this.lastStep = lastStep; }
 
-    public abstract void draw(Canvas canvas);
+	public abstract void draw(Canvas canvas);
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        } else {
-            if (o instanceof Drawing) {
-                Drawing drawing = (Drawing) o;
-                return this.id == drawing.getId();
-            }
-            return false;
-        }
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		} else {
+			if (o instanceof Drawing) {
+				Drawing drawing = (Drawing) o;
+				return this.id == drawing.getId();
+			}
+			return false;
+		}
+	}
 }

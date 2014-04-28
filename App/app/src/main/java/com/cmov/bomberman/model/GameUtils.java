@@ -44,13 +44,16 @@ public class GameUtils {
 
 	/**
 	 * @param level the game level
+	 *
 	 * @return the file name of this level.
 	 */
 	private static String levelFilename(final int level) { return "level_" + level + ".txt"; }
 
 	/**
 	 * Reads the map correspondent to the level from a resource file.
+	 *
 	 * @param level the game level
+	 *
 	 * @return the map
 	 */
 	public static char[][] readLevelFromFile(final int level) {
@@ -87,6 +90,7 @@ public class GameUtils {
 
 	/**
 	 * @param level the game level
+	 *
 	 * @return the file name of the configuration file for this level.
 	 */
 	private static String configFilename(final int level) {
@@ -95,7 +99,9 @@ public class GameUtils {
 
 	/**
 	 * Reads the configuration file correspondent to the level from a resource file.
+	 *
 	 * @param level the game level
+	 *
 	 * @return the game configuration
 	 */
 	public static GameConfiguration readConfigurationFile(final int level) {
@@ -151,9 +157,10 @@ public class GameUtils {
 	 * Gets the bitmap in the nth row and the nth column.
 	 * This only works in the bomberman_*_sheet sprites.
 	 *
-	 * @param src the initial resource file
-	 * @param row the row of the destiny bitmap
+	 * @param src    the initial resource file
+	 * @param row    the row of the destiny bitmap
 	 * @param column the column of the destiny bitmap
+	 *
 	 * @return the bitmap in the specified row and column in the src bitmap assuming every image
 	 * has 30px width and 30px height.
 	 */
@@ -164,6 +171,7 @@ public class GameUtils {
 
 	/**
 	 * Reads the wall sprite from the resource file.
+	 *
 	 * @return the wall image
 	 */
 	public static Bitmap readWallSprite() {
@@ -173,17 +181,19 @@ public class GameUtils {
 
 	/**
 	 * Reads the bomb sprite from the resource file
+	 *
 	 * @return the bomb image on the normal mode
 	 */
 	public static Bitmap[] readBombSprite() {
-		final Bitmap bombSprite = BitmapFactory.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_bomb_sheet);
+		final Bitmap bombSprite = BitmapFactory.decodeResource(CONTEXT.getResources(),
+															   R.drawable.bomberman_bomb_sheet);
 		final int numBitmaps = 3;
 		final Bitmap[] bombImg = new Bitmap[numBitmaps];
 
 		// These images are all in the first column and are separated by an empty position
 		for (int i = 0; i < numBitmaps; i++) {
 			// 1 + 2*i row, 1st column
-			bombImg[i] = getBitmap(bombSprite, 1 + 2*i, 1);
+			bombImg[i] = getBitmap(bombSprite, 1 + 2 * i, 1);
 		}
 
 		return bombImg;
@@ -228,11 +238,13 @@ public class GameUtils {
 	 * Reads the bomberman sprite from the resource file.
 	 * The order in which the bitmaps are in the array is:
 	 * (Down, Left, Up, Right, PowerUp?, Destroyed)
+	 *
 	 * @return the bomberman img for each possible action (there are 6 different actions) and for
 	 * each step (there are 3 steps)
 	 */
 	public static Bitmap[][] readBombermanSprite() {
-		Bitmap bombermanSprite = BitmapFactory.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_bomberman_sheet);
+		Bitmap bombermanSprite = BitmapFactory
+				.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_bomberman_sheet);
 		final int numActions = 6;
 		final int numSteps = 3;
 
@@ -250,6 +262,7 @@ public class GameUtils {
 
 	/**
 	 * Reads the obstacle sprite from the resource file.
+	 *
 	 * @return the obstacle img for each step (there are 7 steps)
 	 */
 	public static Bitmap[] readObstacleSprite() {
@@ -267,6 +280,7 @@ public class GameUtils {
 
 	/**
 	 * Reads the robot sprite from the resource file.
+	 *
 	 * @return the robot img for each action (MOVE_LEFT and MOVE_RIGHT) and for each step (there are 3 steps).
 	 */
 	public static Bitmap[][] readRobotSprite() {
@@ -289,6 +303,7 @@ public class GameUtils {
 
 	/**
 	 * Reads the robot sprite from the resource file.
+	 *
 	 * @return the robot img for each step (there are 5 steps) of the robot in the destroyed mode.
 	 */
 	public static Bitmap[] readRobotDestroyedSprite() {

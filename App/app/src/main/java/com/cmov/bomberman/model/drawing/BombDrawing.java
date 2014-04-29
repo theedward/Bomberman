@@ -2,13 +2,14 @@ package com.cmov.bomberman.model.drawing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.agent.Bomb;
 
 public class BombDrawing extends Drawing {
-	private static Bitmap sprite[];
-	private static Bitmap explosionSprite[][];
+    private static Bitmap sprite[];
+    private static Bitmap explosionSprite[][];
 
 	private final int rangeRight;
     private final int rangeLeft;
@@ -24,22 +25,23 @@ public class BombDrawing extends Drawing {
         this.rangeDown = rangeDown;
 		this.setCurrentAction(currentAction);
 
-		if (sprite == null) {
-			sprite = GameUtils.readBombSprite();
-		}
+        if (sprite == null) {
+            sprite = GameUtils.readBombSprite();
+        }
 
-		if (explosionSprite == null) {
-			explosionSprite = GameUtils.readBombExplosionSprite();
-		}
-	}
+        if (explosionSprite == null) {
+            explosionSprite = GameUtils.readBombExplosionSprite();
+        }
+    }
 
-	@Override
-	public void draw(final Canvas canvas) {
-		final int spriteWidth = sprite[0].getWidth();
-		final int spriteHeight = sprite[0].getHeight();
-		final int x = (int) (getPosition().getX() * spriteWidth);
-		final int y = (int) (getPosition().getY() * spriteHeight);
-		int drawStep = this.getStep();
+    @Override
+    public void draw(final Canvas canvas) {
+        final int spriteWidth = sprite[0].getWidth();
+        final int spriteHeight = sprite[0].getHeight();
+        final int x = (int) (getPosition().getX() * spriteWidth);
+        final int y = (int) (getPosition().getY() * spriteHeight);
+        int drawStep = this.getStep();
+
 
 		if (this.getCurrentAction().equals(Bomb.Actions.EXPLODE.toString())) {
 

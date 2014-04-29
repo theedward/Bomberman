@@ -2,6 +2,7 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import android.util.JsonReader;
+
 import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
@@ -196,4 +197,5 @@ public class Player {
 		// update score
 		gameActivity.updateScoreView(this.score);
 	}
+
 }

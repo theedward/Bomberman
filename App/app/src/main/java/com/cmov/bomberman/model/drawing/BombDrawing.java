@@ -11,12 +11,30 @@ public class BombDrawing extends Drawing {
     private static Bitmap sprite[];
     private static Bitmap explosionSprite[][];
 
-	private final int rangeRight;
-    private final int rangeLeft;
-    private final int rangeUp;
-    private final int rangeDown;
 
-	public BombDrawing(final Position position, final int step, final int rangeRight, final int rangeLeft, final int rangeUp, final int rangeDown, final String currentAction) {
+
+    private int rangeRight;
+    private int rangeLeft;
+    private int rangeUp;
+    private int rangeDown;
+
+    public void setRangeRight(int rangeRight) {
+        this.rangeRight = rangeRight;
+    }
+
+    public void setRangeLeft(int rangeLeft) {
+        this.rangeLeft = rangeLeft;
+    }
+
+    public void setRangeUp(int rangeUp) {
+        this.rangeUp = rangeUp;
+    }
+
+    public void setRangeDown(int rangeDown) {
+        this.rangeDown = rangeDown;
+    }
+
+	public BombDrawing(final Position position, final int step,final int rangeRight, final int rangeLeft, final int rangeUp, final int rangeDown, final String currentAction) {
 		super(position);
 		this.setStep(step);
 		this.rangeRight = rangeRight;
@@ -46,10 +64,6 @@ public class BombDrawing extends Drawing {
 		if (this.getCurrentAction().equals(Bomb.Actions.EXPLODE.toString())) {
 
 			// Left
-            System.out.println("Drawing Bomb Down: " + rangeDown);
-            System.out.println("Drawing Bomb Up: " + rangeUp);
-            System.out.println("Drawing Bomb Left: " + rangeLeft);
-            System.out.println("Drawing Bomb Right: " + rangeRight);
             if(rangeLeft != 0)
 			    canvas.drawBitmap(explosionSprite[drawStep][0], x - 1 * spriteWidth, y, null);
 			// Up
@@ -65,10 +79,10 @@ public class BombDrawing extends Drawing {
 			canvas.drawBitmap(explosionSprite[drawStep][4], x, y, null);
 
 			// Vertical
-			for (int hy = y - (rangeDown) * spriteHeight; hy < y; hy += spriteWidth) {
+			for (int hy = y - (rangeUp) * spriteHeight; hy < y; hy += spriteWidth) {
 				canvas.drawBitmap(explosionSprite[drawStep][5], x, hy, null);
 			}
-			for (int hy = y + (rangeUp) * spriteHeight; hy > y; hy -= spriteWidth) {
+			for (int hy = y + (rangeDown) * spriteHeight; hy > y; hy -= spriteWidth) {
 				canvas.drawBitmap(explosionSprite[drawStep][5], x, hy, null);
 			}
 

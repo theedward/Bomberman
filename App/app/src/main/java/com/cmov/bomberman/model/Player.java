@@ -104,10 +104,10 @@ public class Player {
 				String type = "";
 				String currentAction = "";
 				String lastAction = "";
-				int rangeRight = 1;
-                int rangeLeft = 1;
-                int rangeUp = 1;
-                int rangeDown = 1;
+				int rangeRight = 0;
+                int rangeLeft = 0;
+                int rangeUp = 0;
+                int rangeDown = 0;
 				int drawingId = 0;
 				boolean isDestroyed = false;
 

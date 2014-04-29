@@ -19,26 +19,6 @@ public class State {
     private List<Agent> agents;
     private List<Agent> pausedCharacters;
     private int objectsIdCounter;
-
-
-    public void setBombLimitRight(int bombLimitRight) { this.bombLimitRight = bombLimitRight; }
-
-    public void setBombLimitLeft(int bombLimitLeft){ this.bombLimitLeft = bombLimitLeft; }
-
-    public void setBombLimitUp (int bombLimitUp) { this.bombLimitUp = bombLimitUp; }
-
-    public void setBombLimitDown (int bombLimitDown) { this.bombLimitDown = bombLimitDown; }
-
-    public int getBombLimitRight () { return this.bombLimitRight; }
-
-    public int getBombLimitLeft () { return this.bombLimitLeft; }
-
-    public int getBombLimitUp () { return this.bombLimitUp; }
-
-    public int getBombLimitDown () { return this.bombLimitDown; }
-
-
-
     /**
      * The timestamp of the last update.
      */
@@ -48,6 +28,22 @@ public class State {
         agents = new LinkedList<Agent>();
         pausedCharacters = new LinkedList<Agent>();
     }
+
+    public int getBombLimitRight () { return this.bombLimitRight; }
+
+    public void setBombLimitRight(int bombLimitRight) { this.bombLimitRight = bombLimitRight; }
+
+    public int getBombLimitLeft () { return this.bombLimitLeft; }
+
+    public void setBombLimitLeft(int bombLimitLeft){ this.bombLimitLeft = bombLimitLeft; }
+
+    public int getBombLimitUp () { return this.bombLimitUp; }
+
+    public void setBombLimitUp (int bombLimitUp) { this.bombLimitUp = bombLimitUp; }
+
+    public int getBombLimitDown () { return this.bombLimitDown; }
+
+    public void setBombLimitDown (int bombLimitDown) { this.bombLimitDown = bombLimitDown; }
 
     /**
      * Sets the last update time to now.
@@ -196,7 +192,7 @@ public class State {
                 if (agent.getType().equals("Robot")) {
                     bombOwner.addScore(bombOwner.getRobotScore());
                 } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                    bombOwner.addScore(bombOwner.getOponentScore());
+                    bombOwner.addScore(bombOwner.getOpponentScore());
                 }
                 agent.handleEvent(Event.DESTROY);
             }
@@ -217,7 +213,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }
@@ -237,7 +233,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }
@@ -257,7 +253,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }
@@ -277,7 +273,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }

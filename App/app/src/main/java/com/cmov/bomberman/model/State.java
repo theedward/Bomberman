@@ -9,7 +9,6 @@ import java.util.List;
 
 
 public class State {
-
     private int bombLimitLeft;
     private int bombLimitRight;
     private int bombLimitUp;
@@ -19,8 +18,9 @@ public class State {
     private List<Agent> agents;
     private List<Agent> pausedCharacters;
     private int objectsIdCounter;
+
     /**
-     * The timestamp of the last update.
+     * The time of the last update.
      */
     private long lastUpdate;
 
@@ -105,7 +105,7 @@ public class State {
             }
         }
 
-        this.lastUpdate = now;
+        this.lastUpdate = System.currentTimeMillis();
     }
 
     public void addAgent(Agent object) {

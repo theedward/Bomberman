@@ -27,10 +27,19 @@ public class GameThread extends Thread {
      * and only gets unlocked when running is true.
      */
     public void run() {
+		final int timeSleep = 1000 / numUpdates;
 		while (!game.hasFinished()) {
+			final long now = System.currentTimeMillis();
+
 			game.update();
+
 			try {
-				Thread.sleep(1000 / numUpdates);
+				final long dt = System.currentTimeMillis() - now;
+				// suspend thread only when the time spent on game#update is smaller than the time it should
+				// spend on each update (1000 / numUpdates).
+				if (timeSleep > dt) {
+					Thread.sleep(timeSleep - dt);
+				}
 			} catch (InterruptedException e) {
 				return;
 			}

@@ -1,24 +1,15 @@
 package com.cmov.bomberman.model;
 
 import android.util.JsonWriter;
-
 import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Bomberman;
 import com.cmov.bomberman.model.agent.Obstacle;
 import com.cmov.bomberman.model.agent.Robot;
-import com.cmov.bomberman.model.drawing.BombermanDrawing;
-import com.cmov.bomberman.model.drawing.Drawing;
-import com.cmov.bomberman.model.drawing.ObstacleDrawing;
-import com.cmov.bomberman.model.drawing.RobotDrawing;
-import com.cmov.bomberman.model.drawing.WallDrawing;
+import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * This is where all the game will be processed.
@@ -32,9 +23,8 @@ public final class Game {
     /**
      * The number of updates the game will have.
      */
-    private int duration;
+    private int numRoundsLeft;
     private boolean hasStarted;
-    private int totalScore = 0;
 
     /**
      * This constructor performs all the necessary steps to start the game right next.
@@ -51,7 +41,7 @@ public final class Game {
         // Read data from files
         this.gameState.setMap(GameUtils.readLevelFromFile(level));
         this.gameConfiguration = GameUtils.readConfigurationFile(level);
-        this.duration = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
+        this.numRoundsLeft = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
     }
 
     /**
@@ -83,7 +73,7 @@ public final class Game {
                 } else if (character == State.DrawingType.WALL.toChar()) {
                     wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
                 } else {
-                    // Bomberman
+                    // Let's see if it's a Bomberman
                     try {
                         // starts at 1
                         int bombermanId = Integer.parseInt(Character.toString(character)) - 1;
@@ -104,7 +94,6 @@ public final class Game {
                         } else {
                             map[rowIdx][colIdx] = State.DrawingType.EMPTY.toChar();
                         }
-
                     } catch (NumberFormatException e) {
                         // Not a Bomberman
                     }
@@ -213,7 +202,7 @@ public final class Game {
     public TreeMap<String, Integer> checkWinner() {
         TreeMap<String, Integer> scores = new TreeMap<String, Integer>();
         for (Player p : players.values()) {
-            scores.put(p.getUsername(), p.getScore());
+            scores.put(p.getUsername(), p.getCurrentScore());
         }
         return scores;
 
@@ -233,10 +222,10 @@ public final class Game {
         gameState.playAll();
         updatePlayers();
 
-        //isdestroyed must be sent on the Player#onUpdate
+        // the destroyed flag must be sent on the Player#onUpdate
         gameState.removeDestroyedAgents();
 
-        this.duration--;
+        this.numRoundsLeft--;
 
         if (this.hasFinished()) {
             this.end();
@@ -251,39 +240,58 @@ public final class Game {
         StringWriter msg = new StringWriter();
         JsonWriter writer = new JsonWriter(msg);
 
-        try {
-            writer.setIndent("  ");
-            writer.beginArray();
-            for (Agent object : gameState.getObjects()) {
-                object.toJson(writer);
-            }
-            writer.endArray();
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("Game#updatePlayers: error creating json message.");
-        }
-
         // Update every player with the character positions
         for (Player p : players.values()) {
+			try {
+				writer.setIndent("  ");
+				writer.beginObject();
+
+				createScoreMsg(writer, p);
+				createTimeMsg(writer);
+				createAgentsMsg(writer);
+
+				writer.endObject();
+				writer.close();
+			} catch (IOException e) {
+				System.out.println("Game#updatePlayers: error creating json message.");
+			}
+
             p.onUpdate(msg.toString());
         }
     }
 
+	private void createScoreMsg(final JsonWriter wr, final Player player) throws IOException {
+		final Bomberman playerAgent = (Bomberman) player.getAgent();
+		wr.name("Score").value(playerAgent.getScore());
+	}
+
+	private void createTimeMsg(final JsonWriter wr) throws IOException {
+		final int timeLeft = this.numRoundsLeft / this.gameConfiguration.getNumUpdatesPerSecond();
+		wr.name("TimeLeft").value(timeLeft);
+	}
+
+	private void createAgentsMsg(final JsonWriter wr) throws IOException {
+		wr.name("Agents");
+		wr.beginArray();
+		for (Agent object : gameState.getObjects()) {
+			object.toJson(wr);
+		}
+		wr.endArray();
+	}
+
     /**
      * Verifies if the game has already finished.
-     * A game finishes when the game duration reaches 0 or when only a player is alive.
+     * A game finishes when the game numRoundsLeft reaches 0, when only a player is alive and the other robots and players
+	 * are dead or when all players are dead and some robots still exist.
      */
     public synchronized boolean hasFinished() {
-        if (duration == 0) {
+        if (numRoundsLeft == 0) {
             return true;
         }
 
         // check how many are still alive
         int numBombermans = 0;
         int numRobots = 0;
-
-        final char[][] map = gameState.getMap();
-
         for (Agent agent : gameState.getObjects()) {
             if (agent.getType().equals("Bomberman")) {
                 numBombermans++;

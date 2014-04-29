@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.GameThread;
@@ -33,6 +32,7 @@ public class GameActivity extends Activity {
 
     private GameView gameView;
     private TextView scoreView;
+	private TextView timeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,20 +125,22 @@ public class GameActivity extends Activity {
             }
         });
 
-        // Get the level
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            level = (Integer) extras.get("level");
-        }
+		this.scoreView = (TextView) findViewById(R.id.playerScore);
+		this.timeView = (TextView) findViewById(R.id.timeLeft);
 
-        // TODO Create a player (currently SINGLE_PLAYER)
-        playerController = new Controllable();
-        Player player = new Player(DEFAULT_USERNAME, playerController);
+		// Get the level
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			level = (Integer) extras.get("level");
+		}
 
-        this.gameView = (GameView) findViewById(R.id.canvas);
-        this.scoreView = (TextView) findViewById(R.id.playerScore);
-        player.setGameView(this);
-        this.gameView.setScreen(player.getScreen());
+		// TODO Create a player (currently SINGLE_PLAYER)
+		playerController = new Controllable();
+		Player player = new Player(DEFAULT_USERNAME, playerController);
+		this.gameView = (GameView) findViewById(R.id.canvas);
+		player.setGameView(this);
+		this.gameView.setScreen(player.getScreen());
+
 
         this.game = new Game(level);
         this.game.addPlayer(DEFAULT_USERNAME, player);
@@ -179,10 +181,12 @@ public class GameActivity extends Activity {
         quit();
     }
 
+	/**
+	 * Destroys the game thread and jumps to the home activity, cleaning up the activity stack.
+	 */
     private void quit() {
         gameThread.interrupt();
 
-        // TODO not working quite well
         // jump to the home activity and forget all the previous activities
         Intent intent = new Intent(GameActivity.this, HomeActivity.class);
         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -192,51 +196,6 @@ public class GameActivity extends Activity {
     @Override
     public void onBackPressed() {
         pauseGame();
-    }
-
-    /**
-     * The user pressed the arrow up button.
-     *
-     * @param view
-     */
-    public void pressedArrowUp(final View view) {
-        playerController.keyPressed('U');
-    }
-
-    /**
-     * The user pressed the arrow left button.
-     *
-     * @param view
-     */
-    public void pressedArrowLeft(final View view) {
-        playerController.keyPressed('L');
-    }
-
-    /**
-     * The user pressed the arrow down button.
-     *
-     * @param view
-     */
-    public void pressedArrowDown(final View view) {
-        playerController.keyPressed('D');
-    }
-
-    /**
-     * The user pressed the arrow right button.
-     *
-     * @param view
-     */
-    public void pressedArrowRight(final View view) {
-        playerController.keyPressed('R');
-    }
-
-    /**
-     * The user pressed the bomb button.
-     *
-     * @param view
-     */
-    public void pressedBomb(final View view) {
-        playerController.keyPressed('B');
     }
 
     @Override
@@ -265,6 +224,15 @@ public class GameActivity extends Activity {
             }
         });
     }
+
+	public void updateTimeView(final int timeLeft) {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				timeView.setText("Time Left: " + timeLeft);
+			}
+		});
+	}
 
     public void gameFinished() {
         final Activity currentActivity = this;

@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -20,7 +19,7 @@ public class Bomberman extends MovableAgent {
      */
     private float timeSinceLastBomb;
     private boolean destroyed;
-    private int score = 0;
+    private int score;
     private int robotScore;
     private int opponentScore;
 
@@ -42,6 +41,7 @@ public class Bomberman extends MovableAgent {
         this.setStep(0);
         this.setLastStep(0);
         this.destroyed = false;
+		this.score = 0;
         this.robotScore = robotScore;
         this.opponentScore = opponentScore;
     }
@@ -51,7 +51,11 @@ public class Bomberman extends MovableAgent {
         this.score += score;
     }
 
-    public int getRobotScore() {
+	public int getScore() {
+		return score;
+	}
+
+	public int getRobotScore() {
         return this.robotScore;
     }
 
@@ -124,7 +128,6 @@ public class Bomberman extends MovableAgent {
             writer.name("step").value(this.getStep());
             writer.name("lastStep").value(this.getLastStep());
             writer.name("id").value(getId());
-            writer.name("score").value(score);
             writer.name("isDestroyed").value(isDestroyed());
             writer.endObject();
         } catch (IOException e) {

@@ -151,8 +151,6 @@ public class Player {
 					}
 				}
 				rd.endObject();
-                System.out.println("VALUES AFTER PARSE: " + "Up: " + rangeUp + "Down: " + rangeDown + "Left: " + rangeLeft + "Right: " + rangeRight);
-
 
                 // updates object
 				if (type != null) {

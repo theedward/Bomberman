@@ -97,7 +97,7 @@ public class GameActivity extends Activity {
         // TODO not working quite well
         // jump to the home activity and forget all the previous activities
         Intent intent = new Intent(GameActivity.this, HomeActivity.class);
-        intent.setFlags(intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 

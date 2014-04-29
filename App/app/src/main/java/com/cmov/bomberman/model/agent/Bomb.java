@@ -100,7 +100,6 @@ public class Bomb extends Agent {
 			writer.name("step").value(this.getStep());
 			writer.name("lastStep").value(this.getLastStep());
 
-            System.out.println("RANGE VALUES SENT: " + "Up: " + rangeUp + "Down: " + rangeDown + "Left: " + rangeLeft + "Right: " + rangeRight);
 			writer.name("rangeRight").value(this.rangeRight);
             writer.name("rangeLeft").value(this.rangeLeft);
             writer.name("rangeUp").value(this.rangeUp);

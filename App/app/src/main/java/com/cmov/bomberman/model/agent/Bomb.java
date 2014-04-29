@@ -8,95 +8,115 @@ import com.cmov.bomberman.model.State;
 import java.io.IOException;
 
 public class Bomb extends Agent {
-    private static final int BOMB_MAX_STEP = 3;
-    private static final int EXPLOSION_MAX_STEP = 4;
+	private static final int BOMB_MAX_STEP = 3;
+	private static final int EXPLOSION_MAX_STEP = 4;
 
-    private final int range;
+	private final int range;
+    private int rangeRight;
+    private int rangeLeft;
+    private int rangeUp;
+    private int rangeDown;
 
-    private int explosionStepIncr;
-    private boolean explosion;
-    private boolean destroyed;
-    private Bomberman owner;
+	private int explosionStepIncr;
+	private boolean explosion;
+	private boolean destroyed;
+	private Bomberman owner;
 
-    public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
-        super(startingPos, new BombAlgorithm(timeout), id);
-        this.range = range;
-        this.explosionStepIncr = 1;
-        this.owner = owner;
-        setStep(0);
-    }
+	public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
+		super(startingPos, new BombAlgorithm(timeout), id);
+		this.range = range;
+		this.explosionStepIncr = 1;
+		this.owner = owner;
+		setStep(0);
+	}
 
-    public Bomberman getOwner() {
-        return this.owner;
-    }
+	public Bomberman getOwner() {
+		return this.owner;
+	}
 
-    @Override
-    public void play(State state, final float dt) {
-        String nextAction = getAlgorithm().getNextActionName();
+    public void setRangeRight(int rangeRight){ this.rangeRight = rangeRight; }
 
-        if (!this.getCurrentAction().equals(nextAction)) {
-            // changed action, restart step
-            this.setLastAction(this.getCurrentAction());
-            this.setCurrentAction(nextAction);
-            this.setLastStep(this.getStep());
-            this.setStep(-1);
-            if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
-                state.bombExplosion(range, this);
-                explosion = true;
-            }
-        }
+    public void setRangeLeft (int rangeLeft) { this.rangeLeft = rangeLeft; }
 
-        if (explosion) {
-            // during the explosion, the steps displayed should be [0 1 2 3 2 1 0]
-            if (this.getStep() < EXPLOSION_MAX_STEP) {
-                this.setStep(this.getStep() + explosionStepIncr);
-            }
+    public void setRangeUp (int rangeUp) { this.rangeUp = rangeUp; }
 
-            if (this.getStep() == EXPLOSION_MAX_STEP) {
-                explosionStepIncr = -1;
-                this.setStep(this.getStep() - 1);
-            } else if (this.getStep() == 0 && explosionStepIncr == -1) {
-                destroyed = true;
-            }
-        } else {
-            this.setStep((this.getStep() + 1) % BOMB_MAX_STEP);
-        }
-    }
+    public void setRangeDown (int rangeDown) {this.rangeDown = rangeDown; }
 
-    @Override
-    public boolean isDestroyed() {
-        return destroyed;
-    }
+	@Override
+	public void play(State state, final float dt) {
+		String nextAction = getAlgorithm().getNextActionName();
 
-    @Override
-    public void toJson(JsonWriter writer) {
-        try {
-            writer.beginObject();
-            writer.name("type").value(getType());
+		if (!this.getCurrentAction().equals(nextAction)) {
+			// changed action, restart step
+			this.setLastAction(this.getCurrentAction());
+			this.setCurrentAction(nextAction);
+			this.setLastStep(this.getStep());
+			this.setStep(-1);
+			if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
+				state.bombExplosion(range, this);
+                setRangeRight(state.getBombLimitRight());
+                setRangeLeft(state.getBombLimitLeft());
+                setRangeUp(state.getBombLimitUp());
+                setRangeDown(state.getBombLimitDown());
+				explosion = true;
+			}
+		}
 
-            writer.name("position");
-            writer.beginArray();
-            writer.value(getPosition().getX() - 0.5f);
-            writer.value(getPosition().getY() - 0.5f);
-            writer.endArray();
+		if (explosion) {
+			// during the explosion, the steps displayed should be [0 1 2 3 2 1 0]
+			if (this.getStep() < EXPLOSION_MAX_STEP) {
+				this.setStep(this.getStep() + explosionStepIncr);
+			}
 
-            writer.name("step").value(this.getStep());
-            writer.name("lastStep").value(this.getLastStep());
+			if (this.getStep() == EXPLOSION_MAX_STEP) {
+				explosionStepIncr = -1;
+				this.setStep(this.getStep() - 1);
+			} else if (this.getStep() == 0 && explosionStepIncr == -1) {
+				destroyed = true;
+			}
+		} else {
+			this.setStep((this.getStep() + 1) % BOMB_MAX_STEP);
+		}
+	}
 
-            writer.name("range").value(this.range);
+	@Override
+	public boolean isDestroyed() {
+		return destroyed;
+	}
 
-            writer.name("currentAction").value(this.getCurrentAction());
-            writer.name("lastAction").value(this.getLastAction());
-            writer.name("id").value(this.getId());
-            writer.name("isDestroyed").value(isDestroyed());
-            writer.endObject();
-        } catch (IOException e) {
-            System.out.println("Bomb#toJson: Error while serializing to json.");
-        }
-    }
+	@Override
+	public void toJson(JsonWriter writer) {
+		try {
+			writer.beginObject();
+			writer.name("type").value(getType());
 
-    public enum Actions {
-        EXPLODE
-    }
+			writer.name("position");
+			writer.beginArray();
+			writer.value(getPosition().getX() - 0.5f);
+			writer.value(getPosition().getY() - 0.5f);
+			writer.endArray();
+
+			writer.name("step").value(this.getStep());
+			writer.name("lastStep").value(this.getLastStep());
+
+			writer.name("rangeRight").value(this.rangeRight);
+            writer.name("rangeLeft").value(this.rangeLeft);
+            writer.name("rangeUp").value(this.rangeUp);
+            writer.name("rangeDown").value(this.rangeDown);
+
+			writer.name("currentAction").value(this.getCurrentAction());
+			writer.name("lastAction").value(this.getLastAction());
+			writer.name("id").value(this.getId());
+			writer.name("isDestroyed").value(isDestroyed());
+			writer.endObject();
+		}
+		catch (IOException e) {
+			System.out.println("Bomb#toJson: Error while serializing to json.");
+		}
+	}
+
+	public enum Actions {
+		EXPLODE
+	}
 
 }

@@ -2,6 +2,7 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
 
 import com.cmov.bomberman.model.drawing.BombDrawing;
 import com.cmov.bomberman.model.drawing.Drawing;
@@ -30,21 +31,24 @@ public class Screen {
         this.drawings = drawings;
     }
 
-    // tests if the object with the given id exists
-    // if yes updates it
-    // if not , instantiates a new one it is a bomb
-    public void updateDrawing(String type, int id, Position pos, String currentAction, String lastAction, int step,
-                              int lastStep, int range, boolean isDestroyed) {
-        if (isDestroyed) {
-            drawings.remove(id);
-        } else if (!drawings.containsKey(id)) {
-            if (type.equals("Bomb")) {
-                drawings.put(id, new BombDrawing(pos, step, range, currentAction));
-            }
-        } else {
-            updateObject(id, pos, currentAction, lastAction, step, lastStep);
-        }
-    }
+
+	// tests if the object with the given id exists
+	// if yes updates it
+	// if not , instantiates a new one it is a bomb
+	public void updateDrawing(String type, int id, Position pos, String currentAction, String lastAction, int step,
+							  int lastStep, int rangeRight, int rangeLeft, int rangeUp, int rangeDown, boolean isDestroyed) {
+		if (isDestroyed) {
+            Log.i("Screen", type + " " + id + " was destroyed");
+			drawings.remove(id);
+		} else if (!drawings.containsKey(id)) {
+			if (type.equals("Bomb")) {
+				drawings.put(id, new BombDrawing(pos, step, rangeRight, rangeLeft, rangeUp, rangeDown, currentAction));
+			}
+		} else {
+			updateObject(id, pos, currentAction, lastAction, step, lastStep);
+		}
+	}
+
 
     // updates the object with the given id
     private void updateObject(int id, Position pos, String currentAction, String lastAction, int step, int lastStep) {

@@ -33,6 +33,8 @@ public class GameThread extends Thread {
             while (!game.hasFinished()) {
 
                 game.update();
+                if(game.hasLost())
+                    activity.gameLost();
 
                 try {
                     Thread.sleep(1000 / numUpdates);
@@ -43,8 +45,6 @@ public class GameThread extends Thread {
                     }
             }
 
-            // game has finished
-            activity.gameFinished();
         }
     }
 }

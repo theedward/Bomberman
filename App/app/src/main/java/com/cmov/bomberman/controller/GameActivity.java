@@ -1,6 +1,9 @@
 package com.cmov.bomberman.controller;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +19,8 @@ import com.cmov.bomberman.model.GameThread;
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.agent.Controllable;
+
+import java.util.TreeMap;
 
 /**
  * TODO support Mode SINGLE_PLAYER and MULTI_PLAYER
@@ -182,8 +187,6 @@ public class GameActivity extends Activity {
     private void quit() {
         gameThread.interrupt();
 
-        // TODO not working quite well
-        // jump to the home activity and forget all the previous activities
         Intent intent = new Intent(GameActivity.this, HomeActivity.class);
         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -266,14 +269,39 @@ public class GameActivity extends Activity {
         });
     }
 
-    public void gameFinished() {
+    public void callDialog(final TreeMap<String, Integer> scores){
+        System.out.println("Calling Dialog");
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Dialog dialog = createDialog(scores);
+                dialog.show();
+            }
+        });
+    }
+
+    public void gameLost() {
         final Activity currentActivity = this;
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(currentActivity, "You lost the game!", Toast.LENGTH_SHORT).show();
-                quit();
             }
         });
+        return;
+    }
+
+    public Dialog createDialog(TreeMap<String, Integer> scores){
+        System.out.println("Creating Dialog");
+        String output = "Player: " + scores.firstEntry().getKey() + " had the score: " + scores.firstEntry().getValue().toString();
+        System.out.println(output);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(output)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        quit();
+                    }
+                });
+        return builder.create();
     }
 }

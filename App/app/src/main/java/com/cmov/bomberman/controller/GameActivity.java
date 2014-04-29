@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,89 @@ public class GameActivity extends Activity {
         // Initialize the GameUtils context parameter needed in almost every method.
         GameUtils.CONTEXT = this;
 
+        // Handle the touch events on the arrows and bomb buttons.
+        // if the event's action is ACTION_DOWN, this is the next action
+        // if the event's action is ACTION_UP, the next action is empty
+        Button btnArrowUp = (Button) findViewById(R.id.arrowUp);
+        btnArrowUp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    playerController.keyPressed('U');
+                    return true;
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    playerController.keyPressed(' ');
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        Button btnArrowLeft = (Button) findViewById(R.id.arrowLeft);
+        btnArrowLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    playerController.keyPressed('L');
+                    return true;
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    playerController.keyPressed(' ');
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        Button btnArrowDown = (Button) findViewById(R.id.arrowDown);
+        btnArrowDown.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    playerController.keyPressed('D');
+                    return true;
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    playerController.keyPressed(' ');
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        Button btnArrowRight = (Button) findViewById(R.id.arrowRight);
+        btnArrowRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    playerController.keyPressed('R');
+                    return true;
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    playerController.keyPressed(' ');
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        Button btnPutBomb = (Button) findViewById(R.id.putBomb);
+        btnPutBomb.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    playerController.keyPressed('B');
+                    return true;
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    playerController.keyPressed(' ');
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
         // Get the level
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -65,14 +150,7 @@ public class GameActivity extends Activity {
         return gameView;
     }
 
-    /**
-     * The user pressed the pause button.
-     * Pauses the game if the game is running or continues the game if the game is paused.
-     *
-     * @param view the pause button
-     */
-    public void pressedPause(final View view) {
-
+    private void pauseGame() {
         if (onPause) {
             game.unpause(DEFAULT_USERNAME);
         } else {
@@ -81,17 +159,7 @@ public class GameActivity extends Activity {
         onPause = !onPause;
     }
 
-    /**
-     * The user pressed the quit button.
-     * Kills the application
-     *
-     * @param view the quit button.
-     */
-    public void pressedQuit(final View view) {
-        quit();
-    }
-
-    private void quit() {
+    private void quitGame() {
         gameThread.interrupt();
 
         // TODO not working quite well
@@ -99,6 +167,30 @@ public class GameActivity extends Activity {
         Intent intent = new Intent(GameActivity.this, HomeActivity.class);
         intent.setFlags(intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    /**
+     * The user pressed the pause button.
+     * Pauses the game if the game is running or continues the game if the game is paused.
+     *
+     * @param view the pause button
+     */
+    public void pressedPause(final View view) {
+        pauseGame();
+    }
+
+    /**
+     * The user pressed the quit button.
+     *
+     * @param view the quit button.
+     */
+    public void pressedQuit(final View view) {
+        quitGame();
+    }
+
+    @Override
+    public void onBackPressed() {
+        pauseGame();
     }
 
     /**
@@ -179,7 +271,7 @@ public class GameActivity extends Activity {
             @Override
             public void run() {
                 Toast.makeText(currentActivity, "You lost the game!", Toast.LENGTH_SHORT).show();
-                quit();
+                quitGame();
             }
         });
     }

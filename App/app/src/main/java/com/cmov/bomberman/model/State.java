@@ -177,7 +177,7 @@ public class State {
 
         // destroy character in position bomb.pos.line + i
         int i;
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX, bombPosY + i);
             agentsToDestroy = getAgentByPosition(pos);
             for (Agent agent : agentsToDestroy) {
@@ -192,7 +192,7 @@ public class State {
             }
         }
         //destroy character in position bomb.pos.column + i
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX + i, bombPosY);
             agentsToDestroy = getAgentByPosition(pos);
             for (Agent agent : agentsToDestroy) {
@@ -207,7 +207,7 @@ public class State {
             }
         }
         //destroy character in position bomb.pos.line - i
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX, bombPosY - i);
             agentsToDestroy = getAgentByPosition(pos);
             for (Agent agent : agentsToDestroy) {
@@ -222,7 +222,7 @@ public class State {
             }
         }
         //destroy character in position bomb.pos.column - i
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX - i, bombPosY);
             agentsToDestroy = getAgentByPosition(pos);
             for (Agent agent : agentsToDestroy) {

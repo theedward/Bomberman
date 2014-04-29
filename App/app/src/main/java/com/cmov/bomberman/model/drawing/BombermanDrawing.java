@@ -48,7 +48,8 @@ public class BombermanDrawing extends Drawing {
         int spriteIndex = getSpriteByAction(this.getCurrentAction());
         int drawStep = this.getStep();
 
-        if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString())) {
+        if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) ||
+                this.getCurrentAction().equals("")) {
             spriteIndex = getSpriteByAction(getLastAction());
             drawStep = this.getLastStep();
         }

@@ -10,59 +10,59 @@
 
 
     <LinearLayout
+        android:id="@+id/linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/linear_layout">
+        android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/playerName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="5dp"
-                android:text="@string/player_name"
-                android:textSize="18sp"
+            android:layout_weight="1"
+            android:background="@drawable/border"
                 android:gravity="center"
-                android:id="@+id/playerName"
-                android:layout_weight="1"
-                android:background="@drawable/border"/>
+            android:padding="5dp"
+            android:text="@string/player_name"
+            android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/playerScore"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="5dp"
-                android:text="@string/player_score"
-                android:textSize="18sp"
+            android:layout_weight="1"
+            android:background="@drawable/border"
                 android:gravity="center"
-                android:id="@+id/playerScore"
-                android:layout_weight="1"
-                android:background="@drawable/border"/>
+            android:padding="5dp"
+            android:text="@string/player_score"
+            android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/timeLeft"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="5dp"
-                android:text="@string/time_left"
-                android:textSize="18sp"
+            android:layout_weight="1"
+            android:background="@drawable/border"
                 android:gravity="center"
-                android:id="@+id/timeLeft"
-                android:layout_weight="1"
-                android:background="@drawable/border"/>
+            android:padding="5dp"
+            android:text="@string/time_left"
+            android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/numPlayers"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="5dp"
-                android:text="@string/number_player"
-                android:textSize="18sp"
+            android:layout_weight="1"
+            android:background="@drawable/border"
                 android:gravity="center"
-                android:id="@+id/numPlayers"
-                android:layout_weight="1"
-                android:background="@drawable/border"/>
+            android:padding="5dp"
+            android:text="@string/number_player"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <view
-            class="com.cmov.bomberman.controller.GameView"
             android:id="@+id/canvas"
+        class="com.cmov.bomberman.controller.GameView"
             android:layout_width="match_parent"
             android:layout_height="350dp"
             android:layout_below="@id/linear_layout"
@@ -71,60 +71,60 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/canvas">
+        android:layout_below="@+id/canvas"
+        android:layout_marginTop="10dp">
 
         <Button
-                android:onClick="pressedPause"
-                android:text="@string/pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true"
+            android:onClick="pressedPause"
+            android:text="@string/pause" />
 
         <Button
-                android:onClick="pressedQuit"
-                android:text="@string/quit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            android:onClick="pressedQuit"
+            android:text="@string/quit" />
 
         <Button
-                android:onClick="pressedArrowUp"
-                android:text="@string/arrowUp"
+            android:id="@+id/arrowUp"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="150dp"/>
+            android:layout_marginLeft="150dp"
+            android:text="@string/arrowUp" />
 
         <Button
-                android:onClick="pressedArrowLeft"
-                android:text="@string/arrowLeft"
+            android:id="@+id/arrowLeft"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
+            android:layout_marginLeft="100dp"
                 android:layout_marginTop="35dp"
-                android:layout_marginLeft="100dp"/>
+            android:text="@string/arrowLeft" />
 
         <Button
-                android:onClick="pressedArrowDown"
-                android:text="@string/arrowDown"
+            android:id="@+id/arrowDown"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
+            android:layout_marginLeft="150dp"
                 android:layout_marginTop="70dp"
-                android:layout_marginLeft="150dp"/>
+            android:text="@string/arrowDown" />
 
         <Button
-                android:onClick="pressedArrowRight"
-                android:text="@string/arrowRight"
+            android:id="@+id/arrowRight"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
+            android:layout_marginLeft="200dp"
                 android:layout_marginTop="35dp"
-                android:layout_marginLeft="200dp"/>
+            android:text="@string/arrowRight" />
 
         <Button
-                android:onClick="pressedBomb"
-                android:text="@string/bomb"
+            android:id="@+id/putBomb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="30dp"/>
+            android:layout_marginTop="30dp"
+            android:text="@string/bomb" />
     </RelativeLayout>
 </RelativeLayout>

@@ -20,7 +20,8 @@ public class Controllable implements Algorithm {
 			put('D', "MOVE_DOWN");
 			put('R', "MOVE_RIGHT");
 			put('B', "PUT_BOMB");
-		}};
+            put(' ', "");
+        }};
 	}
 
 	/**
@@ -46,8 +47,12 @@ public class Controllable implements Algorithm {
 		}
 	}
 
-	/**
-	 * @return the action name mapped from the last key pressed or an empty string
+    public char lastKeyPressed() {
+        return lastKeyPressed;
+    }
+
+    /**
+     * @return the action name mapped from the last key pressed or an empty string
 	 * if no valid key was pressed.
 	 */
 	@Override

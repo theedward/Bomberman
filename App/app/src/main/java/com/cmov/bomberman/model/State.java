@@ -87,9 +87,9 @@ public class State {
 		final long now = System.currentTimeMillis();
 		final float dt = (now - lastUpdate) / 1000.0f;
 
-		for (Agent agent : agents) {
-			agent.play(this, dt);
-		}
+        for (Agent agent : new LinkedList<Agent>(agents)) {
+            agent.play(this, dt);
+        }
 
 		// Check if any robot is in an adjacent position to a Bomberman
 		final int maxY = map.length;
@@ -206,10 +206,10 @@ public class State {
 
 		// destroy character in position bomb.pos.line + i
 		int i;
-		for (i = 0; i < explosionRange; i++) {
+		for (i = 0; i <= explosionRange; i++) {
 			pos = new Position(bombPosX, bombPosY + i);
             if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitRight(i + 1);
+                setBombLimitRight(i);
                 break;
             }
             setBombLimitRight(explosionRange);
@@ -224,10 +224,10 @@ public class State {
 			}
 		}
 		//destroy character in position bomb.pos.column + i
-		for (i = 0; i < explosionRange; i++) {
+		for (i = 0; i <= explosionRange; i++) {
 			pos = new Position(bombPosX + i, bombPosY);
             if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitUp(i + 1);
+                setBombLimitUp(i);
                 break;
             }
             setBombLimitUp(explosionRange);
@@ -242,10 +242,10 @@ public class State {
 			}
 		}
 		//destroy character in position bomb.pos.line - i
-		for (i = 0; i < explosionRange; i++) {
+		for (i = 0; i <= explosionRange; i++) {
 			pos = new Position(bombPosX, bombPosY - i);
             if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitLeft(i + 1);
+                setBombLimitLeft(i);
                 break;
             }
             setBombLimitLeft(explosionRange);
@@ -260,10 +260,11 @@ public class State {
 			}
 		}
 		//destroy character in position bomb.pos.column - i
-		for (i = 0; i < explosionRange; i++) {
+		for (i = 0; i <= explosionRange; i++) {
 			pos = new Position(bombPosX - i, bombPosY);
             if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitDown(i + 1);
+                setBombLimitDown(i);
+                System.out.println("FOUND A WALL: " + bombLimitDown);
                 break;
             }
             setBombLimitDown(explosionRange);

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.GameThread;
@@ -13,6 +14,9 @@ import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.agent.Controllable;
 
+/**
+ * TODO support Mode SINGLE_PLAYER and MULTI_PLAYER
+ */
 public class GameActivity extends Activity {
 	private static final String DEFAULT_USERNAME = "Bomberman";
 
@@ -52,7 +56,7 @@ public class GameActivity extends Activity {
 		this.game = new Game(level);
 		this.game.addPlayer(DEFAULT_USERNAME, player);
 
-		this.gameThread = new GameThread(game);
+		this.gameThread = new GameThread(this, game);
 	}
 
 	public GameView getGameView() {
@@ -76,19 +80,16 @@ public class GameActivity extends Activity {
 	 * @param view the quit button.
 	 */
 	public void pressedQuit(final View view) {
-		boolean hasJoined = false;
-		while (!hasJoined) {
-			try {
-				gameThread.join();
-				hasJoined = true;
-			}
-			catch (InterruptedException e) {
-				// Something happen.. Just try again.
-			}
-		}
+		quit();
+	}
 
-		// jump to the home activity
+	private void quit() {
+		gameThread.interrupt();
+
+		// TODO not working quite well
+		// jump to the home activity and forget all the previous activities
 		Intent intent = new Intent(GameActivity.this, HomeActivity.class);
+		intent.setFlags(intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 
@@ -161,6 +162,17 @@ public class GameActivity extends Activity {
 			@Override
 			public void run() {
 				scoreView.setText("Score: " + score);
+			}
+		});
+	}
+
+	public void gameFinished() {
+		final Activity currentActivity = this;
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(currentActivity, "You lost the game!", Toast.LENGTH_SHORT).show();
+				quit();
 			}
 		});
 	}

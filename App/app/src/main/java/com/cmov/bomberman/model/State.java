@@ -9,10 +9,35 @@ import java.util.List;
 
 
 public class State {
+
+    private int bombLimitLeft;
+    private int bombLimitRight;
+    private int bombLimitUp;
+    private int bombLimitDown;
+
     private char[][] map;
     private List<Agent> agents;
     private List<Agent> pausedCharacters;
     private int objectsIdCounter;
+
+
+    public void setBombLimitRight(int bombLimitRight) { this.bombLimitRight = bombLimitRight; }
+
+    public void setBombLimitLeft(int bombLimitLeft){ this.bombLimitLeft = bombLimitLeft; }
+
+    public void setBombLimitUp (int bombLimitUp) { this.bombLimitUp = bombLimitUp; }
+
+    public void setBombLimitDown (int bombLimitDown) { this.bombLimitDown = bombLimitDown; }
+
+    public int getBombLimitRight () { return this.bombLimitRight; }
+
+    public int getBombLimitLeft () { return this.bombLimitLeft; }
+
+    public int getBombLimitUp () { return this.bombLimitUp; }
+
+    public int getBombLimitDown () { return this.bombLimitDown; }
+
+
 
     /**
      * The timestamp of the last update.
@@ -66,6 +91,7 @@ public class State {
         for (Agent agent : new LinkedList<Agent>(agents)) {
             agent.play(this, dt);
         }
+
 
         // Check if any robot is in an adjacent position to a Bomberman
         final int maxY = map.length;
@@ -155,7 +181,8 @@ public class State {
      * Given a certain explosion range,
      * this method will clear all fields that are in the bomb's path
      */
-    public void bombExplosion(int explosionRange, Bomb bomb) {
+
+	public void bombExplosion(int explosionRange, Bomb bomb) {
         float bombPosX = bomb.getPosition().getX();
         float bombPosY = bomb.getPosition().getY();
         Bomberman bombOwner = bomb.getOwner();
@@ -164,7 +191,7 @@ public class State {
         Position pos = new Position(bombPosX, bombPosY);
         List<Agent> agentsToDestroy = getAgentByPosition(pos);
 
-        for (Agent agent : agentsToDestroy) {
+        for(Agent agent : agentsToDestroy ) {
             if (agent != null) {
                 if (agent.getType().equals("Robot")) {
                     bombOwner.addScore(bombOwner.getRobotScore());
@@ -177,10 +204,15 @@ public class State {
 
         // destroy character in position bomb.pos.line + i
         int i;
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX, bombPosY + i);
+            if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitDown(i - 1);
+                break;
+            }
+            else setBombLimitDown(explosionRange);
             agentsToDestroy = getAgentByPosition(pos);
-            for (Agent agent : agentsToDestroy) {
+            for(Agent agent : agentsToDestroy) {
                 if (agent != null) {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
@@ -192,10 +224,15 @@ public class State {
             }
         }
         //destroy character in position bomb.pos.column + i
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX + i, bombPosY);
+            if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitRight(i - 1);
+                break;
+            }
+            else setBombLimitRight(explosionRange);
             agentsToDestroy = getAgentByPosition(pos);
-            for (Agent agent : agentsToDestroy) {
+            for(Agent agent : agentsToDestroy) {
                 if (agent != null) {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
@@ -207,10 +244,15 @@ public class State {
             }
         }
         //destroy character in position bomb.pos.line - i
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX, bombPosY - i);
+            if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitUp(i - 1);
+                break;
+            }
+            else setBombLimitUp(explosionRange);
             agentsToDestroy = getAgentByPosition(pos);
-            for (Agent agent : agentsToDestroy) {
+            for(Agent agent : agentsToDestroy) {
                 if (agent != null) {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
@@ -222,8 +264,13 @@ public class State {
             }
         }
         //destroy character in position bomb.pos.column - i
-        for (i = 0; i < explosionRange; i++) {
+        for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX - i, bombPosY);
+            if (map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
+                setBombLimitLeft(i - 1);
+                break;
+            }
+            else setBombLimitLeft(explosionRange);
             agentsToDestroy = getAgentByPosition(pos);
             for (Agent agent : agentsToDestroy) {
                 if (agent != null) {
@@ -237,6 +284,8 @@ public class State {
             }
         }
     }
+
+
 
     /**
      * TODO: More than one agent can be in the same position!

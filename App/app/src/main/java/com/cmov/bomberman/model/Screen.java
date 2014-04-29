@@ -45,18 +45,27 @@ public class Screen {
 				drawings.put(id, new BombDrawing(pos, step, rangeRight, rangeLeft, rangeUp, rangeDown, currentAction));
 			}
 		} else {
-			updateObject(id, pos, currentAction, lastAction, step, lastStep);
+			updateObject(type, id, pos, currentAction, lastAction, step, lastStep, rangeRight, rangeLeft, rangeUp, rangeDown);
 		}
 	}
 
 
     // updates the object with the given id
-    private void updateObject(int id, Position pos, String currentAction, String lastAction, int step, int lastStep) {
+    private void updateObject(String type, int id, Position pos, String currentAction, String lastAction, int step, int lastStep,
+                              int rangeRight, int rangeLeft, int rangeUp, int rangeDown) {
         drawings.get(id).setPosition(pos);
         drawings.get(id).setLastAction(lastAction);
         drawings.get(id).setCurrentAction(currentAction);
         drawings.get(id).setStep(step);
         drawings.get(id).setLastStep(lastStep);
+        if (type.equals("Bomb")) {
+            BombDrawing drawing = (BombDrawing) drawings.get(id);
+            drawing.setRangeRight(rangeRight);
+            drawing.setRangeLeft(rangeLeft);
+            drawing.setRangeUp(rangeUp);
+            drawing.setRangeDown(rangeDown);
+        }
+
     }
 
     /**

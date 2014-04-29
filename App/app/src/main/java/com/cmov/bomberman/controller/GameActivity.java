@@ -159,16 +159,6 @@ public class GameActivity extends Activity {
         onPause = !onPause;
     }
 
-    // TODO not working quite well
-    private void quitGame() {
-        gameThread.interrupt();
-
-        // jump to the home activity and forget all the previous activities
-        Intent intent = new Intent(GameActivity.this, HomeActivity.class);
-        intent.setFlags(intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-
     /**
      * The user pressed the pause button.
      * Pauses the game if the game is running or continues the game if the game is paused.
@@ -181,13 +171,24 @@ public class GameActivity extends Activity {
 
     /**
      * The user pressed the quit button.
+     * Kills the application
      *
      * @param view the quit button.
      */
     public void pressedQuit(final View view) {
-        quitGame();
+        quit();
     }
 
+    private void quit() {
+        gameThread.interrupt();
+
+        // TODO not working quite well
+        // jump to the home activity and forget all the previous activities
+        Intent intent = new Intent(GameActivity.this, HomeActivity.class);
+        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+    
     @Override
     public void onBackPressed() {
         pauseGame();
@@ -271,7 +272,7 @@ public class GameActivity extends Activity {
             @Override
             public void run() {
                 Toast.makeText(currentActivity, "You lost the game!", Toast.LENGTH_SHORT).show();
-                quitGame();
+                quit();
             }
         });
     }

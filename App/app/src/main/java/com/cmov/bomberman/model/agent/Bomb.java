@@ -58,6 +58,7 @@ public class Bomb extends Agent {
                 setRangeLeft(state.getBombLimitLeft());
                 setRangeUp(state.getBombLimitUp());
                 setRangeDown(state.getBombLimitDown());
+                System.out.println("BombValues: " + "Up: " + rangeUp + "Down: " + rangeDown + "Left: " + rangeLeft + "Right: " + rangeRight );
 				explosion = true;
 			}
 		}

@@ -224,7 +224,7 @@ public class GameUtils {
             // Vertical
             bombImg[i][5] = getBitmap(bombSprite, 1, 7 + i * distanceBetweenSteps);
             // Horizontal
-            bombImg[i][6] = getBitmap(bombSprite, 5, 5 + i * distanceBetweenSteps);
+            bombImg[i][6] = getBitmap(bombSprite, 5, 7 + i * distanceBetweenSteps);
         }
 
         return bombImg;

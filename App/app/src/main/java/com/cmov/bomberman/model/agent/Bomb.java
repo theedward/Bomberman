@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -58,7 +57,6 @@ public class Bomb extends Agent {
                 setRangeLeft(state.getBombLimitLeft());
                 setRangeUp(state.getBombLimitUp());
                 setRangeDown(state.getBombLimitDown());
-                System.out.println("BombValues: " + "Up: " + rangeUp + "Down: " + rangeDown + "Left: " + rangeLeft + "Right: " + rangeRight );
 				explosion = true;
 			}
 		}

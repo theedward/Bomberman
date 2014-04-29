@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.util.JsonReader;
-
 import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.controller.GameView;
 import com.cmov.bomberman.model.agent.Agent;
@@ -20,19 +19,21 @@ public class Player {
 	private final Screen screen;
 	private final Controllable controller;
 	private Agent agent;
+	private int currentScore;
+	private int currentTimeLeft;
 
 	/**
 	 * This is needed to draw in the canvas in a synchronized manner.
 	 */
 	private GameActivity gameActivity;
-	private int score;
 
 	public Player(String username, Controllable controller) {
 		this.username = username;
 		this.controller = controller;
 		this.screen = new Screen();
 		this.gameActivity = null;
-		this.score = 0;
+		this.currentScore = 0;
+		this.currentTimeLeft = 0;
 	}
 
 	public Agent getAgent() {
@@ -55,12 +56,12 @@ public class Player {
 		return username;
 	}
 
-	public int getScore() {
-		return score;
+	public int getCurrentScore() {
+		return currentScore;
 	}
 
 	public void addScore(final int amount) {
-		this.score += amount;
+		this.currentScore += amount;
 	}
 
 	public Screen getScreen() {
@@ -108,72 +109,98 @@ public class Player {
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
 		try {
-			rd.beginArray();
+			rd.beginObject();
 			while (rd.hasNext()) {
-				Position position = null;
-				int step = 0;
-				int lastStep = 0;
-				String type = "";
-				String currentAction = "";
-				String lastAction = "";
-				int rangeRight = 0;
-                int rangeLeft = 0;
-                int rangeUp = 0;
-                int rangeDown = 0;
-				int drawingId = 0;
-				boolean isDestroyed = false;
-
-				// Parse object
-				rd.beginObject();
-				while (rd.hasNext()) {
-					String name = rd.nextName();
-					if (name != null) {
-						if (name.equals("type")) {
-							type = rd.nextString();
-						} else if (name.equals("currentAction")) {
-							currentAction = rd.nextString();
-						} else if (name.equals("lastAction")) {
-							lastAction = rd.nextString();
-						} else if (name.equals("step")) {
-							step = rd.nextInt();
-						} else if (name.equals("lastStep")) {
-							lastStep = rd.nextInt();
-						} else if (name.equals("position")) {
-							float x, y;
-							rd.beginArray();
-							x = (float) rd.nextDouble();
-							y = (float) rd.nextDouble();
-							position = new Position(x, y);
-							rd.endArray();
-						} else if (name.equals("rangeRight")) {
-							rangeRight = rd.nextInt();
-						} else if (name.equals("rangeLeft")) {
-                            rangeLeft = rd.nextInt();
-                        } else if (name.equals("rangeUp")) {
-                            rangeUp = rd.nextInt();
-                        } else if (name.equals("rangeDown")) {
-                            rangeDown = rd.nextInt();
-                        } else if (name.equals("id")) {
-							drawingId = rd.nextInt();
-						} else if (name.equals("score")) {
-							this.score = rd.nextInt();
-						} else if (name.equals("isDestroyed")) {
-							isDestroyed = rd.nextBoolean();
-						}
+				String name = rd.nextName();
+				if (name != null) {
+					if (name.equals("Score")) {
+						parseScore(rd);
+					} else if (name.equals("TimeLeft")) {
+						parseTimeLeft(rd);
+					} else if (name.equals("Agents")) {
+						parseAgents(rd);
 					}
 				}
-				rd.endObject();
-
-                // updates object
-				if (type != null) {
-					screen.updateDrawing(type, drawingId, position, currentAction, lastAction, step, lastStep, rangeRight, rangeLeft, rangeUp, rangeDown,
-										 isDestroyed);
-				}
 			}
-			rd.endArray();
 		}
 		catch (IOException e) {
 			System.out.println("Player#onUpdate: Error while parsing the message.");
+		}
+	}
+
+	private void parseScore(final JsonReader rd) throws IOException {
+		this.currentScore = rd.nextInt();
+	}
+
+	private void parseTimeLeft(final JsonReader rd) throws IOException {
+		this.currentTimeLeft = rd.nextInt();
+	}
+
+	private void parseAgents(final JsonReader rd) throws IOException {
+		rd.beginArray();
+		while (rd.hasNext()) {
+			parseAgent(rd);
+		}
+		rd.endArray();
+	}
+
+	private void parseAgent(final JsonReader rd) throws IOException {
+		Position position = null;
+		int step = 0;
+		int lastStep = 0;
+		String type = "";
+		String currentAction = "";
+		String lastAction = "";
+		int rangeRight = 0;
+		int rangeLeft = 0;
+		int rangeUp = 0;
+		int rangeDown = 0;
+		int drawingId = 0;
+		boolean isDestroyed = false;
+
+		// Parse object
+		rd.beginObject();
+		while (rd.hasNext()) {
+			String name = rd.nextName();
+			if (name != null) {
+				if (name.equals("type")) {
+					type = rd.nextString();
+				} else if (name.equals("currentAction")) {
+					currentAction = rd.nextString();
+				} else if (name.equals("lastAction")) {
+					lastAction = rd.nextString();
+				} else if (name.equals("step")) {
+					step = rd.nextInt();
+				} else if (name.equals("lastStep")) {
+					lastStep = rd.nextInt();
+				} else if (name.equals("position")) {
+					float x, y;
+					rd.beginArray();
+					x = (float) rd.nextDouble();
+					y = (float) rd.nextDouble();
+					position = new Position(x, y);
+					rd.endArray();
+				} else if (name.equals("rangeRight")) {
+					rangeRight = rd.nextInt();
+				} else if (name.equals("rangeLeft")) {
+					rangeLeft = rd.nextInt();
+				} else if (name.equals("rangeUp")) {
+					rangeUp = rd.nextInt();
+				} else if (name.equals("rangeDown")) {
+					rangeDown = rd.nextInt();
+				} else if (name.equals("id")) {
+					drawingId = rd.nextInt();
+				} else if (name.equals("isDestroyed")) {
+					isDestroyed = rd.nextBoolean();
+				}
+			}
+		}
+		rd.endObject();
+
+		// updates object
+		if (type != null) {
+			screen.updateDrawing(type, drawingId, position, currentAction, lastAction, step, lastStep,
+								 rangeRight, rangeLeft, rangeUp, rangeDown, isDestroyed);
 		}
 	}
 
@@ -205,8 +232,9 @@ public class Player {
 			}
 		}
 
-		// update score
-		gameActivity.updateScoreView(this.score);
+		// update other elements in the view
+		gameActivity.updateScoreView(this.currentScore);
+		gameActivity.updateTimeView(this.currentTimeLeft);
 	}
 
 }

@@ -10,10 +10,10 @@ import java.util.List;
 
 public class State {
 
-    private int bombLimitLeft = 1;
-    private int bombLimitRight = 1;
-    private int bombLimitUp = 1;
-    private int bombLimitDown = 1;
+    private int bombLimitLeft;
+    private int bombLimitRight;
+    private int bombLimitUp;
+    private int bombLimitDown;
 
     private char[][] map;
     private List<Agent> agents;
@@ -207,10 +207,10 @@ public class State {
 		for (i = 0; i <= explosionRange; i++) {
 			pos = new Position(bombPosX, bombPosY + i);
             if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitRight(i);
+                setBombLimitDown(i - 1);
                 break;
             }
-            setBombLimitRight(explosionRange);
+            else setBombLimitDown(explosionRange);
 			agentsToDestroy = getAgentByPosition(pos);
             for(Agent agent : agentsToDestroy) {
                 if (agent != null) {
@@ -227,10 +227,10 @@ public class State {
 		for (i = 0; i <= explosionRange; i++) {
 			pos = new Position(bombPosX + i, bombPosY);
             if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitUp(i);
+                setBombLimitRight(i - 1);
                 break;
             }
-            setBombLimitUp(explosionRange);
+            else setBombLimitRight(explosionRange);
             agentsToDestroy = getAgentByPosition(pos);
             for(Agent agent : agentsToDestroy) {
                 if (agent != null) {
@@ -247,10 +247,10 @@ public class State {
 		for (i = 0; i <= explosionRange; i++) {
 			pos = new Position(bombPosX, bombPosY - i);
             if(map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitLeft(i);
+                setBombLimitUp(i - 1);
                 break;
             }
-            setBombLimitLeft(explosionRange);
+            else setBombLimitUp(explosionRange);
             agentsToDestroy = getAgentByPosition(pos);
             for(Agent agent : agentsToDestroy) {
                 if (agent != null) {
@@ -267,11 +267,10 @@ public class State {
 		for (i = 0; i <= explosionRange; i++) {
             pos = new Position(bombPosX - i, bombPosY);
             if (map[pos.yToDiscrete()][pos.xToDiscrete()] == 'W') {
-                setBombLimitDown(i);
-                System.out.println("FOUND A WALL: " + bombLimitDown);
+                setBombLimitLeft(i - 1);
                 break;
             }
-            setBombLimitDown(explosionRange);
+            else setBombLimitLeft(explosionRange);
             agentsToDestroy = getAgentByPosition(pos);
             for (Agent agent : agentsToDestroy) {
                 if (agent != null) {

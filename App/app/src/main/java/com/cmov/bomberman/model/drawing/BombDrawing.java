@@ -50,13 +50,17 @@ public class BombDrawing extends Drawing {
             System.out.println("Drawing Bomb Up: " + rangeUp);
             System.out.println("Drawing Bomb Left: " + rangeLeft);
             System.out.println("Drawing Bomb Right: " + rangeRight);
-			canvas.drawBitmap(explosionSprite[drawStep][0], x - 1 * spriteWidth, y, null);
+            if(rangeLeft != 0)
+			    canvas.drawBitmap(explosionSprite[drawStep][0], x - 1 * spriteWidth, y, null);
 			// Up
-			canvas.drawBitmap(explosionSprite[drawStep][1], x, y - 1 * spriteHeight, null);
+            if(rangeUp != 0)
+			    canvas.drawBitmap(explosionSprite[drawStep][1], x, y - 1 * spriteHeight, null);
 			// Right
-			canvas.drawBitmap(explosionSprite[drawStep][2], x + 1 * spriteWidth, y, null);
+            if(rangeRight != 0)
+			    canvas.drawBitmap(explosionSprite[drawStep][2], x + 1 * spriteWidth, y, null);
 			// Down
-			canvas.drawBitmap(explosionSprite[drawStep][3], x, y + 1 * spriteHeight, null);
+            if(rangeDown != 0)
+			    canvas.drawBitmap(explosionSprite[drawStep][3], x, y + 1 * spriteHeight, null);
 			// Center
 			canvas.drawBitmap(explosionSprite[drawStep][4], x, y, null);
 

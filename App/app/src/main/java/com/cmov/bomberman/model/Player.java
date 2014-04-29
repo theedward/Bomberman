@@ -151,10 +151,11 @@ public class Player {
 					}
 				}
 				rd.endObject();
+                System.out.println("VALUES AFTER PARSE: " + "Up: " + rangeUp + "Down: " + rangeDown + "Left: " + rangeLeft + "Right: " + rangeRight);
 
-				// updates object
+
+                // updates object
 				if (type != null) {
-                    System.out.println("Up: " + rangeUp + ", Down: " + rangeDown + ", Left: " + rangeLeft + ", Right: " + rangeRight);
 					screen.updateDrawing(type, drawingId, position, currentAction, lastAction, step, lastStep, rangeRight, rangeLeft, rangeUp, rangeDown,
 										 isDestroyed);
 				}

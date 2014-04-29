@@ -1,5 +1,8 @@
 package com.cmov.bomberman.model;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.util.JsonReader;
 import com.cmov.bomberman.controller.GameActivity;
@@ -9,6 +12,7 @@ import com.cmov.bomberman.model.agent.Controllable;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.TreeMap;
 
 public class Player {
 	private final String username;
@@ -75,6 +79,10 @@ public class Player {
 		screen.setDrawings(initialConfig.getMutableDrawings());
 	}
 
+
+
+
+
 	// This method will be called when the game finishes.
 
 	/**
@@ -83,17 +91,21 @@ public class Player {
 	 *
 	 * @param finalConfig the final game configuration
 	 */
-	void onGameEnd(GameConfiguration finalConfig) {
-		// TODO
-	}
 
-	/**
-	 * Updates creates or destroys the drawings from the json report sent by the game.
-	 * The fixed drawings are not included in the report.
-	 *
-	 * @param msg the json report.
-	 */
-	private void parseMessage(String msg) {
+	void onGameEnd(GameConfiguration finalConfig, TreeMap<String, Integer> scores) {
+        //Preparing the String for output
+        System.out.println("Inside onGameEnd");
+        gameActivity.callDialog(scores);
+        }
+
+                /**
+                 * Updates creates or destroys the drawings from the json report sent by the game.
+                 * The fixed drawings are not included in the report.
+                 *
+                 * @param msg the json report.
+                 */
+
+    private void parseMessage(String msg) {
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
 		try {

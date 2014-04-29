@@ -191,15 +191,17 @@ public final class Game {
         }
     }
 
+
     public void end() {
+        System.out.println("Telling the game to end");
         // tell players that the game has ended
         for (Player p : players.values()) {
-            p.onGameEnd(gameConfiguration);
+            p.onGameEnd(gameConfiguration, checkScores());
         }
 
     }
 
-    public TreeMap<String, Integer> checkWinner() {
+    public TreeMap<String, Integer> checkScores() {
         TreeMap<String, Integer> scores = new TreeMap<String, Integer>();
         for (Player p : players.values()) {
             scores.put(p.getUsername(), p.getCurrentScore());
@@ -309,5 +311,16 @@ public final class Game {
         }
 
         return (numBombermans == 0) || (numBombermans == 1 && numRobots == 0);
+    }
+
+    public synchronized boolean hasLost() {
+        Player[] characterOwners = new Player[players.size()];
+        players.values().toArray(characterOwners);
+        for (Player player : characterOwners) {
+            if (player.getAgent().isDestroyed())
+                return true;
+        }
+        return false;
+
     }
 }

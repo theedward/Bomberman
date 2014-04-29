@@ -8,7 +8,8 @@
 	"RobotSpeed": "2",
 	"TimeToExplode": "5",
 	"ExplosionDuration": "5",
-	"ExplosionRange": "1",
+	"ExplosionRange": "3",
 	"PointRobot": "10",
-	"PointOpponent": "10"
+	"PointOpponent": "10",
+	"TimeBetweenBombs": "5"
 }

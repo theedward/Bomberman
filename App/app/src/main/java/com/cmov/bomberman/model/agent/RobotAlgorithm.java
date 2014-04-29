@@ -3,16 +3,17 @@ package com.cmov.bomberman.model.agent;
 import com.cmov.bomberman.model.Event;
 
 public class RobotAlgorithm implements Algorithm {
-	private boolean destroyMode;
+    private boolean destroyMode;
 
-	public RobotAlgorithm() {
-		this.destroyMode = false;
-	}
+    public RobotAlgorithm() {
+        this.destroyMode = false;
+    }
 
-	@Override
-	public String getNextActionName() {
-		return MovableAgent.Actions.MOVE_LEFT.toString();
-		/*
+    @Override
+    public String getNextActionName() {
+        return destroyMode ? Agent.Actions.DESTROY.toString() :
+                MovableAgent.Actions.MOVE_LEFT.toString();
+        /*
 		if (!destroyMode) {
 			int nextMove = (int) (Math.random() * 4);
 			switch (nextMove) {
@@ -29,12 +30,12 @@ public class RobotAlgorithm implements Algorithm {
 			return Agent.Actions.DESTROY.toString();
 		}
 		*/
-	}
+    }
 
-	@Override
-	public void handleEvent(Event e) {
-		if (e == Event.DESTROY) {
-			destroyMode = true;
-		}
-	}
+    @Override
+    public void handleEvent(Event e) {
+        if (e == Event.DESTROY) {
+            destroyMode = true;
+        }
+    }
 }

@@ -28,6 +28,11 @@ public class GameThread extends Thread {
      */
     public void run() {
         while (!game.hasFinished()) {
+            // Handle interruption
+            if (this.isInterrupted()) {
+                return;
+            }
+
             game.update();
 
             try {

@@ -38,7 +38,9 @@ public class Robot extends MovableAgent {
         if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
             if (this.getStep() < MAX_DIE_STEP) {
                 this.setStep(this.getStep() + 1);
-            } else {
+            }
+
+            if (this.getStep() == MAX_DIE_STEP) {
                 destroyed = true;
             }
         }

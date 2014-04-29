@@ -169,7 +169,7 @@ public class State {
                 if (agent.getType().equals("Robot")) {
                     bombOwner.addScore(bombOwner.getRobotScore());
                 } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                    bombOwner.addScore(bombOwner.getOponentScore());
+                    bombOwner.addScore(bombOwner.getOpponentScore());
                 }
                 agent.handleEvent(Event.DESTROY);
             }
@@ -185,7 +185,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }
@@ -200,7 +200,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }
@@ -215,7 +215,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }
@@ -230,7 +230,7 @@ public class State {
                     if (agent.getType().equals("Robot")) {
                         bombOwner.addScore(bombOwner.getRobotScore());
                     } else if (agent.getType().equals("Bomberman") && !agent.equals(bombOwner)) {
-                        bombOwner.addScore(bombOwner.getOponentScore());
+                        bombOwner.addScore(bombOwner.getOpponentScore());
                     }
                     agent.handleEvent(Event.DESTROY);
                 }

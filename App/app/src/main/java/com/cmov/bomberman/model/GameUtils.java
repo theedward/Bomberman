@@ -133,6 +133,8 @@ public class GameUtils {
                     config.setMapWidth(rd.nextInt());
                 } else if (msg.equals("MapHeight")) {
                     config.setMapHeight(rd.nextInt());
+                } else if (msg.equals("TimeBetweenBombs")) {
+                    config.setTimeBetweenBombs((float) rd.nextDouble());
                 } else {
                     rd.skipValue();
                 }

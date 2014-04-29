@@ -11,18 +11,18 @@ public class Bomberman extends MovableAgent {
     private static final int MAX_MOVEMENT_STEP = 3;
     private static final int MAX_DIE_STEP = 3;
 
-    private final int timeBetweenBombs;
+    private final float timeBetweenBombs;
     private final int explosionRange;
     private final int explosionTimeout;
     /**
      * This is initialized with time between bombs because a player
      * is allowed to put a bomb right in the beginning.
      */
-    private long timeSinceLastBomb;
+    private float timeSinceLastBomb;
     private boolean destroyed;
     private int score = 0;
     private int robotScore;
-    private int oponentScore;
+    private int opponentScore;
 
     /**
      * @param pos              the agent position
@@ -32,10 +32,10 @@ public class Bomberman extends MovableAgent {
      * @param range            the bomb range
      * @param timeout          the bomb timeout
      */
-    public Bomberman(Position pos, Algorithm ai, int id, int speed, int timeBetweenBombs, int range, int timeout,
-                     int robotScore, int oponentScore) {
+    public Bomberman(Position pos, Algorithm ai, int id, int speed, float timeBetweenBombs, int range, int timeout,
+                     int robotScore, int opponentScore) {
         super(pos, ai, id, speed);
-        this.timeBetweenBombs = timeBetweenBombs * 1000;
+        this.timeBetweenBombs = timeBetweenBombs;
         this.timeSinceLastBomb = this.timeBetweenBombs;
         this.explosionRange = range;
         this.explosionTimeout = timeout;
@@ -43,7 +43,7 @@ public class Bomberman extends MovableAgent {
         this.setLastStep(0);
         this.destroyed = false;
         this.robotScore = robotScore;
-        this.oponentScore = oponentScore;
+        this.opponentScore = opponentScore;
     }
 
 
@@ -55,8 +55,8 @@ public class Bomberman extends MovableAgent {
         return this.robotScore;
     }
 
-    public int getOponentScore() {
-        return this.oponentScore;
+    public int getOpponentScore() {
+        return this.opponentScore;
     }
 
     @Override

@@ -27,24 +27,15 @@ public class GameThread extends Thread {
      * and only gets unlocked when running is true.
      */
     public void run() {
-        while (!this.isInterrupted()) {
+		while (!game.hasFinished()) {
+			game.update();
+			try {
+				Thread.sleep(1000 / numUpdates);
+			} catch (InterruptedException e) {
+				return;
+			}
+		}
 
-
-            while (!game.hasFinished()) {
-
-                game.update();
-
-                try {
-                    Thread.sleep(1000 / numUpdates);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Thread.currentThread().interrupt();
-                    return;
-                    }
-            }
-
-            // game has finished
-            activity.gameFinished();
-        }
-    }
+		activity.gameFinished();
+	}
 }

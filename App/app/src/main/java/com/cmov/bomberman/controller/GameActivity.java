@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.cmov.bomberman.R;
@@ -210,10 +211,19 @@ public class GameActivity extends Activity {
         if (hasFocus && this.gameThread.getState() == Thread.State.NEW) {
             // Initialize the GameUtils image parameters
             // This is used in the Game#populateGame
-            final int size = Math.min(Math.round(this.gameView.getWidth() / this.game.getMapWidth()),
-                    Math.round(this.gameView.getHeight() / this.game.getMapHeight()));
-            GameUtils.IMG_CANVAS_WIDTH = size;
-            GameUtils.IMG_CANVAS_HEIGHT = size;
+            final int imgSize = Math.min(this.gameView.getWidth() / this.game.getMapWidth(),
+									  this.gameView.getHeight() / this.game.getMapHeight());
+			// Set values on GameUtils
+			GameUtils.IMG_CANVAS_WIDTH = imgSize;
+			GameUtils.IMG_CANVAS_HEIGHT = imgSize;
+
+			// Adjust GameView size
+			final int width = imgSize * this.game.getMapWidth();
+			final int height = imgSize * this.game.getMapHeight();
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+			layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+			layoutParams.addRule(RelativeLayout.BELOW, R.id.dataLayout);
+			this.gameView.setLayoutParams(layoutParams);
 
             this.game.populateGame();
             this.gameThread.start();
@@ -257,7 +267,6 @@ public class GameActivity extends Activity {
                 Toast.makeText(currentActivity, "You lost the game!", Toast.LENGTH_SHORT).show();
             }
         });
-        return;
     }
 
     public Dialog createDialog(TreeMap<String, Integer> scores){

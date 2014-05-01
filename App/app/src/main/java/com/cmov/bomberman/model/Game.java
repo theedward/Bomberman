@@ -144,7 +144,7 @@ public final class Game {
      * @param p the player object
      */
     public void removePlayer(Player p) {
-        players.remove(p);
+        players.remove(p.getUsername());
     }
 
     private void pausePlayer(String username) {
@@ -155,7 +155,7 @@ public final class Game {
 
     private void unpausePlayer(String username) {
         Player p = playersOnPause.get(username);
-        playersOnPause.remove(p);
+        playersOnPause.remove(username);
         addPlayer(username, p);
     }
 

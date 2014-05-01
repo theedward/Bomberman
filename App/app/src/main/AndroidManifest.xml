@@ -41,6 +41,17 @@
                 android:label="@string/title_activity_game"
                 android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".controller.CreateServerActivity"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                  android:label="@string/title_activity_create_server"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".controller.JoinServerActivity"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                  android:label="@string/title_activity_join_server"
+                  android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

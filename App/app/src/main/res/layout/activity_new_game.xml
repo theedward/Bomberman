@@ -6,7 +6,7 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                android:background="@drawable/other_background"
+                android:background="@drawable/background_wallpaper"
                 tools:context=".NewGameActivity">
 
     <TextView
@@ -19,7 +19,7 @@
             android:layout_marginTop="66dp"
             android:text="@string/level"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white"
+            android:textColor="@android:color/white"
             android:textSize="25sp"/>
 
     <NumberPicker
@@ -40,6 +40,7 @@
             android:layout_marginLeft="120dp"
             android:layout_marginTop="25dp"
             android:src="@drawable/first_level"
+            android:contentDescription="@string/map_preview"
         />
 
     <Button

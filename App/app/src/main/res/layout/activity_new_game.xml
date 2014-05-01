@@ -15,10 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/levelPicker"
             android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/levelPicker"
             android:layout_marginTop="66dp"
             android:text="@string/level"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
             android:textSize="25sp"/>
 

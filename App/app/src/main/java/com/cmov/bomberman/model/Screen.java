@@ -2,74 +2,85 @@ package com.cmov.bomberman.model;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import com.cmov.bomberman.model.drawing.BombDrawing;
-import com.cmov.bomberman.model.drawing.Drawing;
-import com.cmov.bomberman.model.drawing.WallDrawing;
+import android.util.Log;
+import android.util.SparseArray;
+import com.cmov.bomberman.model.drawing.*;
 
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class is responsible to draw everything in the canvas.
  */
 public class Screen {
-    List<WallDrawing> wallDrawings; // all the walls
-    Map<Integer, Drawing> drawings;
+	private final String TAG = this.getClass().getSimpleName();
+	private final SparseArray<Drawing> drawings;
+	private final List<WallDrawing> wallDrawings; // contains all the walls
 
     public Screen() {
-        drawings = new HashMap<Integer, Drawing>();
+        drawings = new SparseArray<Drawing>();
+		wallDrawings = new LinkedList<WallDrawing>();
     }
 
-    public void setWallDrawings(List<WallDrawing> wallDrawings) {
-        this.wallDrawings = wallDrawings;
-    }
-
-    public void setDrawings(Map<Integer, Drawing> drawings) {
-        this.drawings = drawings;
-    }
-
+	public boolean hasDrawing(final int id) {
+		return drawings.get(id) != null;
+	}
 
 	// tests if the object with the given id exists
-	// if yes updates it
-	// if not , instantiates a new one it is a bomb
+	// if yes, updates it
+	// if not, creates it
 	public void updateDrawing(String type, int id, Position pos, String currentAction, String lastAction, int step,
 							  int lastStep, int rangeRight, int rangeLeft, int rangeUp, int rangeDown, boolean isDestroyed) {
+		final Drawing d = drawings.get(id);
+		if (drawings.get(id) != null) {
+			// update drawing
+			d.setPosition(pos);
+			d.setLastAction(lastAction);
+			d.setCurrentAction(currentAction);
+			d.setStep(step);
+			d.setLastStep(lastStep);
+
+			if (type.equals("Bomb")) {
+				BombDrawing b = (BombDrawing) d;
+				b.setRangeRight(rangeRight);
+				b.setRangeLeft(rangeLeft);
+				b.setRangeUp(rangeUp);
+				b.setRangeDown(rangeDown);
+			}
+		}
+
 		if (isDestroyed) {
 			drawings.remove(id);
-		} else if (!drawings.containsKey(id)) {
-			if (type.equals("Bomb")) {
-				drawings.put(id, new BombDrawing(pos, step, rangeRight, rangeLeft, rangeUp, rangeDown, currentAction));
-			}
-		} else {
-			updateObject(type, id, pos, currentAction, lastAction, step, lastStep, rangeRight, rangeLeft, rangeUp, rangeDown);
 		}
 	}
 
+	public void createDrawing(String type, int id, Position pos, int rangeRight, int rangeLeft, int rangeUp, int rangeDown) {
+		final int initialStep = 0;
+		final String initialAction = "";
 
-    // updates the object with the given id
-    private void updateObject(String type, int id, Position pos, String currentAction, String lastAction, int step, int lastStep,
-                              int rangeRight, int rangeLeft, int rangeUp, int rangeDown) {
-        drawings.get(id).setPosition(pos);
-        drawings.get(id).setLastAction(lastAction);
-        drawings.get(id).setCurrentAction(currentAction);
-        drawings.get(id).setStep(step);
-        drawings.get(id).setLastStep(lastStep);
-        if (type.equals("Bomb")) {
-            BombDrawing drawing = (BombDrawing) drawings.get(id);
-            drawing.setRangeRight(rangeRight);
-            drawing.setRangeLeft(rangeLeft);
-            drawing.setRangeUp(rangeUp);
-            drawing.setRangeDown(rangeDown);
-        }
+		// create object and insert
+		if (type.equals("Bomberman")) {
+			drawings.put(id, new BombermanDrawing(pos, initialStep, initialAction));
+		} else if (type.equals("Robot")) {
+			drawings.put(id, new RobotDrawing(pos, initialStep, initialAction));
+		} else if (type.equals("Obstacle")) {
+			drawings.put(id, new ObstacleDrawing(pos, initialStep));
+		} else if (type.equals("Bomb")) {
+			drawings.put(id, new BombDrawing(pos, rangeRight, rangeLeft, rangeUp, rangeDown));
+		} else {
+			Log.e(TAG, "Invalid object type: " + type);
+		}
+	}
 
-    }
+	public void createWallDrawing(Position pos) {
+		wallDrawings.add(new WallDrawing(pos));
+	}
 
     /**
      * Draws the walls after the rest of the objects because when an explosion occurs,
      * it doesn't know what is in the other position.
      *
-     * @param canvas
+     * @param canvas the canvas where all the drawings are drawn
      */
     public void drawAll(Canvas canvas) {
         // set background color
@@ -79,8 +90,9 @@ public class Screen {
             wall.draw(canvas);
         }
 
-        for (Drawing drawing : drawings.values()) {
-            drawing.draw(canvas);
+		final int size = drawings.size();
+        for (int i = 0; i < size; i++) {
+            drawings.valueAt(i).draw(canvas);
         }
     }
 }

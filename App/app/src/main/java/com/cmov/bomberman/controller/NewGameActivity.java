@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
-
 import com.cmov.bomberman.R;
 
 public class NewGameActivity extends Activity {
-
-    private static final int MAP_MIN_LEVEL = 1;
+    private static final boolean SINGLE_PLAYER_MODE = false;
+	private static final int MAP_MIN_LEVEL = 1;
     private static final int MAP_MAX_LEVEL = 2;
     private static int[] mapPreviewId;
 
@@ -39,6 +38,7 @@ public class NewGameActivity extends Activity {
     public void startGame(View v) {
         Intent intent = new Intent(NewGameActivity.this, GameActivity.class);
         intent.putExtra("level", levelPicker.getValue());
+		intent.putExtra("isMultiplayer", SINGLE_PLAYER_MODE);
         startActivity(intent);
     }
 

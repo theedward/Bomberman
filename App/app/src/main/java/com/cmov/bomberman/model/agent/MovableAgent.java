@@ -142,6 +142,13 @@ public abstract class MovableAgent extends Agent {
 		MOVE_DOWN,
 		MOVE_UP,
 		MOVE_LEFT,
-		MOVE_RIGHT,
+		MOVE_RIGHT;
+		
+		public static boolean isMovableAction(final String action) {
+			return action.equals(MovableAgent.Actions.MOVE_LEFT.toString()) ||
+					action.equals(MovableAgent.Actions.MOVE_UP.toString()) ||
+					action.equals(MovableAgent.Actions.MOVE_RIGHT.toString()) ||
+					action.equals(MovableAgent.Actions.MOVE_DOWN.toString());
+		}
 	}
 }

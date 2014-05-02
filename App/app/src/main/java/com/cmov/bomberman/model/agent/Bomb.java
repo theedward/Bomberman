@@ -1,45 +1,38 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import android.util.Log;
+import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Bomb extends Agent {
-	private static final int BOMB_MAX_STEP = 3;
 	private static final int EXPLOSION_MAX_STEP = 4;
+	private static final int BOMB_MAX_STEP = 3;
 
+	private final String TAG = this.getClass().getSimpleName();
+
+	private final Bomberman owner;
 	private final int range;
-    private int rangeRight;
-    private int rangeLeft;
-    private int rangeUp;
-    private int rangeDown;
 
+	private int rangeRight;
+	private int rangeLeft;
+	private int rangeUp;
+    private int rangeDown;
 	private int explosionStepIncr;
 	private boolean explosion;
 	private boolean destroyed;
-	private Bomberman owner;
 
 	public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
 		super(startingPos, new BombAlgorithm(timeout), id);
+		this.setStep(0);
 		this.range = range;
 		this.explosionStepIncr = 1;
 		this.owner = owner;
-		setStep(0);
 	}
-
-	public Bomberman getOwner() {
-		return this.owner;
-	}
-
-    public void setRangeRight(int rangeRight){ this.rangeRight = rangeRight; }
-
-    public void setRangeLeft (int rangeLeft) { this.rangeLeft = rangeLeft; }
-
-    public void setRangeUp (int rangeUp) { this.rangeUp = rangeUp; }
-
-    public void setRangeDown (int rangeDown) {this.rangeDown = rangeDown; }
 
 	@Override
 	public void play(State state, final float dt) {
@@ -52,11 +45,7 @@ public class Bomb extends Agent {
 			this.setLastStep(this.getStep());
 			this.setStep(-1);
 			if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
-				state.bombExplosion(range, this);
-                setRangeRight(state.getBombLimitRight());
-                setRangeLeft(state.getBombLimitLeft());
-                setRangeUp(state.getBombLimitUp());
-                setRangeDown(state.getBombLimitDown());
+				processExplosion(state);
 				explosion = true;
 			}
 		}
@@ -76,6 +65,145 @@ public class Bomb extends Agent {
 		} else {
 			this.setStep((this.getStep() + 1) % BOMB_MAX_STEP);
 		}
+	}
+
+	/**
+	 * Destroys every enemy that is in the range and removes them from the map.
+	 */
+	public void processExplosion(final State state) {
+		final int bombMapX = Position.toDiscrete(getPosition().getX());
+		final int bombMapY = Position.toDiscrete(getPosition().getY());
+		final char[][] map = state.getMap();
+
+		// destroy character in position bomb.pos
+		Position pos = new Position(bombMapX, bombMapY);
+		List<Agent> agentsToDestroy = state.getAgentByPosition(pos);
+		for (Agent agent : agentsToDestroy) {
+			if (agent != null) {
+				if (agent.getType().equals("Robot")) {
+					owner.addScore(owner.getRobotScore());
+				} else if (agent.getType().equals("Bomberman") && !agent.equals(owner)) {
+					owner.addScore(owner.getOpponentScore());
+				}
+				agent.handleEvent(Event.DESTROY);
+			}
+		}
+
+		// destroy character in position bomb.pos.line + i
+		final char wall = State.DrawingType.WALL.toChar();
+		int i;
+		boolean destroyedAgent = false;
+		for (i = 1; i <= range; i++) {
+			if (map[bombMapY + i][bombMapX] == wall) {
+				rangeDown = i - 1;
+				break;
+			} else {
+				rangeDown = i;
+			}
+
+			agentsToDestroy = state.getAgentByPosition(new Position(bombMapX, bombMapY + i));
+			for (Agent agent : agentsToDestroy) {
+				if (agent != null) {
+					if (agent.getType().equals("Robot")) {
+						owner.addScore(owner.getRobotScore());
+					} else if (agent.getType().equals("Bomberman") && !agent.equals(owner)) {
+						owner.addScore(owner.getOpponentScore());
+					}
+					agent.handleEvent(Event.DESTROY);
+					destroyedAgent = true;
+				}
+			}
+
+			if (destroyedAgent) {
+				break;
+			}
+		}
+
+		//destroy character in position bomb.pos.column + i
+		destroyedAgent = false;
+		for (i = 1; i <= range; i++) {
+			if (map[bombMapY][bombMapX + i] == wall) {
+				rangeRight = i - 1;
+				break;
+			} else {
+				rangeRight = i;
+			}
+
+			agentsToDestroy = state.getAgentByPosition(new Position(bombMapX + i, bombMapY));
+			for (Agent agent : agentsToDestroy) {
+				if (agent != null) {
+					if (agent.getType().equals("Robot")) {
+						owner.addScore(owner.getRobotScore());
+					} else if (agent.getType().equals("Bomberman") && !agent.equals(owner)) {
+						owner.addScore(owner.getOpponentScore());
+					}
+					agent.handleEvent(Event.DESTROY);
+					destroyedAgent = true;
+				}
+			}
+
+			if (destroyedAgent) {
+				break;
+			}
+		}
+
+		//destroy character in position bomb.pos.line - i
+		destroyedAgent = false;
+		for (i = 1; i <= range; i++) {
+			if (map[bombMapY - i][bombMapX] == wall) {
+				rangeUp = i - 1;
+				break;
+			} else {
+				rangeUp = i;
+			}
+
+			agentsToDestroy = state.getAgentByPosition(new Position(bombMapX, bombMapY - i));
+			for (Agent agent : agentsToDestroy) {
+				if (agent != null) {
+					if (agent.getType().equals("Robot")) {
+						owner.addScore(owner.getRobotScore());
+					} else if (agent.getType().equals("Bomberman") && !agent.equals(owner)) {
+						owner.addScore(owner.getOpponentScore());
+					}
+					agent.handleEvent(Event.DESTROY);
+					destroyedAgent = true;
+				}
+			}
+
+			if (destroyedAgent) {
+				break;
+			}
+		}
+
+		//destroy character in position bomb.pos.column - i
+		destroyedAgent = false;
+		for (i = 1; i <= range; i++) {
+			if (map[bombMapY][bombMapX - i] == wall) {
+				rangeLeft = i - 1;
+				break;
+			} else {
+				rangeLeft = i;
+			}
+
+			agentsToDestroy = state.getAgentByPosition(new Position(bombMapX - i, bombMapY));
+			for (Agent agent : agentsToDestroy) {
+				if (agent != null) {
+					if (agent.getType().equals("Robot")) {
+						owner.addScore(owner.getRobotScore());
+					} else if (agent.getType().equals("Bomberman") && !agent.equals(owner)) {
+						owner.addScore(owner.getOpponentScore());
+					}
+					agent.handleEvent(Event.DESTROY);
+					destroyedAgent = true;
+				}
+			}
+
+			if (destroyedAgent) {
+				break;
+			}
+		}
+
+		Log.i(TAG, "Bomb range: Left= " + rangeLeft + " Right=" + rangeRight + " Up:" + rangeUp + " Down:" + rangeDown);
 	}
 
 	@Override

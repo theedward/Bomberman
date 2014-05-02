@@ -1,6 +1,7 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -13,6 +14,7 @@ public class Bomberman extends MovableAgent {
     private final float timeBetweenBombs;
     private final int explosionRange;
     private final int explosionTimeout;
+
     /**
      * This is initialized with time between bombs because a player
      * is allowed to put a bomb right in the beginning.
@@ -73,8 +75,8 @@ public class Bomberman extends MovableAgent {
         // increase time since last bomb
         this.timeSinceLastBomb += dt;
 
-        String nextAction = getAlgorithm().getNextActionName();
-
+		// perform action
+        final String nextAction = getAlgorithm().getNextActionName();
         // when the action differs
         if (!this.getCurrentAction().equals(nextAction)) {
             this.setLastAction(this.getCurrentAction());
@@ -83,10 +85,7 @@ public class Bomberman extends MovableAgent {
             this.setStep(0);
         }
 
-        if (nextAction.equals(MovableAgent.Actions.MOVE_LEFT.toString()) ||
-                nextAction.equals(MovableAgent.Actions.MOVE_UP.toString()) ||
-                nextAction.equals(MovableAgent.Actions.MOVE_RIGHT.toString()) ||
-                nextAction.equals(MovableAgent.Actions.MOVE_DOWN.toString())) {
+        if (MovableAgent.Actions.isMovableAction(nextAction)) {
             // The next action is moving
             MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
             move(state, action, dt);
@@ -96,9 +95,9 @@ public class Bomberman extends MovableAgent {
             final Position curPos = getPosition();
             final Position bombPos = new Position(Position.toDiscrete(curPos.getX()) + Agent.WIDTH / 2,
                     Position.toDiscrete(curPos.getY()) + Agent.HEIGHT / 2);
-            final int id = state.incObjectsIdCounter();
-            state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
+            final int id = state.createNewId();
 
+            state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
             this.timeSinceLastBomb = 0;
         } else if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
             if (this.getStep() < MAX_DIE_STEP) {
@@ -109,7 +108,27 @@ public class Bomberman extends MovableAgent {
                 destroyed = true;
             }
         }
+
+		// verify if is going to die
+		if (nearRobots(state)) {
+			this.handleEvent(Event.DESTROY);
+		}
     }
+
+	private boolean nearRobots(final State state) {
+		final char[][] map = state.getMap();
+
+		final int maxY = map.length;
+		final int maxX = map[0].length;
+		final int mapX = Position.toDiscrete(getPosition().getX());
+		final int mapY = Position.toDiscrete(getPosition().getY());
+		final char robotChar = State.DrawingType.ROBOT.toChar();
+
+		return ((mapY + 1 < maxY && map[mapY + 1][mapX] == robotChar) ||
+			(mapY - 1 >= 0 && map[mapY - 1][mapX] == robotChar) ||
+			(mapX - 1 >= 0 && map[mapY][mapX - 1] == robotChar) ||
+			(mapX + 1 < maxX && map[mapY][mapX + 1] == robotChar));
+	}
 
     @Override
     public void toJson(JsonWriter writer) {

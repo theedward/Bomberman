@@ -20,7 +20,7 @@ import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.agent.Controllable;
 
-import java.util.TreeMap;
+import java.util.Map;
 
 /**
  * TODO support Mode SINGLE_PLAYER and MULTI_PLAYER
@@ -33,12 +33,16 @@ public class GameActivity extends Activity {
     private Game game;
     private GameThread gameThread;
     private Controllable playerController;
+	private String playerUsername;
+
     private int level;
+	private boolean isMultiplayer;
     private boolean onPause = false;
 
     private GameView gameView;
     private TextView scoreView;
 	private TextView timeView;
+	private TextView numPlayersView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,111 +52,120 @@ public class GameActivity extends Activity {
         // Initialize the GameUtils context parameter needed in almost every method.
         GameUtils.CONTEXT = this;
 
-        // Handle the touch events on the arrows and bomb buttons.
-        // if the event's action is ACTION_DOWN, this is the next action
-        // if the event's action is ACTION_UP, the next action is empty
-        Button btnArrowUp = (Button) findViewById(R.id.arrowUp);
-        btnArrowUp.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    playerController.keyPressed('U');
-                    return true;
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    playerController.keyPressed(' ');
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        Button btnArrowLeft = (Button) findViewById(R.id.arrowLeft);
-        btnArrowLeft.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    playerController.keyPressed('L');
-                    return true;
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    playerController.keyPressed(' ');
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        Button btnArrowDown = (Button) findViewById(R.id.arrowDown);
-        btnArrowDown.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    playerController.keyPressed('D');
-                    return true;
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    playerController.keyPressed(' ');
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        Button btnArrowRight = (Button) findViewById(R.id.arrowRight);
-        btnArrowRight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    playerController.keyPressed('R');
-                    return true;
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    playerController.keyPressed(' ');
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        Button btnPutBomb = (Button) findViewById(R.id.putBomb);
-        btnPutBomb.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    playerController.keyPressed('B');
-                    return true;
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    playerController.keyPressed(' ');
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
-		this.scoreView = (TextView) findViewById(R.id.playerScore);
-		this.timeView = (TextView) findViewById(R.id.timeLeft);
-
 		// Get the level
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			level = (Integer) extras.get("level");
+			isMultiplayer = (Boolean) extras.get("isMultiplayer");
 		}
 
 		// TODO Create a player (currently SINGLE_PLAYER)
+		playerUsername = DEFAULT_USERNAME;
 		playerController = new Controllable();
-		Player player = new Player(DEFAULT_USERNAME, playerController);
-		this.gameView = (GameView) findViewById(R.id.canvas);
+		Player player = new Player(playerController);
+
+		gameView = (GameView) findViewById(R.id.canvas);
 		player.setGameView(this);
-		this.gameView.setScreen(player.getScreen());
+		gameView.setScreen(player.getScreen());
 
+        game = new Game(level);
+        game.registerPlayer(DEFAULT_USERNAME, player);
+        gameThread = new GameThread(game);
 
-        this.game = new Game(level);
-        this.game.addPlayer(DEFAULT_USERNAME, player);
-
-        this.gameThread = new GameThread(this, game);
+		initViews();
     }
+
+	private void initViews() {
+		// Handle the touch events on the arrows and bomb buttons.
+		// if the event's action is ACTION_DOWN, this is the next action
+		// if the event's action is ACTION_UP, the next action is empty
+		Button btnArrowUp = (Button) findViewById(R.id.arrowUp);
+		btnArrowUp.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+					playerController.keyPressed('U');
+					return true;
+				} else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+					playerController.keyPressed(' ');
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+
+		Button btnArrowLeft = (Button) findViewById(R.id.arrowLeft);
+		btnArrowLeft.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+					playerController.keyPressed('L');
+					return true;
+				} else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+					playerController.keyPressed(' ');
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+
+		Button btnArrowDown = (Button) findViewById(R.id.arrowDown);
+		btnArrowDown.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+					playerController.keyPressed('D');
+					return true;
+				} else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+					playerController.keyPressed(' ');
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+
+		Button btnArrowRight = (Button) findViewById(R.id.arrowRight);
+		btnArrowRight.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+					playerController.keyPressed('R');
+					return true;
+				} else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+					playerController.keyPressed(' ');
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+
+		Button btnPutBomb = (Button) findViewById(R.id.putBomb);
+		btnPutBomb.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+					playerController.keyPressed('B');
+					return true;
+				} else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+					playerController.keyPressed(' ');
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+
+		this.scoreView = (TextView) findViewById(R.id.playerScore);
+		this.timeView = (TextView) findViewById(R.id.timeLeft);
+		this.numPlayersView = (TextView) findViewById(R.id.numPlayers);
+
+		TextView usernameView = (TextView) findViewById(R.id.playerName);
+		usernameView.setText(playerUsername);
+	}
 
     public GameView getGameView() {
         return gameView;
@@ -248,12 +261,27 @@ public class GameActivity extends Activity {
         });
     }
 
-    public void callDialog(final TreeMap<String, Integer> scores){
-        System.out.println("Calling Dialog");
+    public void scoreDialog(final Map<String, Integer> scores) {
+		final Activity currentActivity = this;
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                Dialog dialog = createDialog(scores);
+				final StringBuilder sb = new StringBuilder();
+				for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+					sb.append(entry.getKey());
+					sb.append(": ");
+					sb.append(entry.getValue());
+					sb.append(" points\n");
+				}
+
+				final AlertDialog.Builder builder = new AlertDialog.Builder(currentActivity);
+				builder.setMessage(sb.toString())
+					   .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						   public void onClick(DialogInterface dialog, int id) {
+							   quit();
+						   }
+					   });
+				final Dialog dialog = builder.create();
                 dialog.show();
             }
         });
@@ -264,22 +292,8 @@ public class GameActivity extends Activity {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(currentActivity, "You lost the game!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(currentActivity, "You lost the game :(", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public Dialog createDialog(TreeMap<String, Integer> scores){
-        System.out.println("Creating Dialog");
-        String output = "Player: " + scores.firstEntry().getKey() + " had the score: " + scores.firstEntry().getValue().toString();
-        System.out.println(output);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(output)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        quit();
-                    }
-                });
-        return builder.create();
     }
 }

@@ -1,11 +1,11 @@
 package com.cmov.bomberman.model;
 
 import android.util.JsonWriter;
+import android.util.Log;
 import com.cmov.bomberman.model.agent.Agent;
 import com.cmov.bomberman.model.agent.Bomberman;
 import com.cmov.bomberman.model.agent.Obstacle;
 import com.cmov.bomberman.model.agent.Robot;
-import com.cmov.bomberman.model.drawing.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -15,11 +15,15 @@ import java.util.*;
  * This is where all the game will be processed.
  */
 public final class Game {
+	private final String TAG = this.getClass().getSimpleName();
+
     private final Map<String, Player> players;
     private final Map<String, Player> playersOnPause;
+	private final Map<String, Bomberman> playersAgent;
+
     private final State gameState;
     private final GameConfiguration gameConfiguration;
-
+	private List<Position> wallPositions;
     /**
      * The number of updates the game will have.
      */
@@ -35,6 +39,7 @@ public final class Game {
     public Game(final int level) {
         this.players = new HashMap<String, Player>();
         this.playersOnPause = new HashMap<String, Player>();
+		this.playersAgent = new HashMap<String, Bomberman>();
         this.gameState = new State();
         this.hasStarted = false;
 
@@ -49,62 +54,64 @@ public final class Game {
      * Attributes each player a Bomberman.
      */
     public void populateGame() {
-        Player[] characterOwners = new Player[players.size()];
+		final String[] usernames = new String[players.size()];
+        final Player[] characterOwners = new Player[players.size()];
+		players.keySet().toArray(usernames);
         players.values().toArray(characterOwners);
 
-        List<WallDrawing> wallDrawings = new LinkedList<WallDrawing>();
-        Map<Integer, Drawing> drawings = new HashMap<Integer, Drawing>();
-        int idDrawings = 0;
-        final char[][] map = gameState.getMap();
+		wallPositions = new LinkedList<Position>();
 
+		int idCounter = 0;
+		final char[][] map = gameState.getMap();
         for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
             for (int colIdx = 0; colIdx < map[rowIdx].length; colIdx++) {
-                char character = map[rowIdx][colIdx];
-                // the position will be right in the middle
-                final Position pos = new Position(colIdx + 0.5f, rowIdx + 0.5f);
-                if (character == State.DrawingType.OBSTACLE.toChar()) {
-                    gameState.addAgent(new Obstacle(pos, idDrawings));
-                    drawings.put(idDrawings, new ObstacleDrawing(new Position(colIdx, rowIdx), 0));
-                    idDrawings++;
-                } else if (character == State.DrawingType.ROBOT.toChar()) {
-                    gameState.addAgent(new Robot(pos, idDrawings, gameConfiguration.getrSpeed()));
-                    drawings.put(idDrawings, new RobotDrawing(new Position(colIdx, rowIdx), 0, ""));
-                    idDrawings++;
-                } else if (character == State.DrawingType.WALL.toChar()) {
-                    wallDrawings.add(new WallDrawing(new Position(colIdx, rowIdx)));
-                } else {
-                    // Let's see if it's a Bomberman
-                    try {
-                        // starts at 1
-                        int bombermanId = Integer.parseInt(Character.toString(character)) - 1;
-                        // the number of players must be greater or equal than the number of this bomberman
-                        if (bombermanId < characterOwners.length) {
-                            map[rowIdx][colIdx] = State.DrawingType.BOMBERMAN.toChar();
-                            Agent bomberman = new Bomberman(pos, characterOwners[bombermanId].getController(),
-                                    idDrawings, gameConfiguration.getbSpeed(),
-                                    gameConfiguration.getTimeBetweenBombs(),
-                                    gameConfiguration.getExplosionRange(),
-                                    gameConfiguration.getExplosionDuration(),
-                                    gameConfiguration.getPointRobot(),
-                                    gameConfiguration.getPointOpponent());
-                            gameState.addAgent(bomberman);
-                            characterOwners[bombermanId].setAgent(bomberman);
-                            drawings.put(idDrawings, new BombermanDrawing(new Position(colIdx, rowIdx), 0, ""));
-                            idDrawings++;
-                        } else {
-                            map[rowIdx][colIdx] = State.DrawingType.EMPTY.toChar();
-                        }
-                    } catch (NumberFormatException e) {
-                        // Not a Bomberman
-                    }
-                }
-            }
-        }
+				// the position will be right in the middle
+				final Position pos = new Position(colIdx + Agent.HEIGHT/2, rowIdx + Agent.WIDTH/2);
+				final char character = map[rowIdx][colIdx];
 
-        gameConfiguration.setWallDrawings(wallDrawings);
-        gameConfiguration.setMutableDrawings(drawings);
+                if (character == State.DrawingType.OBSTACLE.toChar()) {
+                    gameState.addAgent(new Obstacle(pos, idCounter));
+                    idCounter++;
+                } else if (character == State.DrawingType.ROBOT.toChar()) {
+                    gameState.addAgent(new Robot(pos, idCounter, gameConfiguration.getrSpeed()));
+                    idCounter++;
+                } else if (character == State.DrawingType.WALL.toChar()) {
+					wallPositions.add(new Position(colIdx, rowIdx));
+				} else {
+					// Let's see if it's a Bomberman
+					try {
+						// starts at 1
+						final int bombermanId = Integer.parseInt(Character.toString(character)) - 1;
+
+						// register valid position for a Player
+						// TODO
+
+						// the number of players must be greater or equal than the number of this bomberman
+						if (bombermanId < characterOwners.length) {
+							map[rowIdx][colIdx] = State.DrawingType.BOMBERMAN.toChar();
+							Bomberman bomberman = new Bomberman(pos, characterOwners[bombermanId].getController(),
+																idCounter, gameConfiguration.getbSpeed(),
+																gameConfiguration.getTimeBetweenBombs(),
+																gameConfiguration.getExplosionRange(),
+																gameConfiguration.getExplosionDuration(),
+																gameConfiguration.getPointRobot(),
+																gameConfiguration.getPointOpponent());
+							playersAgent.put(usernames[bombermanId], bomberman);
+							gameState.addAgent(bomberman);
+							characterOwners[bombermanId].setAgentId(idCounter);
+							idCounter++;
+						} else {
+							map[rowIdx][colIdx] = State.DrawingType.EMPTY.toChar();
+						}
+					} catch (NumberFormatException e) {
+						// Not a Bomberman
+					}
+				}
+			}
+		}
+
         // must pass counter id to game state for posterior object creations, such as bombs
-        gameState.setObjectsIdCounter(idDrawings);
+        gameState.setLastId(idCounter);
     }
 
     /**
@@ -122,42 +129,9 @@ public final class Game {
         return this.gameConfiguration.getMapHeight();
     }
 
-    /**
-     * Adds a new player to the game.
-     *
-     * @param username the player username
-     * @param p        the player object
-     * @return true if the username is unique, false otherwise.
-     */
-    public boolean addPlayer(String username, Player p) {
-        if (players.containsKey(username)) {
-            return false;
-        } else {
-            players.put(username, p);
-            return true;
-        }
-    }
-
-    /**
-     * Removes the player from the game.
-     *
-     * @param p the player object
-     */
-    public void removePlayer(Player p) {
-        players.remove(p.getUsername());
-    }
-
-    private void pausePlayer(String username) {
-        Player p = players.get(username);
-        playersOnPause.put(username, p);
-        removePlayer(p);
-    }
-
-    private void unpausePlayer(String username) {
-        Player p = playersOnPause.get(username);
-        playersOnPause.remove(username);
-        addPlayer(username, p);
-    }
+	public void registerPlayer(String username, Player player) {
+		players.put(username, player);
+	}
 
     /**
      * Pauses the game for the player with the given username
@@ -165,8 +139,11 @@ public final class Game {
      * @param username the player's username
      */
     public synchronized void pause(String username) {
-        gameState.pauseAgent(players.get(username));
-        pausePlayer(username);
+		Player p = players.get(username);
+		playersOnPause.put(username, p);
+		players.remove(username);
+
+        gameState.pauseAgent(playersAgent.get(username));
     }
 
     /**
@@ -175,8 +152,11 @@ public final class Game {
      * @param username the player's username
      */
     public synchronized void unpause(String username) {
-        gameState.unpauseAgent(playersOnPause.get(username));
-        unpausePlayer(username);
+		Player p = playersOnPause.get(username);
+		playersOnPause.remove(username);
+		players.put(username, p);
+
+        gameState.unpauseAgent(playersAgent.get(username));
     }
 
     /**
@@ -185,26 +165,28 @@ public final class Game {
      * Starts the game loop
      */
     public void begin() {
-        // tell players that the game has started
+        Log.i(TAG, "Game has started");
+
         for (Player p : players.values()) {
-            p.onGameStart(gameConfiguration);
+            p.onGameStart(wallPositions);
         }
     }
 
-
+	/**
+	 * Calls method onGameEnd of every player. It sends the final scores of the game.
+	 */
     public void end() {
-        System.out.println("Telling the game to end");
-        // tell players that the game has ended
-        for (Player p : players.values()) {
-            p.onGameEnd(gameConfiguration, checkScores());
-        }
+		Log.i(TAG, "Game has ended.");
 
+        for (Player p : players.values()) {
+            p.onGameEnd(checkScores());
+        }
     }
 
-    public TreeMap<String, Integer> checkScores() {
-        TreeMap<String, Integer> scores = new TreeMap<String, Integer>();
-        for (Player p : players.values()) {
-            scores.put(p.getUsername(), p.getCurrentScore());
+    public Map<String, Integer> checkScores() {
+        final Map<String, Integer> scores = new TreeMap<String, Integer>();
+        for (Map.Entry<String, Player> entry : players.entrySet()) {
+            scores.put(entry.getKey(), entry.getValue().getScore());
         }
         return scores;
 
@@ -224,10 +206,9 @@ public final class Game {
         gameState.playAll();
         updatePlayers();
 
-        // the destroyed flag must be sent on the Player#onUpdate
+		// remove agents after update
         gameState.removeDestroyedAgents();
-
-        this.numRoundsLeft--;
+        numRoundsLeft--;
 
         if (this.hasFinished()) {
             this.end();
@@ -235,35 +216,35 @@ public final class Game {
     }
 
     /**
-     * Calls Player#onUpdate with the new state.
+     * Calls Player#update with the new state.
      */
     private synchronized void updatePlayers() {
         // Get all the character positions
-        StringWriter msg = new StringWriter();
-        JsonWriter writer = new JsonWriter(msg);
+        final StringWriter msg = new StringWriter();
+        final JsonWriter writer = new JsonWriter(msg);
 
         // Update every player with the character positions
-        for (Player p : players.values()) {
+        for (Map.Entry<String, Player> entry : players.entrySet()) {
 			try {
 				writer.setIndent("  ");
 				writer.beginObject();
 
-				createScoreMsg(writer, p);
+				createScoreMsg(writer, entry.getKey());
 				createTimeMsg(writer);
 				createAgentsMsg(writer);
 
 				writer.endObject();
 				writer.close();
 			} catch (IOException e) {
-				System.out.println("Game#updatePlayers: error creating json message.");
+				Log.e(TAG, "Error creating json message.");
 			}
 
-            p.onUpdate(msg.toString());
+            entry.getValue().update(msg.toString());
         }
     }
 
-	private void createScoreMsg(final JsonWriter wr, final Player player) throws IOException {
-		final Bomberman playerAgent = (Bomberman) player.getAgent();
+	private void createScoreMsg(final JsonWriter wr, final String username) throws IOException {
+		final Bomberman playerAgent = playersAgent.get(username);
 		wr.name("Score").value(playerAgent.getScore());
 	}
 
@@ -311,16 +292,5 @@ public final class Game {
         }
 
         return (numBombermans == 0) || (numBombermans == 1 && numRobots == 0);
-    }
-
-    public synchronized boolean hasLost() {
-        Player[] characterOwners = new Player[players.size()];
-        players.values().toArray(characterOwners);
-        for (Player player : characterOwners) {
-            if (player.getAgent().isDestroyed())
-                return true;
-        }
-        return false;
-
     }
 }

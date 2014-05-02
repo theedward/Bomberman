@@ -2,7 +2,6 @@ package com.cmov.bomberman.model.drawing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.agent.Bomb;
@@ -11,12 +10,30 @@ public class BombDrawing extends Drawing {
     private static Bitmap sprite[];
     private static Bitmap explosionSprite[][];
 
-
-
     private int rangeRight;
     private int rangeLeft;
     private int rangeUp;
     private int rangeDown;
+
+	public BombDrawing(final Position position, final int rangeRight, final int rangeLeft, final int rangeUp,
+					   final int rangeDown) {
+		super(position);
+		this.setStep(0);
+		this.setCurrentAction("");
+
+		this.rangeRight = rangeRight;
+		this.rangeLeft = rangeLeft;
+		this.rangeUp = rangeUp;
+		this.rangeDown = rangeDown;
+
+        if (sprite == null) {
+            sprite = GameUtils.readBombSprite();
+        }
+
+        if (explosionSprite == null) {
+            explosionSprite = GameUtils.readBombExplosionSprite();
+        }
+    }
 
     public void setRangeRight(int rangeRight) {
         this.rangeRight = rangeRight;
@@ -34,24 +51,6 @@ public class BombDrawing extends Drawing {
         this.rangeDown = rangeDown;
     }
 
-	public BombDrawing(final Position position, final int step,final int rangeRight, final int rangeLeft, final int rangeUp, final int rangeDown, final String currentAction) {
-		super(position);
-		this.setStep(step);
-		this.rangeRight = rangeRight;
-        this.rangeLeft = rangeLeft;
-        this.rangeUp = rangeUp;
-        this.rangeDown = rangeDown;
-		this.setCurrentAction(currentAction);
-
-        if (sprite == null) {
-            sprite = GameUtils.readBombSprite();
-        }
-
-        if (explosionSprite == null) {
-            explosionSprite = GameUtils.readBombExplosionSprite();
-        }
-    }
-
     @Override
     public void draw(final Canvas canvas) {
         final int spriteWidth = sprite[0].getWidth();
@@ -59,7 +58,6 @@ public class BombDrawing extends Drawing {
         final int x = (int) (getPosition().getX() * spriteWidth);
         final int y = (int) (getPosition().getY() * spriteHeight);
         int drawStep = this.getStep();
-
 
 		if (this.getCurrentAction().equals(Bomb.Actions.EXPLODE.toString())) {
             // Vertical

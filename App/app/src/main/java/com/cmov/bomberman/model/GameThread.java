@@ -1,20 +1,20 @@
 package com.cmov.bomberman.model;
 
-import com.cmov.bomberman.controller.GameActivity;
+import android.util.Log;
 
 /**
  * This is the class responsible for continuously running the game.
  */
 public class GameThread extends Thread {
+	private final String TAG = this.getClass().getSimpleName();
+
 	/**
 	 * Number of updates per second
 	 */
 	private final int numUpdates;
 	private final Game game;
-	private final GameActivity activity;
 
-	public GameThread(final GameActivity activity, final Game game) {
-		this.activity = activity;
+	public GameThread(final Game game) {
 		this.game = game;
 		this.numUpdates = this.game.getNumberUpdates();
 	}
@@ -32,14 +32,12 @@ public class GameThread extends Thread {
 			final long now = System.currentTimeMillis();
 
 			game.update();
-			if (game.hasLost()) {
-				activity.gameLost();
-			}
 
 			try {
 				final long dt = System.currentTimeMillis() - now;
 				// suspend thread only when the time spent on game#update is smaller than the time it should
 				// spend on each update (1000 / numUpdates).
+				Log.i(TAG, "Processing the game update took " + dt + " ms.");
 				if (timeSleep > dt) {
 					Thread.sleep(timeSleep - dt);
 				}

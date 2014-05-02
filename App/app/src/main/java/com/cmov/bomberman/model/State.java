@@ -5,7 +5,6 @@ import com.cmov.bomberman.model.agent.Agent;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class State {
     private char[][] map;
     private List<Agent> agents;

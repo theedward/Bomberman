@@ -1,7 +1,5 @@
 package com.cmov.bomberman.model;
 
-import android.util.Log;
-
 /**
  * This is the class responsible for continuously running the game.
  */
@@ -37,7 +35,6 @@ public class GameThread extends Thread {
 				final long dt = System.currentTimeMillis() - now;
 				// suspend thread only when the time spent on game#update is smaller than the time it should
 				// spend on each update (1000 / numUpdates).
-				Log.i(TAG, "Processing the game update took " + dt + " ms.");
 				if (timeSleep > dt) {
 					Thread.sleep(timeSleep - dt);
 				}

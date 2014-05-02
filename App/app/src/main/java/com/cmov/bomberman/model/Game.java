@@ -203,8 +203,13 @@ public final class Game {
         }
 
         // Update the state
+		final long timeBeforePlay = System.currentTimeMillis();
         gameState.playAll();
+		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
+
+		final long timeBeforeUpdate = System.currentTimeMillis();
         updatePlayers();
+		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
 		// remove agents after update
         gameState.removeDestroyedAgents();

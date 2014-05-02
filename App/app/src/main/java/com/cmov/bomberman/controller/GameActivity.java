@@ -59,7 +59,6 @@ public class GameActivity extends Activity {
 			isMultiplayer = (Boolean) extras.get("isMultiplayer");
 		}
 
-		// TODO Create a player (currently SINGLE_PLAYER)
 		playerUsername = DEFAULT_USERNAME;
 		playerController = new Controllable();
 		Player player = new Player(playerController);

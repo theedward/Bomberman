@@ -236,6 +236,7 @@ public final class Game {
 
 				createScoreMsg(writer, entry.getKey());
 				createTimeMsg(writer);
+				createNumPlayersMsg(writer);
 				createAgentsMsg(writer);
 
 				writer.endObject();
@@ -256,6 +257,11 @@ public final class Game {
 	private void createTimeMsg(final JsonWriter wr) throws IOException {
 		final int timeLeft = this.numRoundsLeft / this.gameConfiguration.getNumUpdatesPerSecond();
 		wr.name("TimeLeft").value(timeLeft);
+	}
+
+	private void createNumPlayersMsg(final JsonWriter wr) throws IOException {
+		final int numPlayers = players.size() + playersOnPause.size();
+		wr.name("NumPlayers").value(numPlayers);
 	}
 
 	private void createAgentsMsg(final JsonWriter wr) throws IOException {

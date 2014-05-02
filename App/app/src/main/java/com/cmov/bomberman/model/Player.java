@@ -18,20 +18,25 @@ public class Player {
 	private final Screen screen;
 	private final Controllable controller;
 
+	private int agentId;
+	private boolean destroyed;
+
 	/**
 	 * This is needed to draw in the canvas in a synchronized manner.
 	 */
 	private GameActivity gameActivity;
-	private int agentId;
+
+	/**
+	 * Information to be shown in the views
+	 */
 	private int score;
 	private int timeLeft;
-	private boolean destroyed;
+	private int numPlayers;
 
 	public Player(Controllable controller) {
 		this.controller = controller;
 		this.screen = new Screen();
-		this.gameActivity = null;
-		this.destroyed = true;
+		this.destroyed = false;
 	}
 
 	public Controllable getController() {
@@ -93,6 +98,8 @@ public class Player {
 						parseScore(rd);
 					} else if (name.equals("TimeLeft")) {
 						parseTimeLeft(rd);
+					} else if (name.equals("NumPlayers")) {
+						parseNumPlayers(rd);
 					} else if (name.equals("Agents")) {
 						parseAgents(rd);
 					}
@@ -111,6 +118,10 @@ public class Player {
 
 	private void parseTimeLeft(final JsonReader rd) throws IOException {
 		this.timeLeft = rd.nextInt();
+	}
+
+	private void parseNumPlayers(final JsonReader rd) throws IOException {
+		this.numPlayers = rd.nextInt();
 	}
 
 	private void parseAgents(final JsonReader rd) throws IOException {
@@ -218,6 +229,7 @@ public class Player {
 	private void updateViews() {
 		gameActivity.updateScoreView(this.score);
 		gameActivity.updateTimeView(this.timeLeft);
+		gameActivity.updateNumPlayersView(this.numPlayers);
 	}
 
 	/**

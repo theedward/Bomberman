@@ -260,6 +260,15 @@ public class GameActivity extends Activity {
         });
     }
 
+	public void updateNumPlayersView(final int numPlayers) {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				numPlayersView.setText("Num. Players: " + numPlayers);
+			}
+		});
+	}
+
     public void scoreDialog(final Map<String, Integer> scores) {
 		final Activity currentActivity = this;
         mHandler.post(new Runnable() {

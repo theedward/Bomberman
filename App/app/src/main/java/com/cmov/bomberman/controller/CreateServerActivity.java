@@ -34,6 +34,7 @@ public class CreateServerActivity extends WifiActivity {
             }
         });
         // algures aqui alguem ha de dar um nome ao server
+        //findViewById()
         //hostName =;
         //username =;
 

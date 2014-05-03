@@ -56,10 +56,17 @@
         </activity>
 
         <service
-            android:name=".model.GameProxy"
+            android:name="com.cmov.bomberman.model.GameProxy"
             android:enabled="true"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name="com.cmov.bomberman.controller.LoadingActivity"
+            android:label="@string/title_activity_loading"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
     </application>
 
 </manifest>

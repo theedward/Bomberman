@@ -113,11 +113,19 @@ public final class GameImpl implements Game {
 	/**
      * @return the number of updates per second
      */
-    public int getNumberUpdates() {
+    protected int getNumberUpdates() {
         return this.gameConfiguration.getNumUpdatesPerSecond();
     }
 
-    public int getMapWidth() {
+	@Override
+	public Collection<String> getPlayerUsernames() {
+		Set<String> usernames = new LinkedHashSet<String>();
+		usernames.addAll(players.keySet());
+		usernames.addAll(playersOnPause.keySet());
+		return usernames;
+	}
+
+	public int getMapWidth() {
         return this.gameConfiguration.getMapWidth();
     }
 

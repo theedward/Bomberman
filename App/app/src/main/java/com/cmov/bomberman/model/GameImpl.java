@@ -22,6 +22,9 @@ public final class GameImpl implements Game {
     private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
 
+	private final int bombermanIds[];
+	private final Position bombermanPos[];
+
     private final State gameState;
     private final GameConfiguration gameConfiguration;
 	private List<Position> wallPositions;
@@ -47,6 +50,8 @@ public final class GameImpl implements Game {
         this.gameConfiguration = GameUtils.readConfigurationFile(level);
         this.numRoundsLeft = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
 
+		this.bombermanPos = new Position[gameConfiguration.getMaxNumPlayers()];
+		this.bombermanIds = new int[gameConfiguration.getMaxNumPlayers()];
 		populateGame();
     }
 
@@ -84,26 +89,11 @@ public final class GameImpl implements Game {
 						// starts at 1
 						final int bombermanId = Integer.parseInt(Character.toString(character)) - 1;
 
-						// register valid position for a Player
-						// TODO
-
-						// the number of players must be greater or equal than the number of this bomberman
-						if (bombermanId < characterOwners.length) {
-							map[rowIdx][colIdx] = State.DrawingType.BOMBERMAN.toChar();
-							Bomberman bomberman = new Bomberman(pos, characterOwners[bombermanId].getController(),
-																idCounter, gameConfiguration.getbSpeed(),
-																gameConfiguration.getTimeBetweenBombs(),
-																gameConfiguration.getExplosionRange(),
-																gameConfiguration.getExplosionDuration(),
-																gameConfiguration.getPointRobot(),
-																gameConfiguration.getPointOpponent());
-							playersAgent.put(usernames[bombermanId], bomberman);
-							gameState.addAgent(bomberman);
-							characterOwners[bombermanId].setAgentId(idCounter);
-							idCounter++;
-						} else {
-							map[rowIdx][colIdx] = State.DrawingType.EMPTY.toChar();
-						}
+						// save bomberman position for later use
+						bombermanPos[bombermanId] = pos;
+						bombermanIds[bombermanId] = idCounter;
+						map[rowIdx][colIdx] = State.DrawingType.EMPTY.toChar();
+						idCounter++;
 					} catch (NumberFormatException e) {
 						// Not a Bomberman
 					}
@@ -174,8 +164,25 @@ public final class GameImpl implements Game {
 	 * @param username the player's username
 	 */
 	public synchronized void join(String username, Player player) {
-		// TODO
-		players.put(username, player);
+		if (playersAgent.size() < gameConfiguration.getMaxNumPlayers()) {
+			players.put(username, player);
+
+			// The next bomberman to be chosen
+			final int bombermanId = playersAgent.size();
+			final int agentId = bombermanIds[bombermanId];
+			final Position pos = bombermanPos[bombermanId];
+			final char[][] map = gameState.getMap();
+			map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
+			Bomberman bomberman = new Bomberman(pos, player.getController(), agentId,
+												gameConfiguration.getbSpeed(), gameConfiguration.getTimeBetweenBombs(),
+												gameConfiguration.getExplosionRange(),
+												gameConfiguration.getExplosionDuration(),
+												gameConfiguration.getPointRobot(),
+												gameConfiguration.getPointOpponent());
+			gameState.addAgent(bomberman);
+			player.setAgentId(agentId);
+			playersAgent.put(username, bomberman);
+		}
 	}
 
     /**

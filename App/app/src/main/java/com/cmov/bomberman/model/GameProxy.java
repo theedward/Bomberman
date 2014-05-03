@@ -25,6 +25,7 @@ public class GameProxy extends Service implements Game {
 
 	@Override
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {
+		Log.i(TAG, "onStartCommand");
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			this.level = extras.getInt("level");

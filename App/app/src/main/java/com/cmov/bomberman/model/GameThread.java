@@ -1,9 +1,12 @@
 package com.cmov.bomberman.model;
 
+import android.util.Log;
+
 /**
  * This is the class responsible for continuously running the game.
  */
 public class GameThread extends Thread {
+	private final String TAG = this.getClass().getSimpleName();
 	/**
 	 * Number of updates per second
 	 */
@@ -23,12 +26,14 @@ public class GameThread extends Thread {
 	 * and only gets unlocked when running is true.
 	 */
 	public void run() {
+		Log.i(TAG, "Started running game thread");
 		gameImpl.start();
 
 		final int timeSleep = 1000 / numUpdates;
 		while (!gameImpl.hasFinished()) {
 			final long now = System.currentTimeMillis();
 
+			Log.i(TAG, "Updating...");
 			gameImpl.update();
 
 			try {
@@ -43,6 +48,8 @@ public class GameThread extends Thread {
 				return;
 			}
 		}
+
+		Log.i(TAG, "Game has finished");
 	}
 }
 

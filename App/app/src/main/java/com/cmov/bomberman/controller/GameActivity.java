@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.model.Game;
-import com.cmov.bomberman.model.GameService;
+import com.cmov.bomberman.model.GameProxy;
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.agent.Controllable;
@@ -26,21 +26,21 @@ public class GameActivity extends Activity {
     private final Handler mHandler = new Handler();
 	private boolean mBound = false;
 	private Game game;
+
 	/** Defines callbacks for service binding, passed to bindService() */
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className,
 									   IBinder service) {
 			// We've bound to GameService, cast the IBinder and get LocalService instance
-			GameService.GameBinder binder = (GameService.GameBinder) service;
-			GameService mService = binder.getService();
-			game = mService.getGame();
+			GameProxy.GameBinder binder = (GameProxy.GameBinder) service;
+			GameProxy mService = binder.getService();
+			game = (Game) mService;
 			mBound = true;
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
-			game = null;
 			mBound = false;
 		}
 	};
@@ -180,7 +180,7 @@ public class GameActivity extends Activity {
 		super.onStart();
 
 		// Bind to GameService
-		Intent intent = new Intent(this, GameService.class);
+		Intent intent = new Intent(this, GameProxy.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 

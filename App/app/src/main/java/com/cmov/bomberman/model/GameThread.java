@@ -10,11 +10,11 @@ public class GameThread extends Thread {
 	 * Number of updates per second
 	 */
 	private final int numUpdates;
-	private final Game game;
+	private final GameImpl gameImpl;
 
-	public GameThread(final Game game) {
-		this.game = game;
-		this.numUpdates = this.game.getNumberUpdates();
+	public GameThread(final GameImpl gameImpl) {
+		this.gameImpl = gameImpl;
+		this.numUpdates = this.gameImpl.getNumberUpdates();
 	}
 
 	/**
@@ -26,10 +26,10 @@ public class GameThread extends Thread {
 	 */
 	public void run() {
 		final int timeSleep = 1000 / numUpdates;
-		while (!game.hasFinished()) {
+		while (!gameImpl.hasFinished()) {
 			final long now = System.currentTimeMillis();
 
-			game.update();
+			gameImpl.update();
 
 			try {
 				final long dt = System.currentTimeMillis() - now;

@@ -56,7 +56,7 @@
         </activity>
 
         <service
-            android:name=".model.GameService"
+            android:name=".model.GameProxy"
             android:enabled="true"
             android:exported="false" >
         </service>

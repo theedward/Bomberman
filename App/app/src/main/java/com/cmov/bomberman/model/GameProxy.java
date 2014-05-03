@@ -7,19 +7,19 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-public class GameService extends Service {
+public class GameProxy extends Service implements Game {
 	private final String TAG = this.getClass().getSimpleName();
 	private final IBinder mBinder = new GameBinder();
 
-	private Game game;
+	private GameImpl game;
 	private GameThread gameThread;
 	private boolean isMultiplayer;
 	private int level;
 
-	private void init(final int level) {
-		game = new Game(level);
+	private void init() {
+		game = new GameImpl(level);
 		gameThread = new GameThread(game);
-		gameThread.start();
+
 		Log.i(TAG, "Created the game");
 	}
 
@@ -29,15 +29,16 @@ public class GameService extends Service {
 		if (extras != null) {
 			this.level = extras.getInt("level");
 			this.isMultiplayer = extras.getBoolean("isMultiplayer");
-
-			init(level);
 		}
+
+		GameUtils.CONTEXT = this;
+		init();
+
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
     public IBinder onBind(Intent intent) {
-
         return mBinder;
     }
 
@@ -50,14 +51,62 @@ public class GameService extends Service {
 		gameThread = null;
 	}
 
-	public Game getGame() {
-		return game;
+	@Override
+	public void registerPlayer(final String username, final Player player) {
+		// TODO
+	}
+
+	@Override
+	public void pause(final String username) {
+		// TODO
+	}
+
+	@Override
+	public void unpause(final String username) {
+	   // TODO
+	}
+
+	@Override
+	public void quit(final String username) {
+	   // TODO
+	}
+
+	@Override
+	public void join(final String username, final Player player) {
+		// TODO
+	}
+
+	@Override
+	public void begin() {
+		 // TODO
+	}
+
+	@Override
+	public void end() {
+		// TODO
+	}
+
+	@Override
+	public void update() {
+		// TODO
+	}
+
+	@Override
+	public int getMapWidth() {
+		// TODO
+		return 0;
+	}
+
+	@Override
+	public int getMapHeight() {
+		// TODO
+		return 0;
 	}
 
 	public class GameBinder extends Binder {
-		public GameService getService() {
+		public GameProxy getService() {
 			// Return this instance of GameService so clients can call public methods
-			return GameService.this;
+			return GameProxy.this;
 		}
 	}
 }

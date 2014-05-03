@@ -73,4 +73,8 @@ public class JoinServerActivity extends WifiActivity {
     }
 
 
+
+    private void accept(){
+        //TODO: on click accept
+    }
 }

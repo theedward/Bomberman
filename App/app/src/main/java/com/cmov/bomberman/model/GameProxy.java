@@ -12,15 +12,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class GameProxy extends Service implements Game {
-
-    ServerSocket serverSocket;
-
     private final String TAG = this.getClass().getSimpleName();
     private final IBinder mBinder = new GameBinder();
 
@@ -31,7 +29,7 @@ public class GameProxy extends Service implements Game {
 
     //TODO: estas variáveis vão ter de sair, supostamente têm de chegar cá de outra forma
     private TreeMap<Player, Socket> sockets = new TreeMap<Player, Socket>();
-    private Socket socket;
+    private Socket serverSocket;
     private boolean isServer;
 
     private void init() {
@@ -171,16 +169,11 @@ public class GameProxy extends Service implements Game {
     @Override
     public void pause(final String username) {
 
-
-        if (isMultiplayer) {
+        if (isMultiplayer && !isServer) {
             try {
-                DataOutputStream writeToServer = new DataOutputStream(socket.getOutputStream());
-                if (isServer) {
-                    game.pause(username);
-                } else {
-                    writeToServer.writeChars("PAUSE#" + username);
-                    writeToServer.flush();
-                }
+                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
+                writeToServer.writeChars("PAUSE#" + username);
+                writeToServer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -194,15 +187,12 @@ public class GameProxy extends Service implements Game {
     */
     @Override
     public void unpause(final String username) {
-        if (isMultiplayer) {
+
+        if (isMultiplayer && !isServer) {
             try {
-                DataOutputStream writeToServer = new DataOutputStream(socket.getOutputStream());
-                if (isServer) {
-                    game.unpause(username);
-                } else {
-                    writeToServer.writeChars("UNPAUSE#" + username);
-                    writeToServer.flush();
-                }
+                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
+                writeToServer.writeChars("UNPAUSE#" + username);
+                writeToServer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -213,15 +203,11 @@ public class GameProxy extends Service implements Game {
 
     @Override
     public void quit(final String username) {
-        if (isMultiplayer) {
+        if (isMultiplayer && !isServer) {
             try {
-                DataOutputStream writeToServer = new DataOutputStream(socket.getOutputStream());
-                if (isServer) {
-                    game.quit(username);
-                } else {
-                    writeToServer.writeChars("QUIT#" + username);
-                    writeToServer.flush();
-                }
+                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
+                writeToServer.writeChars("QUIT#" + username);
+                writeToServer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -244,12 +230,15 @@ public class GameProxy extends Service implements Game {
     public int getMapWidth() {
         if (isMultiplayer) {
             try {
-                DataOutputStream writeToServer = new DataOutputStream(socket.getOutputStream());
+                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
+                DataInputStream readFromServer = new DataInputStream(serverSocket.getInputStream());
                 if (isServer) {
-                    game.getMapWidth();
+                    writeToServer.writeInt(getMapWidth());
+                    return game.getMapWidth();
                 } else {
                     writeToServer.writeChars("GETMAPWIDTH#");
                     writeToServer.flush();
+                    return readFromServer.readInt();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -257,19 +246,22 @@ public class GameProxy extends Service implements Game {
         } else {
             return game.getMapWidth();
         }
-        return -1; //returning -1 as a failsafe (should be verified if -1 then ignore)
+        return game.getMapWidth();
     }
 
 	@Override
 	public int getMapHeight() {
 		if (isMultiplayer) {
             try {
-                DataOutputStream writeToServer = new DataOutputStream(socket.getOutputStream());
+                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
+                DataInputStream readFromServer = new DataInputStream(serverSocket.getInputStream());
                 if (isServer) {
+                    writeToServer.writeInt(getMapHeight());
                     game.getMapWidth();
                 } else {
                     writeToServer.writeChars("GETMAPHEIGHT#");
                     writeToServer.flush();
+                    return readFromServer.readInt();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -284,7 +276,7 @@ public class GameProxy extends Service implements Game {
 	public void start() {
 		if (isMultiplayer) {
             try {
-                DataOutputStream writeToServer = new DataOutputStream(socket.getOutputStream());
+                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
                 if (isServer) {
                     game.start();
                 } else {

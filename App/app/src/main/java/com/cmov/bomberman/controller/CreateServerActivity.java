@@ -41,6 +41,9 @@ public class CreateServerActivity extends WifiActivity {
 
     }
 
+    public void accept(){
+        //TODO:do this
+    }
     @Override
     protected void onResume() {
         super.onResume();

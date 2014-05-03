@@ -11,4 +11,8 @@ public class JoinServerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_server);
     }
+
+    private void accept(){
+        //TODO: on click accept
+    }
 }

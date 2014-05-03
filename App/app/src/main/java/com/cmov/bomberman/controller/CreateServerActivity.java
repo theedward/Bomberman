@@ -12,4 +12,7 @@ public class CreateServerActivity extends Activity {
         setContentView(R.layout.activity_create_server);
     }
 
+    public void accept(){
+        //TODO:do this
+    }
 }

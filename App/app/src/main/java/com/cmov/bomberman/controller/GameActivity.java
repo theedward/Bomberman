@@ -24,9 +24,10 @@ import java.util.Map;
 
 public class GameActivity extends Activity {
     private final Handler mHandler = new Handler();
-	private boolean mBound = false;
 	private Game game;
-
+	private boolean mBound = false;
+	private Player player;
+	private String playerUsername;
 	/** Defines callbacks for service binding, passed to bindService() */
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
@@ -34,9 +35,11 @@ public class GameActivity extends Activity {
 									   IBinder service) {
 			// We've bound to GameService, cast the IBinder and get LocalService instance
 			GameProxy.GameBinder binder = (GameProxy.GameBinder) service;
-			GameProxy mService = binder.getService();
-			game = (Game) mService;
+			game = binder.getService();
 			mBound = true;
+
+			// Connected to the game, now join.
+			game.join(playerUsername, player);
 		}
 
 		@Override
@@ -44,7 +47,6 @@ public class GameActivity extends Activity {
 			mBound = false;
 		}
 	};
-	private String playerUsername;
 	private Controllable playerController;
     private boolean isPaused = false;
 
@@ -63,9 +65,6 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        // Initialize the GameUtils context parameter needed in almost every method.
-        GameUtils.CONTEXT = this;
-
 		// Get the level
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -73,9 +72,8 @@ public class GameActivity extends Activity {
 		}
 
 		playerController = new Controllable();
-		Player player = new Player(playerController);
+		player = new Player(playerController);
 		player.setGameActivity(this);
-		game.registerPlayer(playerUsername, player);
 
 		gameView = (GameView) findViewById(R.id.canvas);
 		gameView.setScreen(player.getScreen());

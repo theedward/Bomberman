@@ -4,8 +4,6 @@ package com.cmov.bomberman.model;
  * This is the class responsible for continuously running the game.
  */
 public class GameThread extends Thread {
-	private final String TAG = this.getClass().getSimpleName();
-
 	/**
 	 * Number of updates per second
 	 */
@@ -25,6 +23,8 @@ public class GameThread extends Thread {
 	 * and only gets unlocked when running is true.
 	 */
 	public void run() {
+		gameImpl.start();
+
 		final int timeSleep = 1000 / numUpdates;
 		while (!gameImpl.hasFinished()) {
 			final long now = System.currentTimeMillis();

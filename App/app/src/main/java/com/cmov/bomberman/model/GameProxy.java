@@ -25,7 +25,7 @@ public class GameProxy extends Service implements Game {
 
 	@Override
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {
-		final Bundle extras = intent.getExtras();
+		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			this.level = extras.getInt("level");
 			this.isMultiplayer = extras.getBoolean("isMultiplayer");
@@ -52,55 +52,69 @@ public class GameProxy extends Service implements Game {
 	}
 
 	@Override
-	public void registerPlayer(final String username, final Player player) {
-		// TODO
-	}
-
-	@Override
 	public void pause(final String username) {
-		// TODO
+		if (isMultiplayer) {
+			// TODO
+		} else {
+			game.pause(username);
+		}
 	}
 
 	@Override
 	public void unpause(final String username) {
-	   // TODO
+	   if (isMultiplayer) {
+		   // TODO
+	   } else {
+		   game.pause(username);
+	   }
 	}
 
 	@Override
 	public void quit(final String username) {
-	   // TODO
+	   if (isMultiplayer) {
+		   // TODO
+	   } else {
+		   game.quit(username);
+	   }
 	}
 
 	@Override
-	public void join(final String username, final Player player) {
+	public void join(final String username, Player player) {
 		// TODO
-	}
-
-	@Override
-	public void begin() {
-		 // TODO
-	}
-
-	@Override
-	public void end() {
-		// TODO
-	}
-
-	@Override
-	public void update() {
-		// TODO
+		if (isMultiplayer) {
+			// TODO create network player or something
+		} else {
+			game.join(username, player);
+		}
 	}
 
 	@Override
 	public int getMapWidth() {
-		// TODO
-		return 0;
+		if (isMultiplayer) {
+			// TODO
+			return 0;
+		} else {
+			return game.getMapWidth();
+		}
 	}
 
 	@Override
 	public int getMapHeight() {
-		// TODO
-		return 0;
+		if (isMultiplayer) {
+			// TODO
+			return 0;
+		} else {
+			return game.getMapHeight();
+		}
+	}
+
+	@Override
+	public void start() {
+		if (isMultiplayer) {
+			// TODO
+		} else {
+			gameThread.start();
+		}
 	}
 
 	public class GameBinder extends Binder {

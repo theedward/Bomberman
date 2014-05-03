@@ -29,7 +29,6 @@ public final class GameImpl implements Game {
      * The number of updates the game will have.
      */
     private int numRoundsLeft;
-    private boolean hasStarted;
 
     /**
      * This constructor performs all the necessary steps to start the game right next.
@@ -42,7 +41,6 @@ public final class GameImpl implements Game {
         this.playersOnPause = new HashMap<String, Player>();
 		this.playersAgent = new HashMap<String, Bomberman>();
         this.gameState = new State();
-        this.hasStarted = false;
 
         // Read data from files
         this.gameState.setMap(GameUtils.readLevelFromFile(level));
@@ -117,6 +115,11 @@ public final class GameImpl implements Game {
         gameState.setLastId(idCounter);
     }
 
+	public void start() {
+		this.begin();
+		this.gameState.startCountingNow();
+	}
+
 	/**
      * @return the number of updates per second
      */
@@ -131,15 +134,6 @@ public final class GameImpl implements Game {
     public int getMapHeight() {
         return this.gameConfiguration.getMapHeight();
     }
-
-	/**
-	 * A player has joined the game before it started.
-	 * @param username the player's username
-	 * @param player the player's object
-	 */
-	public void registerPlayer(String username, Player player) {
-		players.put(username, player);
-	}
 
     /**
      * Pauses the game for the player with the given username
@@ -181,6 +175,7 @@ public final class GameImpl implements Game {
 	 */
 	public synchronized void join(String username, Player player) {
 		// TODO
+		players.put(username, player);
 	}
 
     /**
@@ -188,7 +183,7 @@ public final class GameImpl implements Game {
      * Calls Player#onGameStart for every registered player.
      * Starts the game loop
      */
-    public synchronized void begin() {
+    protected synchronized void begin() {
         Log.i(TAG, "Game has started");
 
         for (Player p : players.values()) {
@@ -199,7 +194,7 @@ public final class GameImpl implements Game {
 	/**
 	 * Calls method onGameEnd of every player. It sends the final scores of the game.
 	 */
-    public synchronized void end() {
+    protected synchronized void end() {
 		Log.i(TAG, "Game has ended.");
 
         for (Player p : players.values()) {
@@ -219,13 +214,7 @@ public final class GameImpl implements Game {
     /**
      * Updates the state (new frame).
      */
-    public synchronized void update() {
-        if (!this.hasStarted) {
-            this.hasStarted = true;
-            this.begin();
-            this.gameState.startCountingNow();
-        }
-
+    protected synchronized void update() {
         // Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
         gameState.playAll();

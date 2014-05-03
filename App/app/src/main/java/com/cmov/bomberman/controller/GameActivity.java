@@ -3,10 +3,10 @@ package com.cmov.bomberman.controller;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -15,29 +15,43 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.model.Game;
-import com.cmov.bomberman.model.GameThread;
+import com.cmov.bomberman.model.GameService;
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.agent.Controllable;
 
 import java.util.Map;
 
-/**
- * TODO support Mode SINGLE_PLAYER and MULTI_PLAYER
- */
 public class GameActivity extends Activity {
-    private static final String DEFAULT_USERNAME = "Bomberman";
-
     private final Handler mHandler = new Handler();
+	private boolean mBound = false;
+	private Game game;
+	/** Defines callbacks for service binding, passed to bindService() */
+	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName className,
+									   IBinder service) {
+			// We've bound to GameService, cast the IBinder and get LocalService instance
+			GameService.GameBinder binder = (GameService.GameBinder) service;
+			GameService mService = binder.getService();
+			game = mService.getGame();
+			mBound = true;
+		}
 
-    private Game game;
-    private GameThread gameThread;
-    private Controllable playerController;
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			game = null;
+			mBound = false;
+		}
+	};
 	private String playerUsername;
+	private Controllable playerController;
+    private boolean isPaused = false;
 
-    private int level;
-	private boolean isMultiplayer;
-    private boolean onPause = false;
+	/**
+	 * Only initialize some image parameters once
+	 */
+	private boolean once = false;
 
     private GameView gameView;
     private TextView scoreView;
@@ -55,21 +69,16 @@ public class GameActivity extends Activity {
 		// Get the level
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			level = (Integer) extras.get("level");
-			isMultiplayer = (Boolean) extras.get("isMultiplayer");
+			playerUsername = (String) extras.get("username");
 		}
 
-		playerUsername = DEFAULT_USERNAME;
 		playerController = new Controllable();
 		Player player = new Player(playerController);
+		player.setGameActivity(this);
+		game.registerPlayer(playerUsername, player);
 
 		gameView = (GameView) findViewById(R.id.canvas);
-		player.setGameView(this);
 		gameView.setScreen(player.getScreen());
-
-        game = new Game(level);
-        game.registerPlayer(DEFAULT_USERNAME, player);
-        gameThread = new GameThread(game);
 
 		initViews();
     }
@@ -166,17 +175,91 @@ public class GameActivity extends Activity {
 		usernameView.setText(playerUsername);
 	}
 
-    public GameView getGameView() {
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		// Bind to GameService
+		Intent intent = new Intent(this, GameService.class);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
+	public void onTrimMemory(final int level) {
+		super.onTrimMemory(level);
+		// TODO
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// TODO
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// TODO
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		// TODO
+
+		// Unbind from the service
+		if (mBound) {
+			unbindService(mConnection);
+			mBound = false;
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		// TODO
+	}
+
+	@Override
+	public void onBackPressed() {
+		pauseGame();
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+
+		// Define the size of the canvas
+		if (hasFocus && once) {
+			once = true;
+
+			// Initialize the GameUtils image parameters
+			final int imgSize = Math.min(this.gameView.getWidth() / this.game.getMapWidth(),
+										 this.gameView.getHeight() / this.game.getMapHeight());
+			// Set values on GameUtils
+			GameUtils.IMG_CANVAS_WIDTH = imgSize;
+			GameUtils.IMG_CANVAS_HEIGHT = imgSize;
+
+			// Adjust GameView size
+			final int width = imgSize * this.game.getMapWidth();
+			final int height = imgSize * this.game.getMapHeight();
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+			layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+			this.gameView.setLayoutParams(layoutParams);
+		}
+	}
+
+	public GameView getGameView() {
         return gameView;
     }
 
     private void pauseGame() {
-        if (onPause) {
-            game.unpause(DEFAULT_USERNAME);
+        if (isPaused) {
+            game.unpause(playerUsername);
         } else {
-            game.pause(DEFAULT_USERNAME);
+            game.pause(playerUsername);
         }
-        onPause = !onPause;
+        isPaused = !isPaused;
     }
 
     /**
@@ -203,43 +286,11 @@ public class GameActivity extends Activity {
 	 * Destroys the game thread and jumps to the home activity, cleaning up the activity stack.
 	 */
     private void quit() {
-        gameThread.interrupt();
+        game.quit(playerUsername);
 
         Intent intent = new Intent(GameActivity.this, HomeActivity.class);
         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
-    
-    @Override
-    public void onBackPressed() {
-        pauseGame();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        // Start thread if it's the first time
-        if (hasFocus && this.gameThread.getState() == Thread.State.NEW) {
-            // Initialize the GameUtils image parameters
-            // This is used in the Game#populateGame
-            final int imgSize = Math.min(this.gameView.getWidth() / this.game.getMapWidth(),
-									  this.gameView.getHeight() / this.game.getMapHeight());
-			// Set values on GameUtils
-			GameUtils.IMG_CANVAS_WIDTH = imgSize;
-			GameUtils.IMG_CANVAS_HEIGHT = imgSize;
-
-			// Adjust GameView size
-			final int width = imgSize * this.game.getMapWidth();
-			final int height = imgSize * this.game.getMapHeight();
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
-			layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-			layoutParams.addRule(RelativeLayout.BELOW, R.id.dataLayout);
-			this.gameView.setLayoutParams(layoutParams);
-
-            this.game.populateGame();
-            this.gameThread.start();
-        }
     }
 
     public void updateScoreView(final int score) {

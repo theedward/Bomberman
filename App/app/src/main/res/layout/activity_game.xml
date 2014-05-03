@@ -67,8 +67,7 @@
         android:id="@+id/canvas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/dataLayout"/>
+        android:layout_centerInParent="true" />
 
     <RelativeLayout
         android:id="@+id/buttonsLayout"

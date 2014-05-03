@@ -47,10 +47,6 @@ public class Controllable implements Algorithm {
 		}
 	}
 
-    public char lastKeyPressed() {
-        return lastKeyPressed;
-    }
-
     /**
      * @return the action name mapped from the last key pressed or an empty string
 	 * if no valid key was pressed.

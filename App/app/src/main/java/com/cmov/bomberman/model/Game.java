@@ -13,6 +13,7 @@ import java.util.*;
 
 /**
  * This is where all the game will be processed.
+ * TODO remove synchronized and put smaller region locks
  */
 public final class Game {
 	private final String TAG = this.getClass().getSimpleName();
@@ -114,7 +115,7 @@ public final class Game {
         gameState.setLastId(idCounter);
     }
 
-    /**
+	/**
      * @return the number of updates per second
      */
     public int getNumberUpdates() {
@@ -159,12 +160,28 @@ public final class Game {
         gameState.unpauseAgent(playersAgent.get(username));
     }
 
+	/**
+	 * A player leaves the game.
+	 * @param username the player's username
+	 */
+	public synchronized void quit(String username) {
+		// TODO
+	}
+
+	/**
+	 * A player joins the game.
+	 * @param username the player's username
+	 */
+	public synchronized void join(String username) {
+		// TODO
+	}
+
     /**
      * Creates all the agents in the map.
      * Calls Player#onGameStart for every registered player.
      * Starts the game loop
      */
-    public void begin() {
+    public synchronized void begin() {
         Log.i(TAG, "Game has started");
 
         for (Player p : players.values()) {
@@ -175,7 +192,7 @@ public final class Game {
 	/**
 	 * Calls method onGameEnd of every player. It sends the final scores of the game.
 	 */
-    public void end() {
+    public synchronized void end() {
 		Log.i(TAG, "Game has ended.");
 
         for (Player p : players.values()) {

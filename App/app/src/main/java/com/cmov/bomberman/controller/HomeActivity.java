@@ -15,7 +15,7 @@ public class HomeActivity extends Activity {
     }
 
     public void newGame(View v) {
-        Intent intent = new Intent(HomeActivity.this, NewGameActivity.class);
+        Intent intent = new Intent(HomeActivity.this, CreateGameActivity.class);
         startActivity(intent);
     }
 

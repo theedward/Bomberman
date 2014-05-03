@@ -52,7 +52,7 @@ public class Player {
 	public void setAgentId(final int id) {
 		this.agentId = id;
 	}
-	public void setGameView(final GameActivity gameActivity) {
+	public void setGameActivity(final GameActivity gameActivity) {
 		this.gameActivity = gameActivity;
 	}
 

@@ -23,10 +23,11 @@
     <string name="arrowUp">↑</string>
     <string name="arrowRight">→</string>
     <string name="arrowDown">↓</string>
-
     <string name="map_preview">Map preview</string>
     <string name="enter_username_here">Enter username here</string>
     <string name="enter_servername_here">Enter server name here</string>
+    <string name="players">Players:</string>
+    <string name="waitingGameStart">Waiting for game to start..</string>
 
     <string name="title_activity_new_game">NewGameActivity</string>
     <string name="title_activity_multiplayer">MultiplayerActivity</string>
@@ -34,5 +35,9 @@
     <string name="title_activity_game">GameActivity</string>
     <string name="title_activity_join_server">JoinServerActivity</string>
     <string name="title_activity_create_server">CreateServerActivity</string>
+    <string name="title_activity_loading_game">LoadingGameActivity</string>
+    <string name="title_activity_loading">LoadingActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

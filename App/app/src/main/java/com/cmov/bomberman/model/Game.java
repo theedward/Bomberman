@@ -1,12 +1,15 @@
 package com.cmov.bomberman.model;
 
-public interface Game {
-	public void start();
-	public void pause(String username);
-	public void unpause(String username);
-	public void quit(String username);
-	public void join(String username, Player player);
+import java.util.Collection;
 
-	public int getMapWidth();
-	public int getMapHeight();
+public interface Game {
+	void start();
+	void pause(String username);
+	void unpause(String username);
+	void quit(String username);
+	void join(String username, Player player);
+
+	Collection<String> getPlayerUsernames();
+	int getMapWidth();
+	int getMapHeight();
 }

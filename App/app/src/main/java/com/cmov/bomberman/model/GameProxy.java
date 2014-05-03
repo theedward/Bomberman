@@ -7,14 +7,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,9 +22,11 @@ public class GameProxy extends Service implements Game {
     private boolean isMultiplayer;
     private int level;
 
-    //TODO: estas variáveis vão ter de sair, supostamente têm de chegar cá de outra forma
-    private TreeMap<Player, Socket> sockets = new TreeMap<Player, Socket>();
-    private Socket serverSocket;
+	private OnGameStateListener onGameStateListener;
+
+	//TODO: estas variáveis vão ter de sair, supostamente têm de chegar cá de outra forma
+	private TreeMap<Player, Socket> sockets = new TreeMap<Player, Socket>();
+	private Socket serverSocket;
     private boolean isServer;
 
     private void init() {
@@ -71,7 +68,11 @@ public class GameProxy extends Service implements Game {
         return clientSockets;
     }
 
-    //Gets the array of players from the TreeMap
+	public void setOnGameStateListener(final OnGameStateListener listener) {
+		this.onGameStateListener = listener;
+	}
+
+	//Gets the array of players from the TreeMap
     public Player[] getPlayers() {
         int numPlayer = 0;
         Player[] players = new Player[sockets.size()];
@@ -226,7 +227,13 @@ public class GameProxy extends Service implements Game {
         }
     }
 
-    @Override
+	@Override
+	public Collection<String> getPlayerUsernames() {
+		// TODO
+		return null;
+	}
+
+	@Override
     public int getMapWidth() {
         if (isMultiplayer) {
             try {
@@ -274,6 +281,10 @@ public class GameProxy extends Service implements Game {
 
 	@Override
 	public void start() {
+		if (onGameStateListener != null) {
+			onGameStateListener.onGameStart();
+		}
+
 		if (isMultiplayer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());

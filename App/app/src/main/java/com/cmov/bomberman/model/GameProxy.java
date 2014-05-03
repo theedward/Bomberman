@@ -169,16 +169,11 @@ public class GameProxy extends Service implements Game {
     @Override
     public void pause(final String username) {
 
-
-        if (isMultiplayer) {
+        if (isMultiplayer && !isServer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                if (isServer) {
-                    game.pause(username);
-                } else {
-                    writeToServer.writeChars("PAUSE#" + username);
-                    writeToServer.flush();
-                }
+                writeToServer.writeChars("PAUSE#" + username);
+                writeToServer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -192,15 +187,12 @@ public class GameProxy extends Service implements Game {
     */
     @Override
     public void unpause(final String username) {
-        if (isMultiplayer) {
+
+        if (isMultiplayer && !isServer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                if (isServer) {
-                    game.unpause(username);
-                } else {
-                    writeToServer.writeChars("UNPAUSE#" + username);
-                    writeToServer.flush();
-                }
+                writeToServer.writeChars("UNPAUSE#" + username);
+                writeToServer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -211,15 +203,11 @@ public class GameProxy extends Service implements Game {
 
     @Override
     public void quit(final String username) {
-        if (isMultiplayer) {
+        if (isMultiplayer && !isServer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                if (isServer) {
-                    game.quit(username);
-                } else {
-                    writeToServer.writeChars("QUIT#" + username);
-                    writeToServer.flush();
-                }
+                writeToServer.writeChars("QUIT#" + username);
+                writeToServer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -243,11 +231,14 @@ public class GameProxy extends Service implements Game {
         if (isMultiplayer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
+                DataInputStream readFromServer = new DataInputStream(serverSocket.getInputStream());
                 if (isServer) {
-                    game.getMapWidth();
+                    writeToServer.writeInt(getMapWidth());
+                    return game.getMapWidth();
                 } else {
                     writeToServer.writeChars("GETMAPWIDTH#");
                     writeToServer.flush();
+                    return readFromServer.readInt();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -255,7 +246,7 @@ public class GameProxy extends Service implements Game {
         } else {
             return game.getMapWidth();
         }
-        return -1; //returning -1 as a failsafe (should be verified if -1 then ignore)
+        return game.getMapWidth();
     }
 
 	@Override
@@ -263,11 +254,14 @@ public class GameProxy extends Service implements Game {
 		if (isMultiplayer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
+                DataInputStream readFromServer = new DataInputStream(serverSocket.getInputStream());
                 if (isServer) {
+                    writeToServer.writeInt(getMapHeight());
                     game.getMapWidth();
                 } else {
                     writeToServer.writeChars("GETMAPHEIGHT#");
                     writeToServer.flush();
+                    return readFromServer.readInt();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

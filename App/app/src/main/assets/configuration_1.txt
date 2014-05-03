@@ -2,7 +2,7 @@
 	"MapWidth": "19",
 	"MapHeight": "13",
 	"NumUpdatesPerSecond": "10",
-	"MaxNumPlayers": "1",
+	"MaxNumPlayers": "4",
 	"TimeLimit": "180",
 	"BombermanSpeed": "2",
 	"RobotSpeed": "2",

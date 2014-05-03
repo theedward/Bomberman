@@ -36,8 +36,10 @@ public class GameProxy extends Service implements Game {
         game = new GameImpl(level);
         gameThread = new GameThread(game);
 
+
         Log.i(TAG, "Created the game");
     }
+
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {

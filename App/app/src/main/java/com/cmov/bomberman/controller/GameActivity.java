@@ -7,6 +7,7 @@ import android.content.*;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -23,11 +24,14 @@ import com.cmov.bomberman.model.agent.Controllable;
 import java.util.Map;
 
 public class GameActivity extends Activity {
+	private final String TAG = this.getClass().getSimpleName();
+
     private final Handler mHandler = new Handler();
 	private Game game;
 	private boolean mBound = false;
 	private Player player;
 	private String playerUsername;
+
 	/** Defines callbacks for service binding, passed to bindService() */
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
@@ -40,20 +44,20 @@ public class GameActivity extends Activity {
 
 			// Connected to the game, now join.
 			game.join(playerUsername, player);
+			onJoinGame();
+			game.start();
+
+			Log.i(TAG, "Successfully joined the game");
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
+			Log.i(TAG, "Disconnected from the game.");
 			mBound = false;
 		}
 	};
 	private Controllable playerController;
     private boolean isPaused = false;
-
-	/**
-	 * Only initialize some image parameters once
-	 */
-	private boolean once = false;
 
     private GameView gameView;
     private TextView scoreView;
@@ -177,6 +181,7 @@ public class GameActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 
+		Log.i(TAG, "Binding to service");
 		// Bind to GameService
 		Intent intent = new Intent(this, GameProxy.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -223,28 +228,20 @@ public class GameActivity extends Activity {
 		pauseGame();
 	}
 
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
+	private void onJoinGame() {
+		// Initialize the GameUtils image parameters
+		final int imgSize = Math.min(this.gameView.getWidth() / this.game.getMapWidth(),
+									 this.gameView.getHeight() / this.game.getMapHeight());
+		// Set values on GameUtils
+		GameUtils.IMG_CANVAS_WIDTH = imgSize;
+		GameUtils.IMG_CANVAS_HEIGHT = imgSize;
 
-		// Define the size of the canvas
-		if (hasFocus && once) {
-			once = true;
-
-			// Initialize the GameUtils image parameters
-			final int imgSize = Math.min(this.gameView.getWidth() / this.game.getMapWidth(),
-										 this.gameView.getHeight() / this.game.getMapHeight());
-			// Set values on GameUtils
-			GameUtils.IMG_CANVAS_WIDTH = imgSize;
-			GameUtils.IMG_CANVAS_HEIGHT = imgSize;
-
-			// Adjust GameView size
-			final int width = imgSize * this.game.getMapWidth();
-			final int height = imgSize * this.game.getMapHeight();
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
-			layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-			this.gameView.setLayoutParams(layoutParams);
-		}
+		// Adjust GameView size
+		final int width = imgSize * this.game.getMapWidth();
+		final int height = imgSize * this.game.getMapHeight();
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+		this.gameView.setLayoutParams(layoutParams);
 	}
 
 	public GameView getGameView() {

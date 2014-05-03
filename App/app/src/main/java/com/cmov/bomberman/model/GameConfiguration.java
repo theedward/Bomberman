@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GameConfiguration {
-    private final Map<String, Integer> playerCharacterId;
-    private final Map<String, Integer> playerScore;
-    private final Map<Integer, Position> characterPositions;
     private final List<WallDrawing> wallDrawings;
     private final Map<Integer, Drawing> mutableDrawings;
 
@@ -38,9 +35,6 @@ public class GameConfiguration {
     private int pointOpponent;
 
     public GameConfiguration() {
-        playerCharacterId = new HashMap<String, Integer>();
-        playerScore = new HashMap<String, Integer>();
-        characterPositions = new HashMap<Integer, Position>();
         wallDrawings = new LinkedList<WallDrawing>();
         mutableDrawings = new HashMap<Integer, Drawing>();
     }
@@ -148,21 +142,4 @@ public class GameConfiguration {
     public void setMapHeight(final int mapHeight) {
         this.mapHeight = mapHeight;
     }
-
-    public Map<Integer, Drawing> getMutableDrawings() {
-        return mutableDrawings;
-    }
-
-    public void setMutableDrawings(final Map<Integer, Drawing> mutableDrawings) {
-        this.mutableDrawings.putAll(mutableDrawings);
-    }
-
-    public List<WallDrawing> getWallDrawings() {
-        return wallDrawings;
-    }
-
-    public void setWallDrawings(final List<WallDrawing> walls) {
-        this.wallDrawings.addAll(walls);
-    }
-
 }

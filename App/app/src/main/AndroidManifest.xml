@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.cmov.bomberman.controller.CreateGameActivity"
+            android:name=".controller.CreateSinglePlayerGameActivity"
             android:label="@string/title_activity_new_game"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
@@ -43,7 +43,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
-            android:name="com.cmov.bomberman.controller.GameActivity"
+            android:name=".controller.SinglePlayerGameActivity"
             android:label="@string/title_activity_game"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
@@ -54,13 +54,6 @@
             android:enabled="true"
             android:exported="false" >
         </service>
-
-        <activity
-            android:name="com.cmov.bomberman.controller.LoadingActivity"
-            android:label="@string/title_activity_loading"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-        </activity>
     </application>
 
 </manifest>

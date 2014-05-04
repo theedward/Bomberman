@@ -13,26 +13,26 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GameProxy extends Service implements Game {
     private final String TAG = this.getClass().getSimpleName();
     private final IBinder mBinder = new GameBinder();
 
     private GameImpl game;
-    private GameThread gameThread;
     private boolean isMultiplayer;
     private int level;
 
-	private OnGameStateListener onGameStateListener;
-
 	//TODO: estas variáveis vão ter de sair, supostamente têm de chegar cá de outra forma
+	private ExecutorService executor;
 	private TreeMap<Player, Socket> sockets = new TreeMap<Player, Socket>();
 	private Socket serverSocket;
     private boolean isServer;
 
     private void init() {
-        game = new GameImpl(level);
-        gameThread = new GameThread(game);
+		game = new GameImpl(level);
+		executor = Executors.newSingleThreadExecutor();
 
         Log.i(TAG, "Created the game");
     }
@@ -68,10 +68,6 @@ public class GameProxy extends Service implements Game {
         }
         return clientSockets;
     }
-
-	public void setOnGameStateListener(final OnGameStateListener listener) {
-		this.onGameStateListener = listener;
-	}
 
 	//Gets the array of players from the TreeMap
     public Player[] getPlayers() {
@@ -160,9 +156,8 @@ public class GameProxy extends Service implements Game {
     public void onDestroy() {
         super.onDestroy();
 
-        gameThread.interrupt();
+		executor.shutdownNow();
         game = null;
-        gameThread = null;
     }
 
     /* If i'm not the server i only need to send a message to it with the right protocol
@@ -170,7 +165,6 @@ public class GameProxy extends Service implements Game {
      */
     @Override
     public void pause(final String username) {
-
         if (isMultiplayer && !isServer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
@@ -282,10 +276,6 @@ public class GameProxy extends Service implements Game {
 
 	@Override
 	public void start() {
-		if (onGameStateListener != null) {
-			onGameStateListener.onGameStart();
-		}
-
 		if (isMultiplayer) {
             try {
                 DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
@@ -298,9 +288,17 @@ public class GameProxy extends Service implements Game {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-		} else {
-			gameThread.start();
 		}
+	}
+
+	@Override
+	public void pause() {
+		// TODO
+	}
+
+	@Override
+	public void unpause() {
+		// TODO
 	}
 
 	public class GameBinder extends Binder {

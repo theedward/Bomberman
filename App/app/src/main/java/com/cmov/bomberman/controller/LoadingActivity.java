@@ -23,8 +23,7 @@ import java.util.List;
 
 public class LoadingActivity extends Activity implements OnGameStateListener {
 	private final String TAG = this.getClass().getSimpleName();
-	private GameProxy gameProxy;
-	private boolean mBound;
+
 	/** Defines callbacks for service binding, passed to bindService() */
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
@@ -36,11 +35,8 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 			gameProxy.setOnGameStateListener(LoadingActivity.this);
 
 			// update list
-			List<String> playerUsernames = new LinkedList<String>();
-            playerUsernames.addAll(gameProxy.getPlayerUsernames());
-			playerListView.setAdapter(new ArrayAdapter<String>(LoadingActivity.this,
-															   android.R.layout.simple_list_item_1,
-															   playerUsernames));
+			updateListView(gameProxy.getPlayerUsernames());
+
 			mBound = true;
 		}
 
@@ -51,6 +47,8 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 			mBound = false;
 		}
 	};
+    private boolean mBound;
+    private GameProxy gameProxy;
 	private String username;
 	private boolean isOwner;
 
@@ -61,6 +59,8 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
 
+        playerListView = (ListView) findViewById(R.id.playerList);
+
 		// get data from previous activity
 		final Bundle extras = this.getIntent().getExtras();
 		if (extras != null) {
@@ -68,13 +68,14 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 			isOwner = extras.getBoolean("isOwner");
 		}
 
-		playerListView = (ListView) findViewById(R.id.playerList);
-
 		// depending on if it's owner, show message or show start button
+        // only the owner can start the game
 		if (isOwner) {
+            // hide text view
 			TextView txtWaitingGameStart = (TextView) findViewById(R.id.txtWaitingGameStart);
 			txtWaitingGameStart.setVisibility(View.INVISIBLE);
 		} else {
+            // hide start button
 			Button btnStart = (Button) findViewById(R.id.btnStart);
 			btnStart.setVisibility(View.INVISIBLE);
 		}
@@ -83,9 +84,9 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		Log.i(TAG, "Binding to service");
+		Log.i(TAG, "Binding to the game proxy");
 
-		// Bind to GameService
+		// Bind to the service GameProxy
 		Intent intent = new Intent(this, GameProxy.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -101,6 +102,22 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 		}
 	}
 
+    /**
+     * Updates the list view that contains all the player's username that are connected to the game.
+     * @param usernames all the players usernames
+     */
+    private void updateListView(Collection<String> usernames) {
+        List<String> lstUsernames = new LinkedList<String>();
+
+        lstUsernames.addAll(gameProxy.getPlayerUsernames());
+        playerListView.setAdapter(new ArrayAdapter<String>(LoadingActivity.this,
+                android.R.layout.simple_list_item_1,
+                lstUsernames));
+    }
+
+    /**
+     * When receiving the event 'onGameStart', jump to the GameActivity.
+     */
 	@Override
 	public void onGameStart() {
 		// Game has started. Jump to the game activity
@@ -109,17 +126,22 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 		startActivity(intent);
 	}
 
+    /**
+     * When receiving the event 'onGameUpdate', update the list view showing the list of usernames
+     * @param usernames all the players usernames
+     */
 	@Override
-	public void onGameUpdate(Collection<String> playerUsernames) {
-		List<String> usernames = new LinkedList<String>(playerUsernames);
-		playerListView.setAdapter(new ArrayAdapter<String>(LoadingActivity.this,
-														   android.R.layout.simple_list_item_1,
-														   usernames));
+	public void onGameUpdate(Collection<String> usernames) {
+		updateListView(usernames);
 	}
 
+    /**
+     * When receiving the event 'onGameEnd', it means the game has been canceled.
+     * All network resources are cleaned and it returns to the previous activity.
+     */
 	@Override
 	public void onGameEnd() {
-		// Nothing to do here
+		// TODO perform cleanup
 	}
 
 	/**

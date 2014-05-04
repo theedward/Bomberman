@@ -6,7 +6,6 @@
     <string name="join_server">Join Server</string>
     <string name="create_server">Create Server</string>
     <string name="choose_username">Choose a username:</string>
-    <string name="chose_username">Choose a Username:</string>
     <string name="accept">Accept</string>
     <string name="about_the_game">About the Game:</string>
     <string name="about_us">About Us:</string>
@@ -20,6 +19,7 @@
     <string name="player_score">Player Score</string>
     <string name="time_left">Time Left</string>
     <string name="number_player">Number Players</string>
+    <string name = "my_device">My device:</string>string>
     <string name="pause">Pause</string>
     <string name="quit">Quit</string>
     <string name="bomb">Bomb</string>
@@ -29,6 +29,10 @@
     <string name="arrowDown">↓</string>
     <string name="map_preview">Map preview</string>
     <string name="enter_username_here">Enter username here</string>
+    <string name = "must_enter_username">You must enter a username</string>
+    <string name = "choose_server">Please choose a server to join:</string>
+    <string name = "my_game_players">My game Players:</string>
+    <string name = "choose_level">Choose game level:</string>>
     <string name="enter_servername_here">Enter server name here</string>
     <string name="players">Players:</string>
     <string name="waitingGameStart">Waiting for game to start..</string>

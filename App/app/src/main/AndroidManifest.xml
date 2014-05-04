@@ -48,18 +48,6 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
-        <activity
-            android:name="com.cmov.bomberman.controller.CreateServerActivity"
-            android:label="@string/title_activity_create_server"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-        </activity>
-        <activity
-            android:name="com.cmov.bomberman.controller.JoinServerActivity"
-            android:label="@string/title_activity_join_server"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-        </activity>
 
         <service
             android:name="com.cmov.bomberman.model.GameProxy"

@@ -1,4 +1,4 @@
-package com.cmov.bomberman.model;
+package com.cmov.bomberman.model.net;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,9 +12,8 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
 
-import com.cmov.bomberman.controller.WifiActivity;
+import com.cmov.bomberman.controller.net.MultiplayerGameActivity;
 
-import java.net.InetAddress;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,13 +22,13 @@ public class WifiBroadcastReceiver extends BroadcastReceiver{
     WifiP2pManager manager;
     Channel channel;
     WifiP2pDeviceList wifiP2pDeviceList;
-    WifiActivity wifiActivity;
+    MultiplayerGameActivity multiplayerGameActivity;
 
-    public WifiBroadcastReceiver(WifiP2pManager manager, Channel channel, WifiActivity activity) {
+    public WifiBroadcastReceiver(WifiP2pManager manager, Channel channel, MultiplayerGameActivity activity) {
         super();
         this.manager = manager;
         this.channel = channel;
-        this.wifiActivity = activity;
+        this.multiplayerGameActivity = activity;
     }
 
     public List<String> getGroupOwnersList(WifiP2pDeviceList devices) {
@@ -72,7 +71,7 @@ public class WifiBroadcastReceiver extends BroadcastReceiver{
                     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
                         WifiBroadcastReceiver.this.wifiP2pDeviceList = wifiP2pDeviceList;
                         Log.i("WifiBroadcastReceiver:", "PEERS CHANGED: NUMBER OF PEERS :" + wifiP2pDeviceList.getDeviceList().size());
-                        wifiActivity.onUpdateDevice(getGroupOwnersList(wifiP2pDeviceList));
+                        //multiplayerGameActivity.onUpdateDevice(getGroupOwnersList(wifiP2pDeviceList));
                     }
                 });
 

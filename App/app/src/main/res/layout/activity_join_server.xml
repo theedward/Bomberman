@@ -14,7 +14,7 @@
         android:id="@+id/choose_username_join"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/chose_username"
+        android:text="@string/choose_username"
         android:textSize="26sp"
         android:textColor="@android:color/white"
         android:layout_centerHorizontal="true"

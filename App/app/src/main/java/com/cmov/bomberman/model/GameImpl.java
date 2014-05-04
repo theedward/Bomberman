@@ -17,16 +17,14 @@ import java.util.*;
  */
 public final class GameImpl implements Game {
 	private final String TAG = this.getClass().getSimpleName();
-
     private final Map<String, Player> players;
     private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
-
 	private final int bombermanIds[];
 	private final Position bombermanPos[];
-
     private final State gameState;
     private final GameConfiguration gameConfiguration;
+	private boolean isPaused;
 	private List<Position> wallPositions;
     /**
      * The number of updates the game will have.
@@ -40,6 +38,7 @@ public final class GameImpl implements Game {
      * @param level the level to be played in this game
      */
     public GameImpl(final int level) {
+		this.isPaused = false;
         this.players = new HashMap<String, Player>();
         this.playersOnPause = new HashMap<String, Player>();
 		this.playersAgent = new HashMap<String, Bomberman>();
@@ -108,14 +107,46 @@ public final class GameImpl implements Game {
 	public void start() {
 		this.begin();
 		this.gameState.startCountingNow();
+
+		final int timeSleep = 1000 / gameConfiguration.getNumUpdatesPerSecond();
+		while (!hasFinished()) {
+			try {
+				// when the game is paused, just wait until an unpause
+				synchronized (this) {
+					if (isPaused) {
+						this.wait();
+					}
+				}
+
+				final long now = System.currentTimeMillis();
+				Log.v(TAG, "Updating...");
+				update();
+
+				final long dt = System.currentTimeMillis() - now;
+				// suspend thread only when the time spent on update is smaller than the time it should
+				// spend on each update (1000 / numUpdates).
+				if (timeSleep > dt) {
+					Thread.sleep(timeSleep - dt);
+				}
+			}
+			catch (InterruptedException e) {
+				return;
+			}
+		}
 	}
 
-	/**
-     * @return the number of updates per second
-     */
-    protected int getNumberUpdates() {
-        return this.gameConfiguration.getNumUpdatesPerSecond();
-    }
+	@Override
+	public void pause() {
+		isPaused = true;
+	}
+
+	@Override
+	public void unpause() {
+		isPaused = false;
+		synchronized (this) {
+			notify();
+		}
+	}
 
 	@Override
 	public Collection<String> getPlayerUsernames() {
@@ -198,7 +229,7 @@ public final class GameImpl implements Game {
      * Calls Player#onGameStart for every registered player.
      * Starts the game loop
      */
-    protected synchronized void begin() {
+    private synchronized void begin() {
         Log.i(TAG, "Game has started");
 
         for (Player p : players.values()) {
@@ -209,7 +240,7 @@ public final class GameImpl implements Game {
 	/**
 	 * Calls method onGameEnd of every player. It sends the final scores of the game.
 	 */
-    protected synchronized void end() {
+    private synchronized void end() {
 		Log.i(TAG, "Game has ended.");
 
         for (Player p : players.values()) {
@@ -229,7 +260,7 @@ public final class GameImpl implements Game {
     /**
      * Updates the state (new frame).
      */
-    protected synchronized void update() {
+    private synchronized void update() {
         // Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
         gameState.playAll();
@@ -251,7 +282,7 @@ public final class GameImpl implements Game {
     /**
      * Calls Player#update with the new state.
      */
-    private synchronized void updatePlayers() {
+    private void updatePlayers() {
         // Get all the character positions
         final StringWriter msg = new StringWriter();
         final JsonWriter writer = new JsonWriter(msg);
@@ -306,7 +337,7 @@ public final class GameImpl implements Game {
      * A game finishes when the game numRoundsLeft reaches 0, when only a player is alive and the other robots and players
 	 * are dead or when all players are dead and some robots still exist.
      */
-    protected synchronized boolean hasFinished() {
+    private synchronized boolean hasFinished() {
         if (numRoundsLeft == 0) {
             return true;
         }

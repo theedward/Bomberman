@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -21,6 +20,10 @@ public class Robot extends MovableAgent {
     @Override
     public void play(State state, final float dt) {
         String nextAction = getAlgorithm().getNextActionName();
+
+		if (nextAction.equals("")) {
+			return;
+		}
 
         if (!nextAction.equals(Agent.Actions.DESTROY.toString())) {
             // The next action is moving

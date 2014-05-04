@@ -3,8 +3,7 @@ package com.cmov.bomberman.model;
 import android.graphics.Canvas;
 import android.util.JsonReader;
 import android.util.Log;
-import com.cmov.bomberman.controller.GameActivity;
-import com.cmov.bomberman.controller.GameView;
+import com.cmov.bomberman.controller.GameFragment;
 import com.cmov.bomberman.model.agent.Controllable;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ public class Player {
 	/**
 	 * This is needed to draw in the canvas in a synchronized manner.
 	 */
-	private GameActivity gameActivity;
+	private GameFragment gameFragment;
 
 	/**
 	 * Information to be shown in the views
@@ -33,10 +32,14 @@ public class Player {
 	private int timeLeft;
 	private int numPlayers;
 
-	public Player(Controllable controller) {
+	public Player(Controllable controller, GameFragment gameFragment) {
 		this.controller = controller;
+		this.gameFragment = gameFragment;
 		this.screen = new Screen();
 		this.destroyed = false;
+
+		// set the screen on GameView
+		gameFragment.getGameView().setScreen(screen);
 	}
 
 	public Controllable getController() {
@@ -51,9 +54,6 @@ public class Player {
 
 	public void setAgentId(final int id) {
 		this.agentId = id;
-	}
-	public void setGameActivity(final GameActivity gameActivity) {
-		this.gameActivity = gameActivity;
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Player {
 	 */
 
 	void onGameEnd(final Map<String, Integer> scores) {
-        gameActivity.scoreDialog(scores);
+        gameFragment.scoreDialog(scores);
     }
 
 	/**
@@ -203,7 +203,7 @@ public class Player {
 	 * Draws everything on the canvas.
 	 */
 	private void draw() {
-		final GameView gameView = gameActivity.getGameView();
+		final GameFragment.GameView gameView = gameFragment.getGameView();
 		Canvas canvas = null;
 		try {
 			if (gameView.getHolder() != null) {
@@ -227,9 +227,9 @@ public class Player {
 	 * Updates the other views in the screen (like score, number of players, ...)
 	 */
 	private void updateViews() {
-		gameActivity.updateScoreView(this.score);
-		gameActivity.updateTimeView(this.timeLeft);
-		gameActivity.updateNumPlayersView(this.numPlayers);
+		gameFragment.updateScoreView(this.score);
+		gameFragment.updateTimeView(this.timeLeft);
+		gameFragment.updateNumPlayersView(this.numPlayers);
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class Player {
 
 		// Alert the user that his agent has died
 		if (destroyed) {
-			gameActivity.gameLost();
+			gameFragment.gameLost();
 		}
 	}
 }

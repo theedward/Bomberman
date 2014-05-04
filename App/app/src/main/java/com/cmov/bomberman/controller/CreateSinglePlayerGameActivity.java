@@ -7,9 +7,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import com.cmov.bomberman.R;
-import com.cmov.bomberman.model.GameProxy;
 
-public class CreateGameActivity extends Activity {
+public class CreateSinglePlayerGameActivity extends Activity {
 	private static final String DEFAULT_USERNAME = "Bomberman";
 	private static final int MIN_LEVEL = 1;
     private static final int MAX_LEVEL = 2;
@@ -37,16 +36,10 @@ public class CreateGameActivity extends Activity {
     }
 
     public void startGame(View v) {
-		// Create the game proxy
-		final Intent serviceIntent = new Intent(CreateGameActivity.this, GameProxy.class);
-		serviceIntent.putExtra("level", levelPicker.getValue());
-		serviceIntent.putExtra("isMultiplayer", false);
-		startService(serviceIntent);
-
 		// Go to the GameActivity
-		final Intent intent = new Intent(CreateGameActivity.this, GameActivity.class);
+		final Intent intent = new Intent(this, SinglePlayerGameActivity.class);
+		intent.putExtra("level", levelPicker.getValue());
 		intent.putExtra("username", DEFAULT_USERNAME);
-		intent.putExtra("isMultiplayer", false);
         startActivity(intent);
     }
 }

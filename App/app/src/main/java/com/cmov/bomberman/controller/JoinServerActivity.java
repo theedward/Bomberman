@@ -1,5 +1,6 @@
 package com.cmov.bomberman.controller;
 
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -34,9 +35,7 @@ public class JoinServerActivity extends WifiActivity {
 
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
-            public void onSuccess() {
-                Log.i(TAG, "discovered Peers");
-            }
+            public void onSuccess() { Log.i(TAG, "discovered Peers"); }
 
             @Override
             public void onFailure(int reasonCode) {
@@ -44,14 +43,16 @@ public class JoinServerActivity extends WifiActivity {
             }
         });
 
-        /**************************** USERNAME ****************************************************/
-        EditText usernameBox = (EditText)findViewById(R.id.chose_username_editable_join);
-        username = usernameBox.getText().toString();
+
+    }
+
+    @Override
+    public void onUpdateDevice(final List<String> groupOwners) {
 
         /**************************** OWNERS LIST *************************************************/
-        final String[] groupOwners = (String[])getGroupOwnersList().toArray();
+
         listView = (ListView) findViewById(R.id.listView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(JoinServerActivity.this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, groupOwners);
 
         listView.setAdapter(adapter);
@@ -87,7 +88,6 @@ public class JoinServerActivity extends WifiActivity {
             });
         }
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -100,31 +100,25 @@ public class JoinServerActivity extends WifiActivity {
         unregisterReceiver(mReceiver);
     }
 
-    private void accept(){
+    public void accept(final View view){
+
+        /**************************** USERNAME ****************************************************/
+        EditText usernameBox = (EditText)findViewById(R.id.chose_username_editable_join);
+        username = usernameBox.getText().toString();
 
         // Go to the LoadingGameActivity
-        /*final Intent intent = new Intent(this, LoadingGameActivity.class);
+        final Intent intent = new Intent(this, LoadingActivity.class);
         intent.putExtra("username", username);
         intent.putExtra("isOwner", false);
-        startActivity(intent);*/
+        startActivity(intent);
     }
 
-    public List<String> getGroupOwnersList() {
-        List<String> groupOwners = new LinkedList<String>();
-
-        for (WifiP2pDevice device : mReceiver.getWifiP2pDeviceList().getDeviceList()) {
-            if (device.isGroupOwner()) {
-                groupOwners.add(device.deviceName);
-            }
-        }
-        return groupOwners;
-    }
-
-    public WifiP2pDevice getOwnerDeviceByName(String[] owners,int position) {
+    public WifiP2pDevice getOwnerDeviceByName(List<String> owners, int position) {
         WifiP2pDevice owner= null;
 
+        final String deviceName = owners.get(position);
         for (WifiP2pDevice device : mReceiver.getWifiP2pDeviceList().getDeviceList()) {
-            if (device.deviceName.equals(owners[position])) {
+            if (device.deviceName.equals(deviceName)) {
                 owner = device;
             }
         }

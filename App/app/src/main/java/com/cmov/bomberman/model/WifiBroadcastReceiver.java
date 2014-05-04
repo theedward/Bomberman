@@ -4,14 +4,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
+import android.util.Log;
+
 import com.cmov.bomberman.controller.WifiActivity;
 
 import java.net.InetAddress;
+import java.util.LinkedList;
+import java.util.List;
 
 public class WifiBroadcastReceiver extends BroadcastReceiver{
 
@@ -25,6 +30,19 @@ public class WifiBroadcastReceiver extends BroadcastReceiver{
         this.manager = manager;
         this.channel = channel;
         this.wifiActivity = activity;
+    }
+
+    public List<String> getGroupOwnersList(WifiP2pDeviceList devices) {
+        List<String> groupOwners = new LinkedList<String>();
+
+        if (devices.getDeviceList() != null) {
+            for (WifiP2pDevice device : devices.getDeviceList()) {
+                //if (device.isGroupOwner()) {
+                groupOwners.add(device.deviceName);
+                //}
+            }
+        }
+        return groupOwners;
     }
 
     public WifiP2pDeviceList getWifiP2pDeviceList() {
@@ -53,8 +71,11 @@ public class WifiBroadcastReceiver extends BroadcastReceiver{
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
                         WifiBroadcastReceiver.this.wifiP2pDeviceList = wifiP2pDeviceList;
+                        Log.i("WifiBroadcastReceiver:", "PEERS CHANGED: NUMBER OF PEERS :" + wifiP2pDeviceList.getDeviceList().size());
+                        wifiActivity.onUpdateDevice(getGroupOwnersList(wifiP2pDeviceList));
                     }
                 });
+
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections

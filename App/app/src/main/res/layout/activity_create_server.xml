@@ -22,7 +22,7 @@
         />
 
     <EditText
-        android:id="@+id/choose_server_editable"
+        android:id="@+id/txtUsername"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@id/choose_username"
@@ -35,7 +35,7 @@
         android:background="@drawable/yellow_button"
         android:id="@+id/accept"
         android:layout_width="200dp"
-        android:layout_below="@id/choose_server_editable"
+        android:layout_below="@+id/txtUsername"
         android:layout_marginTop="70dp"
         android:text="@string/accept"
         style="@style/ButtonText"

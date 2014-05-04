@@ -10,6 +10,7 @@ import android.util.Log;
 import java.io.*;
 import java.net.Socket;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,7 +34,6 @@ public class GameProxy extends Service implements Game {
         game = new GameImpl(level);
         gameThread = new GameThread(game);
 
-
         Log.i(TAG, "Created the game");
     }
 
@@ -44,6 +44,7 @@ public class GameProxy extends Service implements Game {
         if (extras != null) {
             this.level = extras.getInt("level");
             this.isMultiplayer = extras.getBoolean("isMultiplayer");
+            this.isServer = extras.getBoolean("isServer");
         }
 
         GameUtils.CONTEXT = this;
@@ -229,8 +230,8 @@ public class GameProxy extends Service implements Game {
 
 	@Override
 	public Collection<String> getPlayerUsernames() {
-		// TODO
-		return null;
+		// TODO to implement
+		return new LinkedList<String>() {{ add("Andre"); }};
 	}
 
 	@Override

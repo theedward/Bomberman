@@ -32,17 +32,28 @@ public class CreateServerActivity extends WifiActivity {
                 Log.i(TAG, "could not create p2p group");
             }
         });
-
-        EditText usernameBox = (EditText)findViewById(R.id.chose_username_editable_join);
-        username = usernameBox.getText().toString();
     }
 
-    public void accept(){
-         /*final Intent intent = new Intent(this, LoadingGameActivity.class);
+    public void accept(View view){
+        final EditText usernameBox = (EditText)findViewById(R.id.txtUsername);
+        if (usernameBox.getText() != null) {
+            username = usernameBox.getText().toString();
+        }
+
+        // create the game proxy
+        // Create the game service
+        final Intent serviceIntent = new Intent(this, GameProxy.class);
+        // TODO create level
+        serviceIntent.putExtra("level", 1);
+        serviceIntent.putExtra("isMultiplayer", true);
+        serviceIntent.putExtra("isServer", true);
+        startService(serviceIntent);
+
+        // go to the loading activity
+        final Intent intent = new Intent(this, LoadingActivity.class);
         intent.putExtra("isOwner", true);
         intent.putExtra("username", username);
         startActivity(intent);
-        */
     }
     @Override
     protected void onResume() {

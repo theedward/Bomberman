@@ -36,7 +36,8 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 			gameProxy.setOnGameStateListener(LoadingActivity.this);
 
 			// update list
-			List<String> playerUsernames = new LinkedList<String>(gameProxy.getPlayerUsernames());
+			List<String> playerUsernames = new LinkedList<String>();
+            playerUsernames.addAll(gameProxy.getPlayerUsernames());
 			playerListView.setAdapter(new ArrayAdapter<String>(LoadingActivity.this,
 															   android.R.layout.simple_list_item_1,
 															   playerUsernames));
@@ -125,7 +126,7 @@ public class LoadingActivity extends Activity implements OnGameStateListener {
 	 * Start the game.
 	 * @param view the button view that was pressed
 	 */
-	protected void start(final View view) {
+	public void start(final View view) {
 		gameProxy.start();
 	}
 }

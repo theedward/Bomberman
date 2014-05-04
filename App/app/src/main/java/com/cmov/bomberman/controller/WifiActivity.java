@@ -10,6 +10,8 @@ import android.os.Bundle;
 
 import com.cmov.bomberman.model.WifiBroadcastReceiver;
 
+import java.util.List;
+
 public abstract class WifiActivity extends Activity{
 
     WifiP2pManager mManager;
@@ -19,6 +21,7 @@ public abstract class WifiActivity extends Activity{
 
     protected void onCreate(Bundle savedInstanceState){
 
+        super.onCreate(savedInstanceState);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         mReceiver = new WifiBroadcastReceiver(mManager, mChannel, this);
@@ -29,5 +32,9 @@ public abstract class WifiActivity extends Activity{
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
+    }
+
+    public void onUpdateDevice(List<String> groupOwners) {
+        // Nothing to do here
     }
 }

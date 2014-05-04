@@ -37,7 +37,7 @@ public class CreateGameActivity extends Activity {
     }
 
     public void startGame(View v) {
-		// Create the game service
+		// Create the game proxy
 		final Intent serviceIntent = new Intent(CreateGameActivity.this, GameProxy.class);
 		serviceIntent.putExtra("level", levelPicker.getValue());
 		serviceIntent.putExtra("isMultiplayer", false);

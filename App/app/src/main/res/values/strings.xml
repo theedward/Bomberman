@@ -8,6 +8,10 @@
     <string name="choose_username">Choose a username:</string>
     <string name="chose_username">Choose a Username:</string>
     <string name="accept">Accept</string>
+    <string name="about_the_game">About the Game:</string>
+    <string name="about_us">About Us:</string>
+    <string name="about_the_game_story">This game was made from a project of Mobile Computing.\nIt was made to be as similar as the one made for the NES.\nHope you enjoy it!</string>
+    <string name="our_story">We are a group of students from Técnico Lisboa.\n Follow us at https://github.com/theedward/Bomberman</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="about">About</string>
     <string name="start">Start</string>

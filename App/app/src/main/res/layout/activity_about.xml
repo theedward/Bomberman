@@ -8,4 +8,51 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:background="@drawable/background_wallpaper"
                 tools:context=".AboutActivity">
+
+    <TextView
+        android:id="@+id/about_the_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_the_game"
+        android:textSize="26sp"
+        android:textColor="@android:color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        />
+
+    <TextView
+        android:id="@+id/about_the_game_story"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_the_game_story"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/about_the_game"
+        />
+
+    <TextView
+        android:id="@+id/about_us"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_us"
+        android:textSize="26sp"
+        android:textColor="@android:color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/about_the_game_story"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/our_story"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/about_us"
+        />
+
 </RelativeLayout>

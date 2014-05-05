@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model;
 
-public class Position {
+import java.io.Serializable;
+
+public class Position implements Serializable {
 	private final float x;
 	private final float y;
 

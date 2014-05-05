@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.GameUtils;
-import com.cmov.bomberman.model.Player;
+import com.cmov.bomberman.model.PlayerImpl;
 import com.cmov.bomberman.model.Screen;
 import com.cmov.bomberman.model.agent.Controllable;
 
@@ -30,7 +30,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 	private boolean gameStarted;
 	private Game game;
 	private String username;
-	private Player player;
+	private PlayerImpl player;
 	private Controllable playerController;
 	private Handler mHandler = new Handler();
 	private GameView gameView;
@@ -163,7 +163,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 
 		// Create player and its controller
 		playerController = new Controllable();
-		player = new Player(playerController, this);
+		player = new PlayerImpl(playerController, this);
 	}
 
 	public void updateScoreView(final int score) {

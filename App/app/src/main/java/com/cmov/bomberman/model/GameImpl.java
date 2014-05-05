@@ -60,7 +60,7 @@ public final class GameImpl implements Game {
      */
     private void populateGame() {
 		final String[] usernames = new String[players.size()];
-        final Player[] characterOwners = new Player[players.size()];
+        final PlayerImpl[] characterOwners = new PlayerImpl[players.size()];
 		players.keySet().toArray(usernames);
         players.values().toArray(characterOwners);
 
@@ -250,7 +250,7 @@ public final class GameImpl implements Game {
 
     private Map<String, Integer> checkScores() {
         final Map<String, Integer> scores = new TreeMap<String, Integer>();
-        for (Map.Entry<String, Player> entry : players.entrySet()) {
+        for (Map.Entry<String, Bomberman> entry : playersAgent.entrySet()) {
             scores.put(entry.getKey(), entry.getValue().getScore());
         }
         return scores;

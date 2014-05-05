@@ -18,17 +18,21 @@ public class Robot extends MovableAgent {
     }
 
     @Override
-    public void play(State state, final float dt) {
+    public boolean play(State state, final float dt) {
+		boolean stateChanged = false;
         String nextAction = getAlgorithm().getNextActionName();
 
 		if (nextAction.equals("")) {
-			return;
+			return false;
 		}
 
         if (!nextAction.equals(Agent.Actions.DESTROY.toString())) {
             // The next action is moving
             MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
-            move(state, action, dt);
+			Position oldPos = getPosition();
+			move(state, action, dt);
+			Position curPos = getPosition();
+			stateChanged = !oldPos.equals(curPos);
         }
 
         if (!this.getCurrentAction().equals(nextAction)) {
@@ -36,6 +40,7 @@ public class Robot extends MovableAgent {
             this.setCurrentAction(nextAction);
             this.setLastStep(this.getStep());
             this.setStep(0);
+			stateChanged = true;
         }
 
         if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
@@ -46,7 +51,10 @@ public class Robot extends MovableAgent {
             if (this.getStep() == MAX_DIE_STEP) {
                 destroyed = true;
             }
+			stateChanged = true;
         }
+
+		return stateChanged;
     }
 
     @Override

@@ -71,7 +71,9 @@ public class Bomberman extends MovableAgent {
     }
 
     @Override
-    public void play(State state, final float dt) {
+    public boolean play(State state, final float dt) {
+		boolean changedState = false;
+
         // increase time since last bomb
         this.timeSinceLastBomb += dt;
 
@@ -83,6 +85,7 @@ public class Bomberman extends MovableAgent {
             this.setCurrentAction(nextAction);
             this.setLastStep(this.getStep());
             this.setStep(0);
+			changedState = true;
         }
 
         if (MovableAgent.Actions.isMovableAction(nextAction)) {
@@ -90,6 +93,7 @@ public class Bomberman extends MovableAgent {
             MovableAgent.Actions action = MovableAgent.Actions.valueOf(nextAction);
             move(state, action, dt);
             setStep((this.getStep() + 1) % MAX_MOVEMENT_STEP);
+			changedState = true;
         } else if (this.getCurrentAction().equals(Bomberman.Actions.PUT_BOMB.toString()) &&
                 this.timeSinceLastBomb >= this.timeBetweenBombs) {
             final Position curPos = getPosition();
@@ -99,6 +103,7 @@ public class Bomberman extends MovableAgent {
 
             state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
             this.timeSinceLastBomb = 0;
+			changedState = true;
         } else if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
             if (this.getStep() < MAX_DIE_STEP) {
                 setStep(this.getStep() + 1);
@@ -107,12 +112,15 @@ public class Bomberman extends MovableAgent {
             if (this.getStep() == MAX_DIE_STEP) {
                 destroyed = true;
             }
+			changedState = true;
         }
 
 		// verify if is going to die
 		if (nearRobots(state)) {
 			this.handleEvent(Event.DESTROY);
 		}
+
+		return changedState;
     }
 
 	private boolean nearRobots(final State state) {

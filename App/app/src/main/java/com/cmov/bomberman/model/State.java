@@ -1,11 +1,13 @@
 package com.cmov.bomberman.model;
 
+import android.util.Log;
 import com.cmov.bomberman.model.agent.Agent;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class State {
+	private final String TAG = this.getClass().getSimpleName();
     private char[][] map;
     private List<Agent> agents;
     private List<Agent> pausedCharacters;
@@ -54,15 +56,19 @@ public class State {
     /**
      * This method calls the method play of each agent.
      */
-    public void playAll() {
+    public boolean playAll() {
         final long now = System.currentTimeMillis();
         final float dt = (now - lastUpdate) / 1000.0f;
+		boolean stateChanged = false;
 
         for (Agent agent : new LinkedList<Agent>(agents)) {
-            agent.play(this, dt);
+            stateChanged |= agent.play(this, dt);
         }
 
+		Log.i(TAG, "State changed: " + stateChanged);
+
         this.lastUpdate = System.currentTimeMillis();
+		return stateChanged;
     }
 
     public void addAgent(Agent object) {
@@ -135,7 +141,7 @@ public class State {
     public List<Agent> getAgentByPosition(Position pos) {
         List<Agent> agentsList = new LinkedList<Agent>();
         for (Agent agent : agents) {
-            if (agent.getPosition().equals(pos)) {
+            if (agent.getPosition().equalsInMap(pos)) {
                 agentsList.add(agent);
             }
         }

@@ -3,8 +3,8 @@
                 android:id="@+id/container"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@drawable/home_background"
                 tools:context="com.android.bomberman.HomeActivity">
+<!-- android:background="@drawable/home_background" -->
 
     <Button
             style="@style/ButtonText"

@@ -85,10 +85,12 @@ public class Player {
 	 * The fixed drawings are not included in the report.
 	 *
 	 * @param msg the json report.
+	 * @return true if the agents state has changed, false otherwise.
 	 */
-    private void parseMessage(String msg) {
+    private boolean parseMessage(String msg) {
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
+		boolean gameStateChanged = false;
 		try {
 			rd.beginObject();
 			while (rd.hasNext()) {
@@ -101,7 +103,7 @@ public class Player {
 					} else if (name.equals("NumPlayers")) {
 						parseNumPlayers(rd);
 					} else if (name.equals("Agents")) {
-						parseAgents(rd);
+						gameStateChanged = parseAgents(rd);
 					}
 				}
 			}
@@ -110,6 +112,8 @@ public class Player {
 		catch (IOException e) {
 			Log.e(TAG, "Error while parsing the message");
 		}
+
+		return gameStateChanged;
 	}
 
 	private void parseScore(final JsonReader rd) throws IOException {
@@ -124,12 +128,15 @@ public class Player {
 		this.numPlayers = rd.nextInt();
 	}
 
-	private void parseAgents(final JsonReader rd) throws IOException {
+	private boolean parseAgents(final JsonReader rd) throws IOException {
+		boolean gameStateChanged = false;
 		rd.beginArray();
 		while (rd.hasNext()) {
 			parseAgent(rd);
+			gameStateChanged = true;
 		}
 		rd.endArray();
+		return gameStateChanged;
 	}
 
 	private void parseAgent(final JsonReader rd) throws IOException {
@@ -219,8 +226,6 @@ public class Player {
 				gameView.getHolder().unlockCanvasAndPost(canvas);
 			}
 		}
-
-		updateViews();
 	}
 
 	/**
@@ -241,8 +246,11 @@ public class Player {
 	 * @param msg the json report
 	 */
 	public void update(String msg) {
-		parseMessage(msg);
-		draw();
+		boolean gameStateChanged = parseMessage(msg);
+		if (gameStateChanged) {
+			draw();
+		}
+		updateViews();
 
 		// Alert the user that his agent has died
 		if (destroyed) {

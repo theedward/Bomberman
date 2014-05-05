@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-
 import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
@@ -85,8 +84,9 @@ public abstract class Agent {
      *
      * @param state the game state
      * @param dt    the time since the last update
+	 * @return true if the agent has changed any state while playing, false otherwise.
      */
-    abstract public void play(final State state, final float dt);
+    abstract public boolean play(final State state, final float dt);
 
     /**
      * Returns if this agent is already destroyed (should be removed from the game)

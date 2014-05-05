@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.NumberPicker;
 import com.cmov.bomberman.R;
 
@@ -29,8 +28,8 @@ public class CreateSinglePlayerGameActivity extends Activity {
         levelPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(final NumberPicker numberPicker, final int oldVal, final int newVal) {
-                final ImageView mapPreview = (ImageView) findViewById(R.id.imageView1);
-                mapPreview.setImageDrawable(getResources().getDrawable(mapPreviewId[newVal - 1]));
+//                final ImageView mapPreview = (ImageView) findViewById(R.id.imageView1);
+//                mapPreview.setImageDrawable(getResources().getDrawable(mapPreviewId[newVal - 1]));
             }
         });
     }

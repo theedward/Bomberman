@@ -26,27 +26,20 @@ public class Obstacle extends Agent {
     }
 
     @Override
-    public boolean play(final State state, final float dt) {
-		boolean hasChanged = false;
-
+    public void play(final State state, final float dt) {
         if (step > 0 && step < MAX_STEP) {
             // increase step until it reaches MAX_STEP
             step++;
-			hasChanged = true;
         } else if (step == MAX_STEP) {
             // when the MAX_STEP is reached, destroy the obstacle
             destroyed = true;
-			hasChanged = true;
         } else {
             // check if the next action is DESTROY
             Algorithm ai = getAlgorithm();
             if (ai.getNextActionName().equals(Agent.Actions.DESTROY.toString())) {
                 step++;
-				hasChanged = true;
             }
         }
-
-		return hasChanged;
     }
 
     @Override

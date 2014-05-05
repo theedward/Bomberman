@@ -43,7 +43,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
-            android:name=".controller.SinglePlayerGameActivity"
+            android:name=".controller.GameActivity"
             android:label="@string/title_activity_game"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >

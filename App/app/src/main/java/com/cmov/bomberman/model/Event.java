@@ -5,5 +5,5 @@ package com.cmov.bomberman.model;
  * These events are passed from the state to the agents.
  */
 public enum Event {
-	DESTROY
+	COLLISION, DESTROY
 }

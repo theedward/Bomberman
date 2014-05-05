@@ -36,7 +36,7 @@ public class CreateSinglePlayerGameActivity extends Activity {
 
     public void startGame(View v) {
 		// Go to the GameActivity
-		final Intent intent = new Intent(this, SinglePlayerGameActivity.class);
+		final Intent intent = new Intent(this, GameActivity.class);
 		intent.putExtra("level", levelPicker.getValue());
 		intent.putExtra("username", DEFAULT_USERNAME);
         startActivity(intent);

@@ -1,8 +1,8 @@
 package com.cmov.bomberman.controller;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,16 +16,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.cmov.bomberman.R;
-import com.cmov.bomberman.model.Game;
-import com.cmov.bomberman.model.GameUtils;
-import com.cmov.bomberman.model.PlayerImpl;
-import com.cmov.bomberman.model.Screen;
+import com.cmov.bomberman.model.*;
 import com.cmov.bomberman.model.agent.Controllable;
 
 import java.util.Map;
 
-public class GameFragment extends Fragment implements SurfaceHolder.Callback {
+public class GameActivity extends Activity implements SurfaceHolder.Callback {
 	private final String TAG = this.getClass().getSimpleName();
+
 	private boolean gamePaused;
 	private boolean gameStarted;
 	private Game game;
@@ -38,38 +36,27 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 	private TextView timeView;
 	private TextView numPlayersView;
 
-	public void setUsername(final String username) {
-		this.username = username;
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game);
 
-	public void setGame(Game game) {
-		this.game = game;
-	}
+		GameUtils.CONTEXT = this;
 
-	@Override
-	public void onActivityCreated(final Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-
-		Button btnPause = (Button) getActivity().findViewById(R.id.btnPause);
-		btnPause.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View view) {
-				pressedPause();
-			}
-		});
-
-		Button btnQuit = (Button) getActivity().findViewById(R.id.btnQuit);
-		btnQuit.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View view) {
-				quitGame();
-			}
-		});
+		int level = 1;
+		String username = "";
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			level = extras.getInt("level");
+			username = extras.getString("username");
+		} else {
+			Log.e(TAG, "Didn't receive the level or the username in the bundle");
+		}
 
 		// Handle the touch events on the arrows and bomb buttons.
 		// if the event's action is ACTION_DOWN, this is the next action
 		// if the event's action is ACTION_UP, the next action is empty
-		Button btnArrowUp = (Button) getActivity().findViewById(R.id.arrowUp);
+		Button btnArrowUp = (Button) findViewById(R.id.arrowUp);
 		btnArrowUp.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -85,7 +72,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 			}
 		});
 
-		Button btnArrowLeft = (Button) getActivity().findViewById(R.id.arrowLeft);
+		Button btnArrowLeft = (Button) findViewById(R.id.arrowLeft);
 		btnArrowLeft.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -101,7 +88,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 			}
 		});
 
-		Button btnArrowDown = (Button) getActivity().findViewById(R.id.arrowDown);
+		Button btnArrowDown = (Button) findViewById(R.id.arrowDown);
 		btnArrowDown.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -117,7 +104,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 			}
 		});
 
-		Button btnArrowRight = (Button) getActivity().findViewById(R.id.arrowRight);
+		Button btnArrowRight = (Button) findViewById(R.id.arrowRight);
 		btnArrowRight.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -133,7 +120,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 			}
 		});
 
-		Button btnPutBomb = (Button) getActivity().findViewById(R.id.putBomb);
+		Button btnPutBomb = (Button) findViewById(R.id.putBomb);
 		btnPutBomb.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -149,21 +136,30 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 			}
 		});
 
-		this.gameView = (GameView) getActivity().findViewById(R.id.canvas);
+		this.gameView = (GameView) findViewById(R.id.canvas);
 		SurfaceHolder holder = this.gameView.getHolder();
 		holder.addCallback(this);
 
-		this.scoreView = (TextView) getActivity().findViewById(R.id.playerScore);
-		this.timeView = (TextView) getActivity().findViewById(R.id.timeLeft);
-		this.numPlayersView = (TextView) getActivity().findViewById(R.id.numPlayers);
+		this.scoreView = (TextView) findViewById(R.id.playerScore);
+		this.timeView = (TextView) findViewById(R.id.timeLeft);
+		this.numPlayersView = (TextView) findViewById(R.id.numPlayers);
 
 		// This one is only changed once
-		final TextView usernameView = (TextView) getActivity().findViewById(R.id.playerName);
+		final TextView usernameView = (TextView) findViewById(R.id.playerName);
 		usernameView.setText(username);
+
+		// Create game
+		this.game = new GameImpl(level);
+		this.username = username;
 
 		// Create player and its controller
 		playerController = new Controllable();
 		player = new PlayerImpl(playerController, this);
+    }
+
+	@Override
+	public void onBackPressed() {
+		pressedPause(null);
 	}
 
 	public void updateScoreView(final int score) {
@@ -205,7 +201,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 					sb.append(" points\n");
 				}
 
-				final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				final AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
 				builder.setMessage(sb.toString()).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						quitGame();
@@ -215,13 +211,6 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 				dialog.show();
 			}
 		});
-	}
-
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-							 final Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
-		return inflater.inflate(R.layout.fragment_game, container);
 	}
 
 	@Override
@@ -254,6 +243,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 			final int width = imgSize * game.getMapWidth();
 			final int height = imgSize * game.getMapHeight();
 
+			// TODO
 			ViewGroup.LayoutParams layoutParams = gameView.getLayoutParams();
 			layoutParams.width = width;
 			layoutParams.height = height;
@@ -276,7 +266,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 				gameStarted = true;
 			}
 		} else {
-			Log.e(TAG, "Game is not initialized in onStart");
+			Log.e(TAG, "Game is not initialized in surfaceChanged");
 		}
 	}
 
@@ -289,12 +279,16 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 		return gameView;
 	}
 
-	public void pressedPause() {
+	public void pressedPause(final View view) {
 		if (gamePaused) {
 			unpauseGame();
 		} else {
 			pauseGame();
 		}
+	}
+
+	public void pressedQuit(final View view) {
+		quitGame();
 	}
 
 	private void unpauseGame() {
@@ -323,7 +317,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 	private void quitGame() {
 		game.quit(username);
 
-		Intent intent = new Intent(getActivity(), HomeActivity.class);
+		Intent intent = new Intent(this, HomeActivity.class);
 		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
@@ -335,7 +329,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getActivity(), "You lost the game :(", Toast.LENGTH_SHORT).show();
+				Toast.makeText(GameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
 			}
 		});
 	}

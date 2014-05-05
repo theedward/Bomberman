@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.JsonReader;
-
 import com.cmov.bomberman.R;
 
 import java.io.BufferedReader;

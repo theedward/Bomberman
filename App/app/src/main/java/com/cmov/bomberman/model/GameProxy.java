@@ -182,7 +182,6 @@ public class GameProxy extends Service implements Game {
         } else if (msgType.equals("QUIT")) {
             quit(username);
         } else if (msgType.equals("JOIN")) {
-			// TODO Add <username, socket> to clientSockets before calling join
             join(username, null);
         } else if (msgType.equals("GETMAPWIDTH")) {
             int width = getMapWidth();

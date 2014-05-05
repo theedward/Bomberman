@@ -106,21 +106,26 @@ public final class GameImpl implements Game {
 
 	public void start() {
 		this.begin();
-		this.gameState.startCountingNow();
 
 		final int timeSleep = 1000 / gameConfiguration.getNumUpdatesPerSecond();
+		long lastTime = System.currentTimeMillis();
 		while (!hasFinished()) {
 			try {
 				// when the game is paused, just wait until an unpause
 				synchronized (this) {
 					if (isPaused) {
 						this.wait();
+
+						// time spent on pause doesn't count
+						lastTime = System.currentTimeMillis();
 					}
 				}
 
-				final long now = System.currentTimeMillis();
 				Log.v(TAG, "Updating...");
-				update();
+
+				final long now = System.currentTimeMillis();
+				update(now - lastTime);
+				lastTime = now;
 
 				final long dt = System.currentTimeMillis() - now;
 				// suspend thread only when the time spent on update is smaller than the time it should
@@ -260,14 +265,14 @@ public final class GameImpl implements Game {
     /**
      * Updates the state (new frame).
      */
-    private synchronized void update() {
+    private synchronized void update(long dt) {
         // Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
-        boolean gameStateChanged = gameState.playAll();
+        gameState.playAll(dt);
 		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
 
 		final long timeBeforeUpdate = System.currentTimeMillis();
-		updatePlayers(gameStateChanged);
+		updatePlayers();
 		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
 		// remove agents after update
@@ -282,7 +287,7 @@ public final class GameImpl implements Game {
     /**
      * Calls Player#update with the new state.
      */
-    private void updatePlayers(boolean agentsChanged) {
+    private void updatePlayers() {
         // Get all the character positions
         final StringWriter msg = new StringWriter();
         final JsonWriter writer = new JsonWriter(msg);
@@ -296,7 +301,7 @@ public final class GameImpl implements Game {
 				createScoreMsg(writer, entry.getKey());
 				createTimeMsg(writer);
 				createNumPlayersMsg(writer);
-				createAgentsMsg(writer, agentsChanged);
+				createAgentsMsg(writer);
 
 				writer.endObject();
 				writer.close();
@@ -323,18 +328,13 @@ public final class GameImpl implements Game {
 		wr.name("NumPlayers").value(numPlayers);
 	}
 
-	private void createAgentsMsg(final JsonWriter wr, final boolean agentsChanged) throws IOException {
+	private void createAgentsMsg(final JsonWriter wr) throws IOException {
 		wr.name("Agents");
-		if (agentsChanged) {
-			wr.beginArray();
-			for (Agent object : gameState.getObjects()) {
-				object.toJson(wr);
-			}
-			wr.endArray();
-		} else {
-			wr.beginArray();
-			wr.endArray();
+		wr.beginArray();
+		for (Agent object : gameState.getObjects()) {
+			object.toJson(wr);
 		}
+		wr.endArray();
 	}
 
     /**

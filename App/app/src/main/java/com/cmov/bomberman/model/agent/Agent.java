@@ -84,9 +84,8 @@ public abstract class Agent {
      *
      * @param state the game state
      * @param dt    the time since the last update
-	 * @return true if the agent has changed any state while playing, false otherwise.
      */
-    abstract public boolean play(final State state, final float dt);
+    abstract public void play(final State state, final float dt);
 
     /**
      * Returns if this agent is already destroyed (should be removed from the game)

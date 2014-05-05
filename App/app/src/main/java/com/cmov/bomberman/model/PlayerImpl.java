@@ -3,7 +3,7 @@ package com.cmov.bomberman.model;
 import android.graphics.Canvas;
 import android.util.JsonReader;
 import android.util.Log;
-import com.cmov.bomberman.controller.GameFragment;
+import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.model.agent.Algorithm;
 import com.cmov.bomberman.model.agent.Controllable;
 
@@ -24,7 +24,7 @@ public class PlayerImpl implements Player {
 	/**
 	 * This is needed to draw in the canvas in a synchronized manner.
 	 */
-	private GameFragment gameFragment;
+	private GameActivity gameActivity;
 
 	/**
 	 * Information to be shown in the views
@@ -33,14 +33,14 @@ public class PlayerImpl implements Player {
 	private int timeLeft;
 	private int numPlayers;
 
-	public PlayerImpl(Controllable controller, GameFragment gameFragment) {
+	public PlayerImpl(Controllable controller, GameActivity gameActivity) {
 		this.controller = controller;
-		this.gameFragment = gameFragment;
+		this.gameActivity = gameActivity;
 		this.screen = new Screen();
 		this.destroyed = false;
 
 		// set the screen on GameView
-		gameFragment.getGameView().setScreen(screen);
+		gameActivity.getGameView().setScreen(screen);
 	}
 
 	public Algorithm getController() {
@@ -72,7 +72,7 @@ public class PlayerImpl implements Player {
 	 */
 
 	public void onGameEnd(final Map<String, Integer> scores) {
-        gameFragment.scoreDialog(scores);
+        gameActivity.scoreDialog(scores);
     }
 
 	/**
@@ -80,9 +80,8 @@ public class PlayerImpl implements Player {
 	 * The fixed drawings are not included in the report.
 	 *
 	 * @param msg the json report.
-	 * @return true if the agents state has changed, false otherwise.
 	 */
-    private boolean parseMessage(String msg) {
+    private void parseMessage(String msg) {
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
 		boolean gameStateChanged = false;
@@ -98,7 +97,7 @@ public class PlayerImpl implements Player {
 					} else if (name.equals("NumPlayers")) {
 						parseNumPlayers(rd);
 					} else if (name.equals("Agents")) {
-						gameStateChanged = parseAgents(rd);
+						parseAgents(rd);
 					}
 				}
 			}
@@ -107,8 +106,6 @@ public class PlayerImpl implements Player {
 		catch (IOException e) {
 			Log.e(TAG, "Error while parsing the message");
 		}
-
-		return gameStateChanged;
 	}
 
 	private void parseScore(final JsonReader rd) throws IOException {
@@ -123,15 +120,12 @@ public class PlayerImpl implements Player {
 		this.numPlayers = rd.nextInt();
 	}
 
-	private boolean parseAgents(final JsonReader rd) throws IOException {
-		boolean gameStateChanged = false;
+	private void parseAgents(final JsonReader rd) throws IOException {
 		rd.beginArray();
 		while (rd.hasNext()) {
 			parseAgent(rd);
-			gameStateChanged = true;
 		}
 		rd.endArray();
-		return gameStateChanged;
 	}
 
 	private void parseAgent(final JsonReader rd) throws IOException {
@@ -205,7 +199,7 @@ public class PlayerImpl implements Player {
 	 * Draws everything on the canvas.
 	 */
 	private void draw() {
-		final GameFragment.GameView gameView = gameFragment.getGameView();
+		final GameActivity.GameView gameView = gameActivity.getGameView();
 		Canvas canvas = null;
 		try {
 			if (gameView.getHolder() != null) {
@@ -221,15 +215,17 @@ public class PlayerImpl implements Player {
 				gameView.getHolder().unlockCanvasAndPost(canvas);
 			}
 		}
+
+		updateViews();
 	}
 
 	/**
 	 * Updates the other views in the screen (like score, number of players, ...)
 	 */
 	private void updateViews() {
-		gameFragment.updateScoreView(this.score);
-		gameFragment.updateTimeView(this.timeLeft);
-		gameFragment.updateNumPlayersView(this.numPlayers);
+		gameActivity.updateScoreView(this.score);
+		gameActivity.updateTimeView(this.timeLeft);
+		gameActivity.updateNumPlayersView(this.numPlayers);
 	}
 
 	/**
@@ -241,15 +237,12 @@ public class PlayerImpl implements Player {
 	 * @param msg the json report
 	 */
 	public void update(String msg) {
-		boolean gameStateChanged = parseMessage(msg);
-		if (gameStateChanged) {
-			draw();
-		}
-		updateViews();
+		parseMessage(msg);
+		draw();
 
 		// Alert the user that his agent has died
 		if (destroyed) {
-			gameFragment.gameLost();
+			gameActivity.gameLost();
 		}
 	}
 }

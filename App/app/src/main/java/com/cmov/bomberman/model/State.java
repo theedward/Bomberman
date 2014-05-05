@@ -1,6 +1,5 @@
 package com.cmov.bomberman.model;
 
-import android.util.Log;
 import com.cmov.bomberman.model.agent.Agent;
 
 import java.util.LinkedList;
@@ -13,11 +12,6 @@ public class State {
     private List<Agent> pausedCharacters;
     private int idCounter;
 
-    /**
-     * The time of the last update.
-     */
-    private long lastUpdate;
-
     public State() {
         agents = new LinkedList<Agent>();
         pausedCharacters = new LinkedList<Agent>();
@@ -27,10 +21,6 @@ public class State {
      * Sets the last update time to now.
      * This method is called after the game starts.
      */
-    public void startCountingNow() {
-        this.lastUpdate = System.currentTimeMillis();
-    }
-
     public void setLastId(int id) {
         this.idCounter = id;
     }
@@ -56,19 +46,12 @@ public class State {
     /**
      * This method calls the method play of each agent.
      */
-    public boolean playAll() {
-        final long now = System.currentTimeMillis();
-        final float dt = (now - lastUpdate) / 1000.0f;
-		boolean stateChanged = false;
+    public void playAll(final long dt) {
+        final float dtInSeconds = dt / 1000.0f;
 
         for (Agent agent : new LinkedList<Agent>(agents)) {
-            stateChanged |= agent.play(this, dt);
+            agent.play(this, dtInSeconds);
         }
-
-		Log.i(TAG, "State changed: " + stateChanged);
-
-        this.lastUpdate = System.currentTimeMillis();
-		return stateChanged;
     }
 
     public void addAgent(Agent object) {

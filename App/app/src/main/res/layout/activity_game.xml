@@ -7,9 +7,131 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".GameActivity">
-    <fragment
-            android:id="@+id/gameFragment"
-            android:name="com.cmov.bomberman.controller.GameFragment"
+
+    <LinearLayout
+            android:id="@+id/dataLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+        <TextView
+                android:id="@+id/playerName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/player_name"
+                android:textSize="18sp" />
+
+        <TextView
+                android:id="@+id/playerScore"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/player_score"
+                android:textSize="18sp" />
+
+        <TextView
+                android:id="@+id/timeLeft"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/time_left"
+                android:textSize="18sp" />
+
+        <TextView
+                android:id="@+id/numPlayers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/number_player"
+                android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- Resized during execution -->
+    <view
+            class="com.cmov.bomberman.controller.GameActivity$GameView"
+            android:id="@+id/canvas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true" />
+
+    <RelativeLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentBottom="true" >
+
+        <Button
+                android:id="@+id/btnPause"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:text="@string/pause"
+                android:onClick="pressedPause"/>
+
+        <Button
+                android:id="@+id/btnQuit"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:text="@string/quit"
+                android:onClick="pressedQuit"/>
+
+        <Button
+                android:id="@+id/arrowUp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/arrowUp" />
+
+        <Button
+                android:id="@+id/arrowLeft"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/arrowUp"
+                android:text="@string/arrowLeft" />
+
+        <Button
+                android:id="@+id/arrowDown"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:text="@string/arrowDown" />
+
+        <Button
+                android:id="@+id/arrowRight"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/arrowUp"
+                android:text="@string/arrowRight" />
+
+        <Button
+                android:id="@+id/putBomb"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="@string/bomb" />
+    </RelativeLayout>
+
 </RelativeLayout>

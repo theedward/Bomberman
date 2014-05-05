@@ -35,7 +35,7 @@ public class Bomb extends Agent {
 	}
 
 	@Override
-	public boolean play(State state, final float dt) {
+	public void play(State state, final float dt) {
 		String nextAction = getAlgorithm().getNextActionName();
 
 		if (!this.getCurrentAction().equals(nextAction)) {
@@ -65,9 +65,6 @@ public class Bomb extends Agent {
 		} else {
 			this.setStep((this.getStep() + 1) % BOMB_MAX_STEP);
 		}
-
-		// Bomb always changes
-		return true;
 	}
 
 	/**

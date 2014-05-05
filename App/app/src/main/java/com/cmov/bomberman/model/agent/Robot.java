@@ -1,6 +1,7 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
+import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
@@ -18,12 +19,11 @@ public class Robot extends MovableAgent {
     }
 
     @Override
-    public boolean play(State state, final float dt) {
-		boolean stateChanged = false;
+    public void play(State state, final float dt) {
         String nextAction = getAlgorithm().getNextActionName();
 
 		if (nextAction.equals("")) {
-			return false;
+			return;
 		}
 
         if (!nextAction.equals(Agent.Actions.DESTROY.toString())) {
@@ -32,7 +32,10 @@ public class Robot extends MovableAgent {
 			Position oldPos = getPosition();
 			move(state, action, dt);
 			Position curPos = getPosition();
-			stateChanged = !oldPos.equals(curPos);
+
+			if (curPos.equals(oldPos)) {
+				getAlgorithm().handleEvent(Event.COLLISION);
+			}
         }
 
         if (!this.getCurrentAction().equals(nextAction)) {
@@ -40,7 +43,6 @@ public class Robot extends MovableAgent {
             this.setCurrentAction(nextAction);
             this.setLastStep(this.getStep());
             this.setStep(0);
-			stateChanged = true;
         }
 
         if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
@@ -51,10 +53,7 @@ public class Robot extends MovableAgent {
             if (this.getStep() == MAX_DIE_STEP) {
                 destroyed = true;
             }
-			stateChanged = true;
         }
-
-		return stateChanged;
     }
 
     @Override

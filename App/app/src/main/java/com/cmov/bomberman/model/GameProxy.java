@@ -7,48 +7,49 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GameProxy extends Service implements Game {
     private final String TAG = this.getClass().getSimpleName();
-    private final IBinder mBinder = new GameBinder();
+    private final IBinder mBinder = new Binder() {
+		public GameProxy getService() {
+			return GameProxy.this;
+		}
+	};
 
     private GameImpl game;
-    private boolean isMultiplayer;
     private int level;
 
-	//TODO: estas variáveis vão ter de sair, supostamente têm de chegar cá de outra forma
 	private ExecutorService executor;
-	private TreeMap<Player, Socket> sockets = new TreeMap<Player, Socket>();
-	private Socket serverSocket;
+	private Map<String, Socket> clientSockets = new TreeMap<String, Socket>();
+	private ServerSocket serverSocket;
+	private Socket server;
     private boolean isServer;
-
-    private void init() {
-		game = new GameImpl(level);
-		executor = Executors.newSingleThreadExecutor();
-
-        Log.i(TAG, "Created the game");
-    }
-
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             this.level = extras.getInt("level");
-            this.isMultiplayer = extras.getBoolean("isMultiplayer");
             this.isServer = extras.getBoolean("isServer");
+			if (isServer) {
+				// read client ports
+			} else {
+				// read server host & port
+			}
         }
 
         GameUtils.CONTEXT = this;
-        init();
+		game = new GameImpl(level);
+		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		Log.i(TAG, "onStartCommand went fine.");
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -58,253 +59,287 @@ public class GameProxy extends Service implements Game {
         return mBinder;
     }
 
-    //Gets the array of sockets from the TreeMap
-    public Socket[] getSockets() {
-        int numSocket = 0;
-        Socket[] clientSockets = new Socket[sockets.size()];
-        for (Map.Entry<Player, Socket> entry : sockets.entrySet()) {
-            clientSockets[numSocket] = entry.getValue();
-            numSocket++;
-        }
-        return clientSockets;
-    }
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 
-	//Gets the array of players from the TreeMap
-    public Player[] getPlayers() {
-        int numPlayer = 0;
-        Player[] players = new Player[sockets.size()];
-        for (Map.Entry<Player, Socket> entry : sockets.entrySet()) {
-            players[numPlayer] = entry.getKey();
-            numPlayer++;
-        }
-        return players;
-    }
+		executor.shutdownNow();
+		game = null;
+	}
 
-    //Creates DataInputStreams for all the sockets in the sockets TreeMap
-    public DataInputStream[] getInputReaders() {
-        int socketsSize = sockets.size();
-        Socket[] clientSockets = getSockets();
-        InputStream[] inputStreams = new InputStream[socketsSize];
-        DataInputStream[] dataInputStreams = new DataInputStream[socketsSize];
-        try {
-            for (int i = 0; i < socketsSize; i++) {
-                inputStreams[i] = clientSockets[i].getInputStream();
-                dataInputStreams[i] = new DataInputStream(inputStreams[i]);
-            }
+//	//Gets the array of players from the TreeMap
+//    public Player[] getPlayers() {
+//        int numPlayer = 0;
+//        Player[] players = new Player[clientSockets.size()];
+//        for (Map.Entry<Player, Socket> entry : clientSockets.entrySet()) {
+//            players[numPlayer] = entry.getKey();
+//            numPlayer++;
+//        }
+//        return players;
+//    }
+
+    // Creates DataInputStreams for all the sockets in the sockets TreeMap
+    public Collection<DataInputStream> getInputStreams() {
+		List<DataInputStream> inputStreams = new LinkedList<DataInputStream>();
+		try {
+			for (Socket s : clientSockets.values()) {
+				inputStreams.add(new DataInputStream(s.getInputStream()));
+			}
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return dataInputStreams;
+		return inputStreams;
     }
 
-    //Creates DataOutputStreams for all the sockets in the sockets TreeMap
-    public DataOutputStream[] getOutputReaders() {
-        int socketsSize = sockets.size();
-        Socket[] clientSockets = getSockets();
-        OutputStream[] outputStreams = new DataOutputStream[socketsSize];
-        DataOutputStream[] dataOutputStreams = new DataOutputStream[socketsSize];
-        try {
-            for (int i = 0; i < socketsSize; i++) {
-                outputStreams[i] = clientSockets[i].getOutputStream();
-                dataOutputStreams[i] = new DataOutputStream(outputStreams[i]);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return dataOutputStreams;
-    }
+    // Creates DataOutputStreams for all the clientSockets in the clientSockets TreeMap
+	public Collection<DataOutputStream> getOutputStreams() {
+		List<DataOutputStream> inputStreams = new LinkedList<DataOutputStream>();
+		try {
+			for (Socket s : clientSockets.values()) {
+				inputStreams.add(new DataOutputStream(s.getOutputStream()));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return inputStreams;
+	}
 
     //This function will analyse the message the socket has and call the functions
     // necessairy to perform the given task
     public void analyzeMessage(String message) {
         String[] parts = message.split("#");
-        //pause message should be PAUSE#username
-        //unpause message should be UNPAUSE#username
-        if (parts[0].equals("PAUSE")) {
-            pause(parts[1]);
-        } else if (parts[0].equals("UNPAUSE")) {
-            unpause(parts[1]);
-        } else if (parts[0].equals("QUIT")) {
-            quit(parts[1]);
-        } else if (parts[0].equals("JOIN")) {
-            //TODO: need to have the player here, getPlayerByUsername would be nice
-        } else if (parts[0].equals("START")) {
-            start();
-        } else if (parts[0].equals("GETMAPWIDTH")) {
-            getMapWidth();
-        } else if (parts[0].equals("GETMAPHEIGHT")) {
-            getMapHeight();
-        }
+		String msgType = "";
+		String username = "";
+		if (parts.length == 2) {
+			msgType = parts[0];
+			username = parts[1];
+		} else {
+			Log.e(TAG, "Server received message without 2 arguments.");
+		}
+
+        if (msgType.equals("PAUSE")) {
+            pause(username);
+        } else if (msgType.equals("UNPAUSE")) {
+            unpause(username);
+        } else if (msgType.equals("QUIT")) {
+            quit(username);
+        } else if (msgType.equals("JOIN")) {
+            join(username, null);
+        } else if (msgType.equals("GETMAPWIDTH")) {
+            int width = getMapWidth();
+			replyWidth(username, width);
+        } else if (msgType.equals("GETMAPHEIGHT")) {
+            int height = getMapHeight();
+			replyHeight(username, height);
+        } else if (msgType.equals("GETPLAYERUSERNAMES")) {
+			Collection<String> usernames = getPlayerUsernames();
+			replyGetPlayerUsernames(username, usernames);
+		}
     }
 
-    //This function should be used in the main while loop, reading from sockets
+    //This function should be used in the main while loop, reading from clientSockets
     public void readFromSockets() {
-        DataInputStream[] readers = getInputReaders();
-        String message = new String();
+        Collection<DataInputStream> inputStreams = getInputStreams();
+        String message;
         try {
-            for (DataInputStream is : readers) {
-                if (is.available() != 0)
-                    message = is.readUTF();
-                analyzeMessage(message);
+            for (DataInputStream is : inputStreams) {
+                if (is.available() > 0) {
+					message = is.readUTF();
+					analyzeMessage(message);
+				}
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+	private void replyWidth(String username, int width) {
+		try {
+			DataOutputStream out = new DataOutputStream(clientSockets.get(username).getOutputStream());
+			out.writeInt(width);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-		executor.shutdownNow();
-        game = null;
-    }
+	private void replyHeight(String username, int height) {
+		try {
+			DataOutputStream out = new DataOutputStream(clientSockets.get(username).getOutputStream());
+			out.writeInt(height);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    /* If i'm not the server i only need to send a message to it with the right protocol
-        If i am the server i just need to call the function with the right player's username
-     */
+	private void replyGetPlayerUsernames(String username, Collection<String> usernames) {
+		try {
+			DataOutputStream out = new DataOutputStream(clientSockets.get(username).getOutputStream());
+			for (String s : usernames) {
+				out.writeUTF(s);
+			}
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * if I'm not the server I only need to send a message to it with the right protocol
+	 * if I am the server I just need to call the function with the right player's username
+	 * @param username the player's username
+	 */
     @Override
     public void pause(final String username) {
-        if (isMultiplayer && !isServer) {
+        if (isServer) {
+			game.pause(username);
+		} else {
             try {
-                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                writeToServer.writeChars("PAUSE#" + username);
+                DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
+                writeToServer.writeUTF("PAUSE#" + username);
                 writeToServer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
-            game.pause(username);
         }
     }
 
-    /* If i'm not the server i only need to send a message to it with the right protocol
-       If i am the server i just need to call the function with the right player's username
-    */
+	/**
+	 * if I'm not the server I only need to send a message to it with the right protocol
+	 * if I am the server I just need to call the function with the right player's username
+	 * @param username the player's username
+	 */
     @Override
     public void unpause(final String username) {
-
-        if (isMultiplayer && !isServer) {
-            try {
-                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                writeToServer.writeChars("UNPAUSE#" + username);
-                writeToServer.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            game.unpause(username);
-        }
+		if (isServer) {
+			game.unpause(username);
+		} else {
+			try {
+				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
+				writeToServer.writeUTF("UNPAUSE#" + username);
+				writeToServer.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     }
 
     @Override
     public void quit(final String username) {
-        if (isMultiplayer && !isServer) {
-            try {
-                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                writeToServer.writeChars("QUIT#" + username);
-                writeToServer.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            game.quit(username);
-        }
+		if (isServer) {
+			game.quit(username);
+		} else {
+			try {
+				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
+				writeToServer.writeUTF("QUIT#" + username);
+				writeToServer.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     }
 
     @Override
     public void join(final String username, Player player) {
-        // TODO
-        if (isMultiplayer) {
-            // TODO create network player or something
+        if (isServer) {
+			// TODO create network player
+			Player networkPlayer = null;
+            game.join(username, networkPlayer);
         } else {
-            game.join(username, player);
-        }
+			try {
+				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
+				writeToServer.writeUTF("JOIN#" + username);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     }
 
 	@Override
 	public Collection<String> getPlayerUsernames() {
-		// TODO to implement
-		return new LinkedList<String>() {{ add("Andre"); }};
+		if (isServer) {
+			return game.getPlayerUsernames();
+		} else {
+			try {
+				LinkedList<String> usernames = new LinkedList<String>();
+				DataInputStream readFromServer = new DataInputStream(server.getInputStream());
+				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
+				writeToServer.writeUTF("GETPLAYERUSERNAMES#");
+				writeToServer.flush();
+
+				// In case there are no usernames, the server sends an empty string
+				do {
+					String username = readFromServer.readUTF();
+					if (!username.equals("")) {
+						usernames.add(username);
+					}
+				}
+				while (readFromServer.available() > 0);
+
+				Log.i(TAG, "Server has " + usernames.size() + " usernames");
+				return usernames;
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return null;
 	}
 
 	@Override
     public int getMapWidth() {
-        if (isMultiplayer) {
-            try {
-                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                DataInputStream readFromServer = new DataInputStream(serverSocket.getInputStream());
-                if (isServer) {
-                    writeToServer.writeInt(getMapWidth());
-                    return game.getMapWidth();
-                } else {
-                    writeToServer.writeChars("GETMAPWIDTH#");
-                    writeToServer.flush();
-                    return readFromServer.readInt();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            return game.getMapWidth();
-        }
-        return game.getMapWidth();
+		try {
+			if (isServer) {
+				return game.getMapWidth();
+			} else {
+				DataInputStream readFromServer = new DataInputStream(server.getInputStream());
+				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
+				writeToServer.writeUTF("GETMAPWIDTH#");
+				writeToServer.flush();
+				return readFromServer.readInt();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        return -1;
     }
 
 	@Override
 	public int getMapHeight() {
-		if (isMultiplayer) {
-            try {
-                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                DataInputStream readFromServer = new DataInputStream(serverSocket.getInputStream());
-                if (isServer) {
-                    writeToServer.writeInt(getMapHeight());
-                    game.getMapWidth();
-                } else {
-                    writeToServer.writeChars("GETMAPHEIGHT#");
-                    writeToServer.flush();
-                    return readFromServer.readInt();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-		} else {
-			return game.getMapHeight();
+		try {
+			if (isServer) {
+				return game.getMapWidth();
+			} else {
+				DataInputStream readFromServer = new DataInputStream(server.getInputStream());
+				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
+				writeToServer.writeUTF("GETMAPHEIGHT#");
+				writeToServer.flush();
+				return readFromServer.readInt();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-        return -1; //same as previous method
+
+		return -1;
 	}
 
 	@Override
 	public void start() {
-		if (isMultiplayer) {
-            try {
-                DataOutputStream writeToServer = new DataOutputStream(serverSocket.getOutputStream());
-                if (isServer) {
-                    game.start();
-                } else {
-                    writeToServer.writeChars("START#");
-                    writeToServer.flush();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+		// only the server owner can start the game
+		if (isServer) {
+			game.start();
 		}
 	}
 
 	@Override
 	public void pause() {
-		// TODO
+		// Nobody can't pause the game. It will run until it has finished.
 	}
 
 	@Override
 	public void unpause() {
-		// TODO
-	}
-
-	public class GameBinder extends Binder {
-		public GameProxy getService() {
-			// Return this instance of GameService so clients can call public methods
-			return GameProxy.this;
-		}
+		// Nobody can't unpause the game. It will run until it has finished.
 	}
 }

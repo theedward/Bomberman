@@ -2,7 +2,6 @@ package com.cmov.bomberman.model.drawing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.agent.Agent;
@@ -18,7 +17,7 @@ public class BombermanDrawing extends Drawing {
         this.setCurrentAction(currentAction);
 
         if (sprite == null) {
-            sprite = GameUtils.readBombermanSprite();
+            sprite = GameUtils.getInstance().readBombermanSprite();
         }
     }
 

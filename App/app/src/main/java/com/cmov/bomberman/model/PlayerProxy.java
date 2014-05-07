@@ -39,10 +39,11 @@ public class PlayerProxy implements Player {
 	}
 
 	@Override
-	public void onGameStart(final List<Position> wallPositions) {
+	public void onGameStart(final int level, final List<Position> wallPositions) {
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
 			out.writeUTF("ONGAMESTART#");
+			out.writeInt(level);
 			out.writeObject(wallPositions);
 			out.flush();
 		} catch (IOException e) {

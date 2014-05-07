@@ -2,7 +2,6 @@ package com.cmov.bomberman.model.drawing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Position;
 
@@ -12,7 +11,7 @@ public class WallDrawing extends Drawing {
     public WallDrawing(final Position position) {
         super(position);
         if (sprite == null) {
-            sprite = GameUtils.readWallSprite();
+            sprite = GameUtils.getInstance().readWallSprite();
         }
     }
 

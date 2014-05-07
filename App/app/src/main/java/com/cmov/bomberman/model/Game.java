@@ -13,6 +13,4 @@ public interface Game {
 	void join(String username, Player player);
 
 	Collection<String> getPlayerUsernames();
-	int getMapWidth();
-	int getMapHeight();
 }

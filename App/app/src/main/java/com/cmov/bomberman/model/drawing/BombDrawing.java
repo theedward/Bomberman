@@ -27,11 +27,11 @@ public class BombDrawing extends Drawing {
 		this.rangeDown = rangeDown;
 
         if (sprite == null) {
-            sprite = GameUtils.readBombSprite();
+            sprite = GameUtils.getInstance().readBombSprite();
         }
 
         if (explosionSprite == null) {
-            explosionSprite = GameUtils.readBombExplosionSprite();
+            explosionSprite = GameUtils.getInstance().readBombExplosionSprite();
         }
     }
 

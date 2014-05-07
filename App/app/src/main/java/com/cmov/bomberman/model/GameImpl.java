@@ -17,6 +17,7 @@ import java.util.*;
  */
 public final class GameImpl implements Game {
 	private final String TAG = this.getClass().getSimpleName();
+	private final int level;
     private final Map<String, Player> players;
     private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
@@ -38,6 +39,7 @@ public final class GameImpl implements Game {
      * @param level the level to be played in this game
      */
     public GameImpl(final int level) {
+		this.level = level;
 		this.isPaused = false;
         this.players = new HashMap<String, Player>();
         this.playersOnPause = new HashMap<String, Player>();
@@ -45,8 +47,8 @@ public final class GameImpl implements Game {
         this.gameState = new State();
 
         // Read data from files
-        this.gameState.setMap(GameUtils.readLevelFromFile(level));
-        this.gameConfiguration = GameUtils.readConfigurationFile(level);
+        this.gameState.setMap(GameUtils.getInstance().readLevelFromFile(level));
+        this.gameConfiguration = GameUtils.getInstance().readConfigurationFile(level);
         this.numRoundsLeft = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
 
 		this.bombermanPos = new Position[gameConfiguration.getMaxNumPlayers()];
@@ -161,14 +163,6 @@ public final class GameImpl implements Game {
 		return usernames;
 	}
 
-	public int getMapWidth() {
-        return this.gameConfiguration.getMapWidth();
-    }
-
-    public int getMapHeight() {
-        return this.gameConfiguration.getMapHeight();
-    }
-
     /**
      * Pauses the game for the player with the given username
      *
@@ -238,7 +232,7 @@ public final class GameImpl implements Game {
         Log.i(TAG, "Game has started");
 
         for (Player p : players.values()) {
-            p.onGameStart(wallPositions);
+            p.onGameStart(level, wallPositions);
         }
     }
 

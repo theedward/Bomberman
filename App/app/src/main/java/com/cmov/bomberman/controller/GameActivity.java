@@ -41,7 +41,7 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-		GameUtils.CONTEXT = this;
+		GameUtils.createInstance(getApplicationContext());
 
 		int level = 1;
 		String username = "";
@@ -233,23 +233,6 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceChanged(final SurfaceHolder surfaceHolder, final int i, final int i2, final int i3) {
 		if (game != null) {
-			final int imgSize = Math.min(gameView.getWidth() / game.getMapWidth(),
-										 gameView.getHeight() / game.getMapHeight());
-			// Set values on GameUtils
-			GameUtils.IMG_CANVAS_WIDTH = imgSize;
-			GameUtils.IMG_CANVAS_HEIGHT = imgSize;
-
-			// Adjust GameView size
-			final int width = imgSize * game.getMapWidth();
-			final int height = imgSize * game.getMapHeight();
-
-			// TODO
-			ViewGroup.LayoutParams layoutParams = gameView.getLayoutParams();
-			layoutParams.width = width;
-			layoutParams.height = height;
-
-			Log.i(TAG, "GameView w: " + width + " h:" + height);
-
 			if (!gameStarted) {
 				// Before starting the game, let the player join it
 				game.join(username, player);
@@ -332,6 +315,21 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 				Toast.makeText(GameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	public void updateLevel(int width, int height) {
+		final int imgSize = Math.min(gameView.getWidth() / width,
+									 gameView.getHeight() / height);
+		// Set values on GameUtils
+		GameUtils.getInstance().setImageSizeOnCanvas(imgSize, imgSize);
+
+		// Adjust GameView size
+		final int canvasWidth = imgSize * width;
+		final int canvasHeight = imgSize * height;
+
+		ViewGroup.LayoutParams layoutParams = gameView.getLayoutParams();
+		layoutParams.width = canvasWidth;
+		layoutParams.height = canvasHeight;
 	}
 
 	public static class GameView extends SurfaceView {

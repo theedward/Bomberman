@@ -76,7 +76,6 @@ public class GameProxy extends Service implements Game {
 			}
         }
 
-        GameUtils.CONTEXT = this;
 		game = new GameImpl(level);
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		Log.i(TAG, "onStartCommand went fine.");
@@ -183,13 +182,7 @@ public class GameProxy extends Service implements Game {
             quit(username);
         } else if (msgType.equals("JOIN")) {
             join(username, null);
-        } else if (msgType.equals("GETMAPWIDTH")) {
-            int width = getMapWidth();
-			replyWidth(username, width);
-        } else if (msgType.equals("GETMAPHEIGHT")) {
-            int height = getMapHeight();
-			replyHeight(username, height);
-        } else if (msgType.equals("GETPLAYERUSERNAMES")) {
+        }else if (msgType.equals("GETPLAYERUSERNAMES")) {
 			Collection<String> usernames = getPlayerUsernames();
 			replyGetPlayerUsernames(username, usernames);
 		}
@@ -244,7 +237,7 @@ public class GameProxy extends Service implements Game {
 			try {
 				ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(rest));
 				List<Position> wallPositions = (List<Position>) in.readObject();
-				localPlayer.onGameStart(wallPositions);
+				localPlayer.onGameStart(level, wallPositions);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -310,26 +303,6 @@ public class GameProxy extends Service implements Game {
 			}
 		} else {
 			Log.e(TAG, "Server owner can't receive handleEvent");
-		}
-	}
-
-	private void replyWidth(String username, int width) {
-		try {
-			DataOutputStream out = new DataOutputStream(clientSockets.get(username).getOutputStream());
-			out.writeInt(width);
-			out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void replyHeight(String username, int height) {
-		try {
-			DataOutputStream out = new DataOutputStream(clientSockets.get(username).getOutputStream());
-			out.writeInt(height);
-			out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -452,43 +425,6 @@ public class GameProxy extends Service implements Game {
 		}
 
 		return null;
-	}
-
-	@Override
-    public int getMapWidth() {
-		try {
-			if (isServer) {
-				return game.getMapWidth();
-			} else {
-				DataInputStream readFromServer = new DataInputStream(server.getInputStream());
-				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
-				writeToServer.writeUTF("GETMAPWIDTH#");
-				writeToServer.flush();
-				return readFromServer.readInt();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        return -1;
-    }
-
-	@Override
-	public int getMapHeight() {
-		try {
-			if (isServer) {
-				return game.getMapWidth();
-			} else {
-				DataInputStream readFromServer = new DataInputStream(server.getInputStream());
-				DataOutputStream writeToServer = new DataOutputStream(server.getOutputStream());
-				writeToServer.writeUTF("GETMAPHEIGHT#");
-				writeToServer.flush();
-				return readFromServer.readInt();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return -1;
 	}
 
 	@Override

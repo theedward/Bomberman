@@ -9,6 +9,6 @@ public interface Player {
 	void update(String msg);
 	Algorithm getController();
 	void setAgentId(int id);
-	void onGameStart(final List<Position> wallPositions);
+	void onGameStart(final int level, final List<Position> wallPositions);
 	void onGameEnd(final Map<String, Integer> scores);
 }

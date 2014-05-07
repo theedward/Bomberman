@@ -58,7 +58,10 @@ public class PlayerImpl implements Player {
 	 *
 	 * @param wallPositions the position of every wall
 	 */
-	public void onGameStart(final List<Position> wallPositions) {
+	public void onGameStart(final int level, final List<Position> wallPositions) {
+		GameConfiguration config = GameUtils.getInstance().readConfigurationFile(level);
+		gameActivity.updateLevel(config.getMapWidth(), config.getMapHeight());
+
 		for (Position pos : wallPositions) {
 			screen.createWallDrawing(pos);
 		}
@@ -84,7 +87,6 @@ public class PlayerImpl implements Player {
     private void parseMessage(String msg) {
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
-		boolean gameStateChanged = false;
 		try {
 			rd.beginObject();
 			while (rd.hasNext()) {

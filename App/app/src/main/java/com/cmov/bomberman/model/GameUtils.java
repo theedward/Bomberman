@@ -20,33 +20,49 @@ public class GameUtils {
     /**
      * The width any bitmap has on the resource file.
      */
-    public static final int IMG_WIDTH = 30;
-
+    private static final int IMG_WIDTH = 30;
     /**
      * The height any bitmap has on the resource file.
      */
-    public static final int IMG_HEIGHT = 30;
-
+    private static final int IMG_HEIGHT = 30;
+	private static GameUtils instance;
     /**
      * The width any bitmap will occupy in the canvas.
      */
-    public static int IMG_CANVAS_WIDTH;
+    private int imgCanvasWidth;
 
     /**
      * The height any bitmap will occupy in the canvas.
      */
-    public static int IMG_CANVAS_HEIGHT;
+    private int imgCanvasHeight;
 
     /**
      * This is needed to access all the project resources like files.
      */
-    public static Context CONTEXT;
+    private Context context;
 
-    /**
+	private GameUtils(Context context) {
+		this.context = context;
+	}
+
+	public static void createInstance(Context context) {
+		instance = new GameUtils(context);
+	}
+
+	public static GameUtils getInstance() {
+		return instance;
+	}
+
+	public void setImageSizeOnCanvas(int width, int height) {
+		this.imgCanvasWidth = width;
+		this.imgCanvasHeight = height;
+	}
+
+	/**
      * @param level the game level
      * @return the file name of this level.
      */
-    private static String levelFilename(final int level) {
+    private String levelFilename(final int level) {
         return "level_" + level + ".txt";
     }
 
@@ -56,11 +72,11 @@ public class GameUtils {
      * @param level the game level
      * @return the map
      */
-    public static char[][] readLevelFromFile(final int level) {
-        final String filename = GameUtils.levelFilename(level);
+    public char[][] readLevelFromFile(final int level) {
+        final String filename = levelFilename(level);
 
         try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(CONTEXT.getAssets().open(filename)));
+            BufferedReader rd = new BufferedReader(new InputStreamReader(context.getAssets().open(filename)));
             LinkedList<String> list = new LinkedList<String>();
 
             String line;
@@ -90,7 +106,7 @@ public class GameUtils {
      * @param level the game level
      * @return the file name of the configuration file for this level.
      */
-    private static String configFilename(final int level) {
+    private String configFilename(final int level) {
         return "configuration_" + level + ".txt";
     }
 
@@ -100,11 +116,11 @@ public class GameUtils {
      * @param level the game level
      * @return the game configuration
      */
-    public static GameConfiguration readConfigurationFile(final int level) {
+    public GameConfiguration readConfigurationFile(final int level) {
         final String filename = configFilename(level);
         final GameConfiguration config = new GameConfiguration();
         try {
-            JsonReader rd = new JsonReader(new InputStreamReader(CONTEXT.getAssets().open(filename)));
+            JsonReader rd = new JsonReader(new InputStreamReader(context.getAssets().open(filename)));
             rd.beginObject();
             while (rd.hasNext()) {
                 String msg = rd.nextName();
@@ -159,9 +175,9 @@ public class GameUtils {
      * @return the bitmap in the specified row and column in the src bitmap assuming every image
      * has 30px width and 30px height.
      */
-    private static Bitmap getBitmap(final Bitmap src, final int row, final int column) {
+    private Bitmap getBitmap(final Bitmap src, final int row, final int column) {
         Bitmap bm = Bitmap.createBitmap(src, (column - 1) * IMG_WIDTH, (row - 1) * IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT);
-        return Bitmap.createScaledBitmap(bm, IMG_CANVAS_WIDTH, IMG_CANVAS_HEIGHT, true);
+        return Bitmap.createScaledBitmap(bm, imgCanvasWidth, imgCanvasHeight, true);
     }
 
     /**
@@ -169,9 +185,9 @@ public class GameUtils {
      *
      * @return the wall image
      */
-    public static Bitmap readWallSprite() {
+    public Bitmap readWallSprite() {
         // Wall: 3rd row, 1st column
-        return getBitmap(BitmapFactory.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_tiles_sheet), 1, 3);
+        return getBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.bomberman_tiles_sheet), 1, 3);
     }
 
     /**
@@ -179,9 +195,8 @@ public class GameUtils {
      *
      * @return the bomb image on the normal mode
      */
-    public static Bitmap[] readBombSprite() {
-        final Bitmap bombSprite = BitmapFactory.decodeResource(CONTEXT.getResources(),
-                R.drawable.bomberman_bomb_sheet);
+    public Bitmap[] readBombSprite() {
+        final Bitmap bombSprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomberman_bomb_sheet);
         final int numBitmaps = 3;
         final Bitmap[] bombImg = new Bitmap[numBitmaps];
 
@@ -201,8 +216,8 @@ public class GameUtils {
      *
      * @return a bomb img for each step (there are 4 steps)
      */
-    public static Bitmap[][] readBombExplosionSprite() {
-        Bitmap bombSprite = BitmapFactory.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_bomb_sheet);
+    public Bitmap[][] readBombExplosionSprite() {
+        Bitmap bombSprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomberman_bomb_sheet);
 
         final int numSteps = 4;
         final int numBitmaps = 7;
@@ -237,9 +252,9 @@ public class GameUtils {
      * @return the bomberman img for each possible action (there are 6 different actions) and for
      * each step (there are 3 steps)
      */
-    public static Bitmap[][] readBombermanSprite() {
+    public Bitmap[][] readBombermanSprite() {
         Bitmap bombermanSprite = BitmapFactory
-                .decodeResource(CONTEXT.getResources(), R.drawable.bomberman_bomberman_sheet);
+                .decodeResource(context.getResources(), R.drawable.bomberman_bomberman_sheet);
         final int numActions = 6;
         final int numSteps = 3;
 
@@ -260,8 +275,8 @@ public class GameUtils {
      *
      * @return the obstacle img for each step (there are 7 steps)
      */
-    public static Bitmap[] readObstacleSprite() {
-        Bitmap obstacleSprite = BitmapFactory.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_tiles_sheet);
+    public Bitmap[] readObstacleSprite() {
+        Bitmap obstacleSprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomberman_tiles_sheet);
         final int numSteps = 7;
 
         Bitmap[] obstacleImg = new Bitmap[numSteps];
@@ -278,8 +293,8 @@ public class GameUtils {
      *
      * @return the robot img for each action (MOVE_LEFT and MOVE_RIGHT) and for each step (there are 3 steps).
      */
-    public static Bitmap[][] readRobotSprite() {
-        Bitmap robotSprite = BitmapFactory.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_enemies_sheet);
+    public Bitmap[][] readRobotSprite() {
+        Bitmap robotSprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomberman_enemies_sheet);
         // moving left or moving right
         final int numActions = 2;
         final int numSteps = 3;
@@ -301,8 +316,8 @@ public class GameUtils {
      *
      * @return the robot img for each step (there are 5 steps) of the robot in the destroyed mode.
      */
-    public static Bitmap[] readRobotDestroyedSprite() {
-        Bitmap robotSprite = BitmapFactory.decodeResource(CONTEXT.getResources(), R.drawable.bomberman_enemies_sheet);
+    public Bitmap[] readRobotDestroyedSprite() {
+        Bitmap robotSprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomberman_enemies_sheet);
         final int numSteps = 5;
 
         Bitmap[] robotImg = new Bitmap[numSteps];

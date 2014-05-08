@@ -203,8 +203,9 @@ public final class GameImpl implements Game {
 			final Position pos = bombermanPos[bombermanId];
 			final char[][] map = gameState.getMap();
 			map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
-			Bomberman bomberman = new Bomberman(pos, player.getController(), agentId,
-												gameConfiguration.getbSpeed(), gameConfiguration.getTimeBetweenBombs(),
+			Bomberman bomberman = new Bomberman(pos, player.getController(), agentId, gameConfiguration.getbSpeed(),
+												gameConfiguration.getExplosionDuration(),
+												gameConfiguration.getTimeBetweenBombs(),
 												gameConfiguration.getExplosionRange(),
 												gameConfiguration.getTimeToExplode(),
 												gameConfiguration.getPointRobot(),

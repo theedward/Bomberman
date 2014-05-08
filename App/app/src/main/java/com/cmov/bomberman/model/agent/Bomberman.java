@@ -11,7 +11,8 @@ public class Bomberman extends MovableAgent {
     private static final int MAX_MOVEMENT_STEP = 3;
     private static final int MAX_DIE_STEP = 3;
 
-    private final float timeBetweenBombs;
+	private final float explosionDuration;
+	private final float timeBetweenBombs;
     private final int explosionRange;
 	private final float explosionTimeout;
 
@@ -29,14 +30,16 @@ public class Bomberman extends MovableAgent {
 	 * @param pos              the agent position
 	 * @param ai               the agent algorithm
 	 * @param speed            the agent speed
+	 * @param explosionDuration
 	 * @param timeBetweenBombs time between bombs in milliseconds.
 	 * @param range            the bomb range
 	 * @param timeout          the bomb timeout
 	 */
-	public Bomberman(Position pos, Algorithm ai, int id, float speed, float timeBetweenBombs, int range, float timeout,
-					 int robotScore, int opponentScore) {
-        super(pos, ai, id, speed);
-        this.timeBetweenBombs = timeBetweenBombs;
+	public Bomberman(Position pos, Algorithm ai, int id, float speed, final float explosionDuration,
+					 float timeBetweenBombs, int range, float timeout, int robotScore, int opponentScore) {
+		super(pos, ai, id, speed);
+		this.explosionDuration = explosionDuration;
+		this.timeBetweenBombs = timeBetweenBombs;
         this.timeSinceLastBomb = this.timeBetweenBombs;
         this.explosionRange = range;
         this.explosionTimeout = timeout;
@@ -97,8 +100,8 @@ public class Bomberman extends MovableAgent {
                     Position.toDiscrete(curPos.getY()) + Agent.HEIGHT / 2);
             final int id = state.createNewId();
 
-            state.addAgent(new Bomb(bombPos, id, explosionRange, explosionTimeout, this));
-            this.timeSinceLastBomb = 0;
+			state.addAgent(new Bomb(bombPos, id, explosionDuration, explosionRange, explosionTimeout, this));
+			this.timeSinceLastBomb = 0;
         } else if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
             if (this.getStep() < MAX_DIE_STEP) {
                 setStep(this.getStep() + 1);

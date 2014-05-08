@@ -206,7 +206,7 @@ public final class GameImpl implements Game {
 			Bomberman bomberman = new Bomberman(pos, player.getController(), agentId,
 												gameConfiguration.getbSpeed(), gameConfiguration.getTimeBetweenBombs(),
 												gameConfiguration.getExplosionRange(),
-												gameConfiguration.getExplosionDuration(),
+												gameConfiguration.getTimeToExplode(),
 												gameConfiguration.getPointRobot(),
 												gameConfiguration.getPointOpponent());
 			gameState.addAgent(bomberman);

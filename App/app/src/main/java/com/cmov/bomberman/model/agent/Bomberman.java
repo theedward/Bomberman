@@ -26,15 +26,15 @@ public class Bomberman extends MovableAgent {
     private int opponentScore;
 
     /**
-     * @param pos              the agent position
-     * @param ai               the agent algorithm
-     * @param speed            the agent speed
-     * @param timeBetweenBombs time between bombs in milliseconds.
-     * @param range            the bomb range
-     * @param timeout          the bomb timeout
-     */
-    public Bomberman(Position pos, Algorithm ai, int id, int speed, float timeBetweenBombs, int range, int timeout,
-                     int robotScore, int opponentScore) {
+	 * @param pos              the agent position
+	 * @param ai               the agent algorithm
+	 * @param speed            the agent speed
+	 * @param timeBetweenBombs time between bombs in milliseconds.
+	 * @param range            the bomb range
+	 * @param timeout          the bomb timeout
+	 */
+	public Bomberman(Position pos, Algorithm ai, int id, float speed, float timeBetweenBombs, int range, int timeout,
+					 int robotScore, int opponentScore) {
         super(pos, ai, id, speed);
         this.timeBetweenBombs = timeBetweenBombs;
         this.timeSinceLastBomb = this.timeBetweenBombs;

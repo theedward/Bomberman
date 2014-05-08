@@ -155,14 +155,6 @@ public final class GameImpl implements Game {
 		}
 	}
 
-	@Override
-	public Collection<String> getPlayerUsernames() {
-		Set<String> usernames = new LinkedHashSet<String>();
-		usernames.addAll(players.keySet());
-		usernames.addAll(playersOnPause.keySet());
-		return usernames;
-	}
-
     /**
      * Pauses the game for the player with the given username
      *
@@ -218,7 +210,6 @@ public final class GameImpl implements Game {
 												gameConfiguration.getPointRobot(),
 												gameConfiguration.getPointOpponent());
 			gameState.addAgent(bomberman);
-			player.setAgentId(agentId);
 			playersAgent.put(username, bomberman);
 		}
 	}
@@ -296,6 +287,7 @@ public final class GameImpl implements Game {
 				createTimeMsg(writer);
 				createNumPlayersMsg(writer);
 				createAgentsMsg(writer);
+				createDeathMsg(writer, entry.getKey());
 
 				writer.endObject();
 				writer.close();
@@ -329,6 +321,10 @@ public final class GameImpl implements Game {
 			object.toJson(wr);
 		}
 		wr.endArray();
+	}
+
+	private void createDeathMsg(final JsonWriter wr, final String username) throws IOException {
+		wr.name("Dead").value(playersAgent.get(username).isDestroyed());
 	}
 
     /**

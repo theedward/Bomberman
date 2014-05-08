@@ -50,7 +50,7 @@
         </activity>
 
         <service
-            android:name="com.cmov.bomberman.model.GameProxy"
+            android:name=".model.net.GameProxy"
             android:enabled="true"
             android:exported="false" >
         </service>

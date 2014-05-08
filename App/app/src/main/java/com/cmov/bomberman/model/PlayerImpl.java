@@ -18,9 +18,6 @@ public class PlayerImpl implements Player {
 	private final Screen screen;
 	private final Controllable controller;
 
-	private int agentId;
-	private boolean destroyed;
-
 	/**
 	 * This is needed to draw in the canvas in a synchronized manner.
 	 */
@@ -32,12 +29,12 @@ public class PlayerImpl implements Player {
 	private int score;
 	private int timeLeft;
 	private int numPlayers;
+	private boolean isDead;
 
 	public PlayerImpl(Controllable controller, GameActivity gameActivity) {
 		this.controller = controller;
 		this.gameActivity = gameActivity;
 		this.screen = new Screen();
-		this.destroyed = false;
 
 		// set the screen on GameView
 		gameActivity.getGameView().setScreen(screen);
@@ -45,10 +42,6 @@ public class PlayerImpl implements Player {
 
 	public Algorithm getController() {
 		return controller;
-	}
-
-	public void setAgentId(final int id) {
-		this.agentId = id;
 	}
 
 	/**
@@ -100,6 +93,8 @@ public class PlayerImpl implements Player {
 						parseNumPlayers(rd);
 					} else if (name.equals("Agents")) {
 						parseAgents(rd);
+					} else if (name.equals("Dead")) {
+						parseDeath(rd);
 					}
 				}
 			}
@@ -190,11 +185,10 @@ public class PlayerImpl implements Player {
 		} else {
 			screen.createDrawing(type, drawingId, pos, rangeRight, rangeLeft, rangeUp, rangeDown);
 		}
+	}
 
-		// update the player's agent state
-		if (drawingId == agentId) {
-			this.destroyed = isDestroyed;
-		}
+	private void parseDeath(final JsonReader rd) throws IOException {
+		this.isDead = rd.nextBoolean();
 	}
 
 	/**
@@ -242,8 +236,7 @@ public class PlayerImpl implements Player {
 		parseMessage(msg);
 		draw();
 
-		// Alert the user that his agent has died
-		if (destroyed) {
+		if (isDead) {
 			gameActivity.gameLost();
 		}
 	}

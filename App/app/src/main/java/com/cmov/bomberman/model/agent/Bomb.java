@@ -26,7 +26,7 @@ public class Bomb extends Agent {
 	private boolean explosion;
 	private boolean destroyed;
 
-	public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
+	public Bomb(final Position startingPos, int id, int range, float timeout, Bomberman owner) {
 		super(startingPos, new BombAlgorithm(timeout), id);
 		this.setStep(0);
 		this.range = range;

@@ -134,9 +134,13 @@ public class GameUtils {
 					config.setbSpeed((float) rd.nextDouble());
 				} else if (msg.equals("RobotSpeed")) {
 					config.setrSpeed((float) rd.nextDouble());
+				} else if (msg.equals("ExplosionDuration")) {
+					config.setExplosionDuration((float) rd.nextDouble());
 				} else if (msg.equals("ExplosionRange")) {
-                    config.setExplosionRange(rd.nextInt());
-                } else if (msg.equals("PointRobot")) {
+					config.setExplosionRange(rd.nextInt());
+				} else if (msg.equals("TimeToExplode")) {
+					config.setTimeToExplode((float) rd.nextDouble());
+				} else if (msg.equals("PointRobot")) {
                     config.setPointRobot(rd.nextInt());
                 } else if (msg.equals("PointOpponent")) {
                     config.setPointOpponent(rd.nextInt());

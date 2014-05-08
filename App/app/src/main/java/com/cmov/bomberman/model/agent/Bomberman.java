@@ -13,7 +13,7 @@ public class Bomberman extends MovableAgent {
 
     private final float timeBetweenBombs;
     private final int explosionRange;
-    private final int explosionTimeout;
+	private final float explosionTimeout;
 
     /**
      * This is initialized with time between bombs because a player
@@ -33,7 +33,7 @@ public class Bomberman extends MovableAgent {
 	 * @param range            the bomb range
 	 * @param timeout          the bomb timeout
 	 */
-	public Bomberman(Position pos, Algorithm ai, int id, float speed, float timeBetweenBombs, int range, int timeout,
+	public Bomberman(Position pos, Algorithm ai, int id, float speed, float timeBetweenBombs, int range, float timeout,
 					 int robotScore, int opponentScore) {
         super(pos, ai, id, speed);
         this.timeBetweenBombs = timeBetweenBombs;

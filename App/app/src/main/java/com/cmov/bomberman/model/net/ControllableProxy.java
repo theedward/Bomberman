@@ -3,13 +3,15 @@ package com.cmov.bomberman.model.net;
 import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.agent.Algorithm;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class ControllableProxy implements Algorithm {
-	private InputStream in;
-	private OutputStream out;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
 
-	public ControllableProxy(final InputStream in, final OutputStream out) {
+	public ControllableProxy(final ObjectInputStream in, final ObjectOutputStream out) {
 		this.in = in;
 		this.out = out;
 	}
@@ -17,13 +19,11 @@ public class ControllableProxy implements Algorithm {
 	@Override
 	public String getNextActionName() {
 		try {
-			ObjectOutputStream objOut = new ObjectOutputStream(out);
-			objOut.writeUTF("getNextActionName");
-			objOut.flush();
-
-			ObjectInputStream objIn = new ObjectInputStream(in);
-			return objIn.readUTF();
-		} catch (IOException e) {
+			out.writeUTF("getNextActionName");
+			out.flush();
+			return in.readUTF();
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		return "";
@@ -32,11 +32,11 @@ public class ControllableProxy implements Algorithm {
 	@Override
 	public void handleEvent(final Event event) {
 		try {
-			ObjectOutputStream objOut = new ObjectOutputStream(out);
-			objOut.writeUTF("handleEvent");
-			objOut.writeUTF(event.name());
-			objOut.flush();
-		} catch (IOException e) {
+			out.writeUTF("handleEvent");
+			out.writeUTF(event.name());
+			out.flush();
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -6,10 +6,10 @@
 	"TimeLimit": "180",
 	"BombermanSpeed": "2",
 	"RobotSpeed": "2",
-	"TimeToExplode": "5",
+	"TimeToExplode": "1",
 	"ExplosionDuration": "5",
-	"ExplosionRange": "3",
+	"ExplosionRange": "2",
 	"PointRobot": "10",
 	"PointOpponent": "10",
-	"TimeBetweenBombs": "5"
+	"TimeBetweenBombs": "0"
 }

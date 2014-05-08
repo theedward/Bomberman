@@ -1,11 +1,5 @@
 package com.cmov.bomberman.model.net;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.GameImpl;
 import com.cmov.bomberman.model.Player;
@@ -15,91 +9,101 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GameProxy extends Service implements Game {
+public class GameProxy implements Game, Runnable {
 	private static final int GAME_SERVER_PORT = 8888;
 
-	private final String TAG = this.getClass().getSimpleName();
+	private final Map<String, ObjectInputStream> clientInputStream = new TreeMap<String, ObjectInputStream>();
+	private final Map<String, ObjectOutputStream> clientOutputStream = new TreeMap<String, ObjectOutputStream>();
 
-    private final IBinder mBinder = new Binder() {
-		public GameProxy getService() {
-			return GameProxy.this;
-		}
-	};
-
-	private final Map<String, Socket> clientSockets = new TreeMap<String, Socket>();
-
-	private GameImpl game;
+	private Game game;
 	private Player localPlayer;
 
-    private int level;
+	private int level;
 	private ExecutorService executor;
 	private ServerSocket serverSocket;
-	private Socket gameSocket;
-    private boolean isServer;
+	private ObjectInputStream gameInputStream;
+	private ObjectOutputStream gameOutputStream;
+	private boolean isServer;
 
 	/**
-	 * When the gameProxy starts, it will start by verifying if it has the role of server or of client.
-	 * If it's the server, it will start waiting for clients on the port GAME_SERVER_PORT. When a client connects,
-	 * it'll wait for his username and then it adds the pair <username, clientSocket> to the saved clients.
-	 *
-	 * If it's a client, it will connect to the server and send it's username.
-	 *
-	 * The list of variables used that are received from the intent are:
-	 * 	boolean isServer: specifies if this gameProxy has the role of the server;
-	 * 	int level: specifies the level to be played. Only needed when GameProxy has the server role;
-	 * 	hostname: specifies the GameProxy's server address. Only needed when isServer is false;
-	 * 	username: Only needed when isServer is false.
-	 */
-    @Override
-    public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-			this.isServer = extras.getBoolean("isServer");
-			if (isServer) {
-				this.level = extras.getInt("level");
-				acceptPlayers();
-			} else {
-				// read server host
-				String hostname = extras.getString("hostname");
-				try {
-					// connect to the server
-					Socket gameSocket = new Socket(hostname, GAME_SERVER_PORT);
-
-					// Send the username
-					String username = extras.getString("username");
-					identifyToServer(username, gameSocket);
-
-					// handle game requests
-					handleGameRequests(gameSocket);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-        }
-
+	 * Server constructor
+	 **/
+	public GameProxy(int level) {
+		isServer = true;
+		this.level = level;
 		game = new GameImpl(level);
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-		Log.i(TAG, "onStartCommand went fine.");
+		executor.submit(this);
+	}
 
-        return super.onStartCommand(intent, flags, startId);
-    }
+	/**
+	 * Client constructor
+	 */
+	public GameProxy(String hostname, String username) {
+		isServer = false;
+		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
+		// read server host
+		try {
+			// connect to the server
+			Socket gameSocket = new Socket(hostname, GAME_SERVER_PORT);
 
-	@Override
+			// handle game requests
+			handleGameRequests(username, gameSocket);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	public void onDestroy() {
-		super.onDestroy();
+		// Stop accepting new requests
+		if (isServer) {
+			try {
+				serverSocket.close();
+			}
+			catch (IOException e) {
+				// Socket already closed
+			}
 
-		game = null;
+			for (ObjectInputStream in : clientInputStream.values()) {
+				try {
+					in.close();
+				}
+				catch (IOException e) {
+					// Stream already closed
+				}
+			}
+
+			for (ObjectOutputStream out : clientOutputStream.values()) {
+				try {
+					out.close();
+				}
+				catch (IOException e) {
+					// Stream already closed
+				}
+			}
+		} else {
+			try {
+				gameInputStream.close();
+				gameOutputStream.close();
+			}
+			catch (IOException e) {
+				// Stream already closed
+			}
+		}
+
+		// Shutdown other threads
 		executor.shutdownNow();
+
+		System.out.println("GameProxy#onDestroy() was successful");
 	}
 
 	/**
@@ -110,50 +114,56 @@ public class GameProxy extends Service implements Game {
 			@Override
 			public void run() {
 				try {
+					serverSocket = new ServerSocket(GAME_SERVER_PORT);
 					while (true) {
-						serverSocket = new ServerSocket(GAME_SERVER_PORT);
-						Socket clientSocket = serverSocket.accept();
+						final Socket clientSocket = serverSocket.accept();
+						System.out.println("A user appeared");
 						handlePlayerRequests(clientSocket);
 					}
 				}
+				catch (SocketException e) {
+					// Socket was closed
+				}
 				catch (IOException e) {
 					e.printStackTrace();
-				}
+			}
 			}
 		});
 	}
 
-	private void handlePlayerRequests(Socket clientSocket) {
+	private void handlePlayerRequests(final Socket clientSocket) throws IOException {
+		ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+
 		// Get the username
-		String username = parseIdentification(clientSocket);
-		clientSockets.put(username, clientSocket);
+		String username = parseIdentification(in);
 
-		executor.submit(new GameConnectionHandler(GameProxy.this, clientSocket));
+		ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+		clientInputStream.put(username, in);
+		clientOutputStream.put(username, out);
+
+		executor.submit(new GameConnectionHandler(GameProxy.this, in, out));
 	}
 
-	private void handleGameRequests(Socket gameSocket) {
-		this.gameSocket = gameSocket;
-		executor.submit(new PlayerConnectionHandler(localPlayer, gameSocket));
+	private void handleGameRequests(String username, final Socket gameSocket) throws IOException {
+		ObjectOutputStream out = new ObjectOutputStream(gameSocket.getOutputStream());
+
+		// Send identification to server
+		identifyToServer(username, out);
+
+		// Set streams for later use
+		this.gameInputStream = new ObjectInputStream(gameSocket.getInputStream());
+		this.gameOutputStream = out;
+
+		executor.submit(new PlayerConnectionHandler(localPlayer, this.gameInputStream, this.gameOutputStream));
 	}
 
-	private String parseIdentification(Socket socket) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-			return in.readUTF();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return "";
+	private String parseIdentification(ObjectInputStream in) throws IOException {
+		return in.readUTF();
 	}
 
-	private void identifyToServer(String username, Socket socket) {
-		try {
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			out.writeUTF(username);
-			out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void identifyToServer(String username, ObjectOutputStream out) throws IOException {
+		out.writeUTF(username);
+		out.flush();
 	}
 
 	/**
@@ -161,17 +171,15 @@ public class GameProxy extends Service implements Game {
 	 * if I am the server I just need to call the function with the right player's username
 	 * @param username the player's username
 	 */
-    @Override
     public void pause(final String username) {
         if (isServer) {
 			game.pause(username);
 		} else {
             try {
-                ObjectOutputStream objOut = new ObjectOutputStream(gameSocket.getOutputStream());
-                objOut.writeUTF("pause");
-				objOut.writeUTF(username);
-                objOut.flush();
-            } catch (IOException e) {
+				gameOutputStream.writeUTF("pause");
+				gameOutputStream.writeUTF(username);
+				gameOutputStream.flush();
+			} catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -182,16 +190,14 @@ public class GameProxy extends Service implements Game {
 	 * if I am the server I just need to call the function with the right player's username
 	 * @param username the player's username
 	 */
-	@Override
 	public void unpause(final String username) {
 		if (isServer) {
-			game.pause(username);
+			game.unpause(username);
 		} else {
 			try {
-				ObjectOutputStream objOut = new ObjectOutputStream(gameSocket.getOutputStream());
-				objOut.writeUTF("unpause");
-				objOut.writeUTF(username);
-				objOut.flush();
+				gameOutputStream.writeUTF("unpause");
+				gameOutputStream.writeUTF(username);
+				gameOutputStream.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -203,55 +209,52 @@ public class GameProxy extends Service implements Game {
 	 * if I am the server I just need to call the function with the right player's username
 	 * @param username the player's username
 	 */
-	@Override
 	public void quit(final String username) {
 		if (isServer) {
-			game.pause(username);
+			game.quit(username);
 		} else {
 			try {
-				ObjectOutputStream objOut = new ObjectOutputStream(gameSocket.getOutputStream());
-				objOut.writeUTF("quit");
-				objOut.writeUTF(username);
-				objOut.flush();
+				gameOutputStream.writeUTF("quit");
+				gameOutputStream.writeUTF(username);
+				gameOutputStream.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-    @Override
-    public void join(final String username, Player player) {
+	public void join(final String username, Player player) {
 		localPlayer = player;
 
 		if (isServer) {
 			game.join(username, localPlayer);
-        } else {
+		} else {
 			try {
-				ObjectOutputStream objOut = new ObjectOutputStream(gameSocket.getOutputStream());
-				objOut.writeUTF("join");
-				objOut.writeUTF(username);
-				objOut.flush();
+				gameOutputStream.writeUTF("join");
+				gameOutputStream.writeUTF(username);
+				gameOutputStream.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-    }
+	}
 
-	@Override
 	public void start() {
-		// only the server owner can start the game
 		if (isServer) {
 			game.start();
 		}
 	}
 
-	@Override
 	public void pause() {
-		// Nobody can't pause the game. It will run until it has finished.
+		// Nothing to do here
+	}
+
+	public void unpause() {
+		// Nothing to do here
 	}
 
 	@Override
-	public void unpause() {
-		// Nobody can't unpause the game. It will run until it has finished.
+	public void run() {
+		acceptPlayers();
 	}
 }

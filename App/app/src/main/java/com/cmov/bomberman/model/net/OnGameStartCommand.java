@@ -4,23 +4,23 @@ import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.Position;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.util.List;
+import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 
 public class OnGameStartCommand implements PlayerCommand {
 	@Override
 	@SuppressWarnings("unchecked")
-	public void execute(final Player player, final InputStream in, final OutputStream out) {
+	public void execute(final Player player, final ObjectInputStream in, final ObjectOutputStream out) {
 		try {
-			ObjectInputStream objectIn = new ObjectInputStream(in);
-			int level = objectIn.readInt();
-			List<Position> wallPositions = (List<Position>) objectIn.readObject();
+			int level = in.readInt();
+			LinkedList<Position> wallPositions = (LinkedList<Position>) in.readObject();
 			player.onGameStart(level, wallPositions);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		}
+		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

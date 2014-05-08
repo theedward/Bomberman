@@ -2,9 +2,11 @@ package com.cmov.bomberman.model.net;
 
 import com.cmov.bomberman.model.Player;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.Socket;
+import java.io.ObjectOutputStream;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,21 +20,28 @@ public class PlayerConnectionHandler implements Runnable {
 	}};
 
 	private final Player player;
-	private final Socket socket;
+	private final ObjectInputStream in;
+	private final ObjectOutputStream out;
 
-	public PlayerConnectionHandler(Player player, Socket socket) {
+	public PlayerConnectionHandler(Player player, ObjectInputStream in, ObjectOutputStream out) {
 		this.player = player;
-		this.socket = socket;
+		this.in = in;
+		this.out = out;
 	}
 
 	public void run() {
 		try {
 			while (true) {
-				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				String commandType = in.readUTF();
 				PlayerCommand command = commandList.get(commandType);
-				command.execute(player, socket.getInputStream(), socket.getOutputStream());
+				command.execute(player, in, out);
 			}
+		}
+		catch (SocketException e) {
+			// Socket was closed
+		}
+		catch (EOFException e) {
+			// Stream was closed
 		}
 		catch (IOException e) {
 			e.printStackTrace();

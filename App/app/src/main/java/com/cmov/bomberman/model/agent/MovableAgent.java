@@ -28,6 +28,8 @@ public abstract class MovableAgent extends Agent {
 	 */
 	public void move(State currentState, Actions action, float dt) {
 
+        currentState.printMap();
+
 		final Axis moveAxis =
 				(action == Actions.MOVE_UP || action == Actions.MOVE_DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
 		final Position oldPosition = getPosition();
@@ -88,7 +90,7 @@ public abstract class MovableAgent extends Agent {
                     final int mapLeftX = Position.toDiscrete(leftX);
 
                     char c = map[mapY][mapLeftX];
-                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() || c == State.DrawingType.BOMB.toChar()) {
                         // move right
                         curX = (float) (Math.floor(leftX+1) + Agent.WIDTH / 2);
                     }
@@ -99,7 +101,7 @@ public abstract class MovableAgent extends Agent {
                     final int mapTopY = Position.toDiscrete(topY);
 
                     char c = map[mapTopY][mapX];
-                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()|| c == State.DrawingType.BOMB.toChar()) {
                         // move bottom
                         curY = (float) (Math.floor(topY+1) + Agent.HEIGHT / 2);
                     }
@@ -110,7 +112,7 @@ public abstract class MovableAgent extends Agent {
                     final int mapRightX = Position.toDiscrete(rightX);
 
                     char c = map[mapY][mapRightX];
-                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()|| c == State.DrawingType.BOMB.toChar()) {
                         // move left
                         curX = (float) (Math.ceil(rightX-1) - Agent.WIDTH / 2);
                     }
@@ -122,7 +124,7 @@ public abstract class MovableAgent extends Agent {
                     final int mapTopY = Position.toDiscrete(bottomY);
 
                     char c = map[mapTopY][mapX];
-                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+                    if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()|| c == State.DrawingType.BOMB.toChar()) {
                         // move bottom
                         curY = (float) (Math.ceil(bottomY-1) - Agent.HEIGHT / 2);
                     }

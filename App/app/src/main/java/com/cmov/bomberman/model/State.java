@@ -44,6 +44,21 @@ public class State {
         this.map = map;
     }
 
+    public void printMap(){
+        System.out.println ("------------DEBUG----------");
+        for(int j = 0; j <=12; j++){
+            for (int i = 0; i <= 18; i++){
+                System.out.print(map[j][i]);
+                if(i == 18)
+                    System.out.println("");
+            }
+        }
+        System.out.println("------------DEBUG----------");
+    }
+
+     public void changeMapPosition(int x, int y, char newVal){
+         map[y][x] = newVal;
+     }
     /**
      * @return the list of active agents in the state.
      */

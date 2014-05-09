@@ -36,8 +36,8 @@ public class Bomb extends Agent {
 
 	@Override
 	public void play(State state, final float dt) {
-		String nextAction = getAlgorithm().getNextActionName();
 
+		String nextAction = getAlgorithm().getNextActionName();
 		if (!this.getCurrentAction().equals(nextAction)) {
 			// changed action, restart step
 			this.setLastAction(this.getCurrentAction());
@@ -73,6 +73,7 @@ public class Bomb extends Agent {
 	public void processExplosion(final State state) {
 		final int bombMapX = Position.toDiscrete(getPosition().getX());
 		final int bombMapY = Position.toDiscrete(getPosition().getY());
+
 		final char[][] map = state.getMap();
 
 		// destroy character in position bomb.pos
@@ -202,7 +203,8 @@ public class Bomb extends Agent {
 				break;
 			}
 		}
-
+        state.changeMapPosition(bombMapX,bombMapY, State.DrawingType.EMPTY.toChar());
+        System.out.println("THE BOMB IS NO MORE!");
 		Log.i(TAG, "Bomb range: Left= " + rangeLeft + " Right=" + rangeRight + " Up:" + rangeUp + " Down:" + rangeDown);
 	}
 

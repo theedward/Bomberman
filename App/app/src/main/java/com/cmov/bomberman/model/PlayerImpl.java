@@ -1,9 +1,7 @@
 package com.cmov.bomberman.model;
 
-import android.graphics.Canvas;
 import android.util.JsonReader;
 import android.util.Log;
-import com.cmov.bomberman.controller.GameActivity;
 import com.cmov.bomberman.model.agent.Algorithm;
 import com.cmov.bomberman.model.agent.Controllable;
 
@@ -17,11 +15,7 @@ public class PlayerImpl implements Player {
 
 	private final Screen screen;
 	private final Controllable controller;
-
-	/**
-	 * This is needed to draw in the canvas in a synchronized manner.
-	 */
-	private GameActivity gameActivity;
+	private PlayerActionListener actionListener;
 
 	/**
 	 * Information to be shown in the views
@@ -31,13 +25,13 @@ public class PlayerImpl implements Player {
 	private int numPlayers;
 	private boolean isDead;
 
-	public PlayerImpl(Controllable controller, GameActivity gameActivity) {
+	public PlayerImpl(Controllable controller, Screen screen) {
 		this.controller = controller;
-		this.gameActivity = gameActivity;
-		this.screen = new Screen();
+		this.screen = screen;
+	}
 
-		// set the screen on GameView
-		gameActivity.getGameView().setScreen(screen);
+	public void setPlayerActionListener(PlayerActionListener listener) {
+		this.actionListener = listener;
 	}
 
 	public Algorithm getController() {
@@ -52,8 +46,10 @@ public class PlayerImpl implements Player {
 	 * @param wallPositions the position of every wall
 	 */
 	public void onGameStart(final int level, final List<Position> wallPositions) {
-		GameConfiguration config = GameUtils.getInstance().readConfigurationFile(level);
-		gameActivity.updateLevel(config.getMapWidth(), config.getMapHeight());
+		if (actionListener != null) {
+			GameConfiguration config = GameUtils.getInstance().readConfigurationFile(level);
+			actionListener.onMapSizeChange(config.getMapWidth(), config.getMapHeight());
+		}
 
 		for (Position pos : wallPositions) {
 			screen.createWallDrawing(pos);
@@ -68,8 +64,10 @@ public class PlayerImpl implements Player {
 	 */
 
 	public void onGameEnd(final Map<String, Integer> scores) {
-        gameActivity.scoreDialog(scores);
-    }
+		if (actionListener != null) {
+			actionListener.onScoresChange(scores);
+		}
+	}
 
 	/**
 	 * Updates the drawings from the json report sent by the game.
@@ -77,7 +75,7 @@ public class PlayerImpl implements Player {
 	 *
 	 * @param msg the json report.
 	 */
-    private void parseMessage(String msg) {
+	private void updateState(String msg) {
 		JsonReader rd = new JsonReader(new StringReader(msg));
 
 		try {
@@ -180,8 +178,9 @@ public class PlayerImpl implements Player {
 
 		// create / update drawing
 		if (screen.hasDrawing(drawingId)) {
-			screen.updateDrawing(type, drawingId, pos, currentAction, lastAction, step, lastStep,
-								 rangeRight, rangeLeft, rangeUp, rangeDown, isDestroyed);
+			screen.updateDrawing(type, drawingId, pos, currentAction, lastAction, step, lastStep, rangeRight,
+								 rangeLeft,
+								 rangeUp, rangeDown, isDestroyed);
 		} else {
 			screen.createDrawing(type, drawingId, pos, rangeRight, rangeLeft, rangeUp, rangeDown);
 		}
@@ -189,39 +188,6 @@ public class PlayerImpl implements Player {
 
 	private void parseDeath(final JsonReader rd) throws IOException {
 		this.isDead = rd.nextBoolean();
-	}
-
-	/**
-	 * Draws everything on the canvas.
-	 */
-	private void draw() {
-		final GameActivity.GameView gameView = gameActivity.getGameView();
-		Canvas canvas = null;
-		try {
-			if (gameView.getHolder() != null) {
-				canvas = gameView.getHolder().lockCanvas();
-				synchronized (gameView.getHolder()) {
-					if (canvas != null) {
-						gameView.onDraw(canvas);
-					}
-				}
-			}
-		} finally {
-			if (canvas != null) {
-				gameView.getHolder().unlockCanvasAndPost(canvas);
-			}
-		}
-
-		updateViews();
-	}
-
-	/**
-	 * Updates the other views in the screen (like score, number of players, ...)
-	 */
-	private void updateViews() {
-		gameActivity.updateScoreView(this.score);
-		gameActivity.updateTimeView(this.timeLeft);
-		gameActivity.updateNumPlayersView(this.numPlayers);
 	}
 
 	/**
@@ -233,11 +199,18 @@ public class PlayerImpl implements Player {
 	 * @param msg the json report
 	 */
 	public void update(String msg) {
-		parseMessage(msg);
-		draw();
+		updateState(msg);
 
-		if (isDead) {
-			gameActivity.gameLost();
+		if (actionListener != null) {
+			actionListener.draw();
+
+			actionListener.onScoreChange(this.score);
+			actionListener.onTimeChange(this.timeLeft);
+			actionListener.onNumPlayersChange(this.numPlayers);
+
+			if (isDead) {
+				actionListener.onDeath();
+			}
 		}
 	}
 }

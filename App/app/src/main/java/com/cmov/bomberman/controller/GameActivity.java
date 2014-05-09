@@ -3,15 +3,16 @@ package com.cmov.bomberman.controller;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.*;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +22,7 @@ import com.cmov.bomberman.model.agent.Controllable;
 
 import java.util.Map;
 
-public class GameActivity extends Activity implements SurfaceHolder.Callback {
+public class GameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
 	private final String TAG = this.getClass().getSimpleName();
 
 	private boolean gamePaused;
@@ -36,10 +37,10 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 	private TextView timeView;
 	private TextView numPlayersView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_game);
 
 		GameUtils.createInstance(getApplicationContext());
 
@@ -153,64 +154,17 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 		this.username = username;
 
 		// Create player and its controller
-		playerController = new Controllable();
-		player = new PlayerImpl(playerController, this);
-    }
+		this.playerController = new Controllable();
+
+		final Screen screen = new Screen();
+		this.gameView.setScreen(screen);
+		this.player = new PlayerImpl(playerController, screen);
+		this.player.setPlayerActionListener(this);
+	}
 
 	@Override
 	public void onBackPressed() {
 		pressedPause(null);
-	}
-
-	public void updateScoreView(final int score) {
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				scoreView.setText("Score: " + score);
-			}
-		});
-	}
-
-	public void updateTimeView(final int timeLeft) {
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				timeView.setText("Time Left: " + timeLeft);
-			}
-		});
-	}
-
-	public void updateNumPlayersView(final int numPlayers) {
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				numPlayersView.setText("Num. Players: " + numPlayers);
-			}
-		});
-	}
-
-	public void scoreDialog(final Map<String, Integer> scores) {
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				final StringBuilder sb = new StringBuilder();
-				for (Map.Entry<String, Integer> entry : scores.entrySet()) {
-					sb.append(entry.getKey());
-					sb.append(": ");
-					sb.append(entry.getValue());
-					sb.append(" points\n");
-				}
-
-				final AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
-				builder.setMessage(sb.toString()).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						quitGame();
-					}
-				});
-				final Dialog dialog = builder.create();
-				dialog.show();
-			}
-		});
 	}
 
 	@Override
@@ -258,10 +212,6 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 		// Nothing to do here
 	}
 
-	public GameView getGameView() {
-		return gameView;
-	}
-
 	public void pressedPause(final View view) {
 		if (gamePaused) {
 			unpauseGame();
@@ -305,21 +255,64 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 		startActivity(intent);
 	}
 
-	/**
-	 * Called by the player when it's destroyed
-	 */
-	public void gameLost() {
+	@Override
+	public void onScoreChange(final int score) {
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(GameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
+				scoreView.setText("Score: " + score);
 			}
 		});
 	}
 
-	public void updateLevel(int width, int height) {
-		final int imgSize = Math.min(gameView.getWidth() / width,
-									 gameView.getHeight() / height);
+	@Override
+	public void onScoresChange(final Map<String, Integer> scores) {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				final StringBuilder sb = new StringBuilder();
+				for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+					sb.append(entry.getKey());
+					sb.append(": ");
+					sb.append(entry.getValue());
+					sb.append(" points\n");
+				}
+
+				final AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+				builder.setMessage(sb.toString()).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						quitGame();
+					}
+				});
+				final Dialog dialog = builder.create();
+				dialog.show();
+			}
+		});
+	}
+
+	@Override
+	public void onTimeChange(final int time) {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				timeView.setText("Time Left: " + time);
+			}
+		});
+	}
+
+	@Override
+	public void onNumPlayersChange(final int numPlayers) {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				numPlayersView.setText("Num. Players: " + numPlayers);
+			}
+		});
+	}
+
+	@Override
+	public void onMapSizeChange(final int width, final int height) {
+		final int imgSize = Math.min(gameView.getWidth() / width, gameView.getHeight() / height);
 		// Set values on GameUtils
 		GameUtils.getInstance().setImageSizeOnCanvas(imgSize, imgSize);
 
@@ -332,23 +325,31 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 		layoutParams.height = canvasHeight;
 	}
 
-	public static class GameView extends SurfaceView {
-		Screen screen;
+	@Override
+	public void onDeath() {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(GameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
 
-		public GameView(final Context context, final AttributeSet attrs) {
-			super(context, attrs);
-		}
-
-		public void setScreen(final Screen screen) {
-			this.screen = screen;
-		}
-
-		@Override
-		public void onDraw(Canvas canvas) {
-			super.onDraw(canvas);
-
-			if (screen != null) {
-				screen.drawAll(canvas);
+	@Override
+	public void draw() {
+		Canvas canvas = null;
+		try {
+			if (gameView.getHolder() != null) {
+				canvas = gameView.getHolder().lockCanvas();
+				synchronized (gameView.getHolder()) {
+					if (canvas != null) {
+						gameView.onDraw(canvas);
+					}
+				}
+			}
+		} finally {
+			if (canvas != null) {
+				gameView.getHolder().unlockCanvasAndPost(canvas);
 			}
 		}
 	}

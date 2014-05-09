@@ -22,7 +22,7 @@ import com.cmov.bomberman.model.agent.Controllable;
 
 import java.util.Map;
 
-public class GameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
+public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
 	private final String TAG = this.getClass().getSimpleName();
 
 	private boolean gamePaused;
@@ -278,7 +278,7 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback, Pl
 					sb.append(" points\n");
 				}
 
-				final AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+				final AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayerGameActivity.this);
 				builder.setMessage(sb.toString()).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						quitGame();
@@ -330,7 +330,7 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback, Pl
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(GameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
+				Toast.makeText(SinglePlayerGameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
 			}
 		});
 	}

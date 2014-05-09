@@ -22,7 +22,7 @@ public class Bomb extends Agent {
 	private int rangeRight;
 	private int rangeLeft;
 	private int rangeUp;
-    private int rangeDown;
+	private int rangeDown;
 	private boolean explosion;
 	private boolean destroyed;
 	private float timeSinceExplosion;
@@ -61,7 +61,7 @@ public class Bomb extends Agent {
 			if (timeSinceExplosion > explosionDuration) {
 				destroyed = true;
 			} else {
-				super.setStep(step);
+				super.setStep(sprite[step]);
 			}
 
 			timeSinceExplosion += dt;
@@ -206,7 +206,8 @@ public class Bomb extends Agent {
 			}
 		}
 
-		Log.i(TAG, "Bomb range: Left= " + rangeLeft + " Right=" + rangeRight + " Up:" + rangeUp + " Down:" + rangeDown);
+		Log.i(TAG, "Bomb range: Left= " + rangeLeft + " Right=" + rangeRight + " Up:" + rangeUp + " Down:" +
+				   rangeDown);
 	}
 
 	@Override
@@ -230,9 +231,9 @@ public class Bomb extends Agent {
 			writer.name("lastStep").value(this.getLastStep());
 
 			writer.name("rangeRight").value(this.rangeRight);
-            writer.name("rangeLeft").value(this.rangeLeft);
-            writer.name("rangeUp").value(this.rangeUp);
-            writer.name("rangeDown").value(this.rangeDown);
+			writer.name("rangeLeft").value(this.rangeLeft);
+			writer.name("rangeUp").value(this.rangeUp);
+			writer.name("rangeDown").value(this.rangeDown);
 
 			writer.name("currentAction").value(this.getCurrentAction());
 			writer.name("lastAction").value(this.getLastAction());

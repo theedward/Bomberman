@@ -2,13 +2,17 @@ package com.cmov.bomberman.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.controller.net.MultiplayerGameActivity;
+
+import org.w3c.dom.Text;
 
 public class MultiplayerActivity extends Activity {
 
@@ -19,6 +23,19 @@ public class MultiplayerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multiplayer);
+
+        Typeface blockFonts = Typeface.createFromAsset(getAssets(), "Inconsolata-Regular.ttf");
+        TextView bomberman = (TextView) findViewById(R.id.bombermantxt);
+        TextView chooseUsername = (TextView) findViewById(R.id.choose_username);
+        TextView editUsername = (TextView) findViewById(R.id.txtUsername);
+        TextView createServer = (TextView) findViewById(R.id.create_server_button);
+        TextView joinServer = (TextView) findViewById(R.id.join_server_button);
+
+        bomberman.setTypeface(blockFonts);
+        chooseUsername.setTypeface(blockFonts);
+        editUsername.setTypeface(blockFonts);
+        createServer.setTypeface(blockFonts);
+        joinServer.setTypeface(blockFonts);
     }
 
     public void joinServer(View v) {

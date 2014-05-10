@@ -6,19 +6,53 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                android:background="@drawable/background_wallpaper"
+                android:background="@android:color/holo_red_dark"
                 tools:context=".AboutActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id = "@+id/bigthing">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:id ="@+id/bombermanimg"
+            />
+
+        <TextView
+            android:id="@+id/bombermantxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Bomberman"
+            android:textSize="50dp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/about_the_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/about_the_game"
+        android:layout_below="@id/bigthing"
         android:textSize="26sp"
         android:textColor="@android:color/white"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/about_the_game"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/white" />
 
     <TextView
         android:id="@+id/about_the_game_story"
@@ -40,18 +74,26 @@
         android:textSize="26sp"
         android:textColor="@android:color/white"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:layout_below="@id/about_the_game_story"
         />
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/about_us"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/white" />
+
     <TextView
+        android:id = "@+id/about_us_story"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/our_story"
         android:textSize="20sp"
         android:textColor="@android:color/white"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@id/about_us"
         />
 

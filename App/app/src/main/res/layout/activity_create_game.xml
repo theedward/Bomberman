@@ -6,52 +6,78 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                android:background="@drawable/background_wallpaper"
+                android:background="@android:color/holo_red_dark"
                 tools:context=".NewGameActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:id ="@+id/bombermanimg"
+            />
+
+        <TextView
+            android:id="@+id/bombermantxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Bomberman"
+            android:textSize="50dp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
     <TextView
             android:id="@+id/level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/levelPicker"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="66dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
             android:text="@string/level"
             android:textColor="@android:color/white"
-            android:textSize="25sp"/>
+            android:layout_below="@id/bigthing"
+            android:textSize="30dp"/>
 
     <NumberPicker
-            android:id="@+id/levelPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/level"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="29dp"
-            />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/levelPicker"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/level"
+        android:layout_marginTop="30dp"
+        style = "@android:style/Theme">
+        </NumberPicker>
 
-    <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/level"
-            android:layout_marginLeft="120dp"
-            android:layout_marginTop="25dp"
-            android:src="@drawable/first_level"
-            android:contentDescription="@string/map_preview"
-        />
+
 
     <Button
-        android:background="@drawable/yellow_button"
-        android:id="@+id/start"
-        android:layout_width="200dp"
-        android:layout_below="@+id/imageView1"
-        android:layout_marginTop="70dp"
-        android:layout_toRightOf="@+id/levelPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:id="@+id/startbtn"
+        android:layout_below="@id/levelPicker"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="20dp"
         android:text="@string/start"
-        style="@style/ButtonText"
+        android:textSize = "30dp"
         android:onClick="startGame"
-         />
+        android:textColor="@android:color/white"
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/startbtn"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/white" />
 
 
 </RelativeLayout>

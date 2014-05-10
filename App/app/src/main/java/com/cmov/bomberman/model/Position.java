@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model;
 
-public class Position {
+import java.io.Serializable;
+
+public class Position implements Serializable {
 	private final float x;
 	private final float y;
 
@@ -33,16 +35,17 @@ public class Position {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o == null) {
-			return false;
+	public boolean equals(Object other) {
+		if (other instanceof Position) {
+			Position o = (Position) other;
+			return this.x == o.x && this.y == o.y;
 		} else {
-			if (o instanceof Position) {
-				Position pos = (Position) o;
-				return (pos.xToDiscrete() == this.xToDiscrete()) && (pos.yToDiscrete() == this.yToDiscrete());
-			}
 			return false;
 		}
+	}
+
+	public boolean equalsInMap(Position other) {
+		return (other.xToDiscrete() == this.xToDiscrete()) && (other.yToDiscrete() == this.yToDiscrete());
 	}
 
 	public String toString() {

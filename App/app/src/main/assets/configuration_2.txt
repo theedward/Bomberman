@@ -1,0 +1,16 @@
+{
+	"level": "2",
+	"TimeLimit": "120",
+	"TimeToExplode": "1.5",
+	"ExplosionDuration": "1",
+	"ExplosionRange": "3",
+	"TimeBetweenBombs": "1.5",
+	"RobotSpeed": "1",
+	"PointRobot": "10",
+	"PointOpponent": "100",
+	"MapWidth": "19",
+	"MapHeight": "13",
+	"MaxNumPlayers": "4",
+	"BombermanSpeed": "1",
+	"NumUpdatesPerSecond": "10"
+}

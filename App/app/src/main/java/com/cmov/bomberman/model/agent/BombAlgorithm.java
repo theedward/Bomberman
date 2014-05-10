@@ -3,12 +3,12 @@ package com.cmov.bomberman.model.agent;
 import com.cmov.bomberman.model.Event;
 
 public class BombAlgorithm implements Algorithm {
-	private int explosionTimeout;
+	private float explosionTimeout;
 	private long initialTime;
 
-	public BombAlgorithm(int timeout) {
+	public BombAlgorithm(float timeout) {
 		initialTime = System.currentTimeMillis();
-		explosionTimeout = timeout * 1000;
+		explosionTimeout = timeout * 1000f;
 	}
 
 	@Override

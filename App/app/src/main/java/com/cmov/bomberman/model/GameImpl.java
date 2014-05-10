@@ -17,6 +17,7 @@ import java.util.*;
  */
 public final class GameImpl implements Game {
 	private final String TAG = this.getClass().getSimpleName();
+	private final int level;
     private final Map<String, Player> players;
     private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
@@ -38,6 +39,7 @@ public final class GameImpl implements Game {
      * @param level the level to be played in this game
      */
     public GameImpl(final int level) {
+		this.level = level;
 		this.isPaused = false;
         this.players = new HashMap<String, Player>();
         this.playersOnPause = new HashMap<String, Player>();
@@ -45,8 +47,8 @@ public final class GameImpl implements Game {
         this.gameState = new State();
 
         // Read data from files
-        this.gameState.setMap(GameUtils.readLevelFromFile(level));
-        this.gameConfiguration = GameUtils.readConfigurationFile(level);
+        this.gameState.setMap(GameUtils.getInstance().readLevelFromFile(level));
+        this.gameConfiguration = GameUtils.getInstance().readConfigurationFile(level);
         this.numRoundsLeft = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
 
 		this.bombermanPos = new Position[gameConfiguration.getMaxNumPlayers()];
@@ -60,7 +62,7 @@ public final class GameImpl implements Game {
      */
     private void populateGame() {
 		final String[] usernames = new String[players.size()];
-        final Player[] characterOwners = new Player[players.size()];
+        final PlayerImpl[] characterOwners = new PlayerImpl[players.size()];
 		players.keySet().toArray(usernames);
         players.values().toArray(characterOwners);
 
@@ -106,21 +108,26 @@ public final class GameImpl implements Game {
 
 	public void start() {
 		this.begin();
-		this.gameState.startCountingNow();
 
 		final int timeSleep = 1000 / gameConfiguration.getNumUpdatesPerSecond();
+		long lastTime = System.currentTimeMillis();
 		while (!hasFinished()) {
 			try {
 				// when the game is paused, just wait until an unpause
 				synchronized (this) {
 					if (isPaused) {
 						this.wait();
+
+						// time spent on pause doesn't count
+						lastTime = System.currentTimeMillis();
 					}
 				}
 
-				final long now = System.currentTimeMillis();
 				Log.v(TAG, "Updating...");
-				update();
+
+				final long now = System.currentTimeMillis();
+				update(now - lastTime);
+				lastTime = now;
 
 				final long dt = System.currentTimeMillis() - now;
 				// suspend thread only when the time spent on update is smaller than the time it should
@@ -147,22 +154,6 @@ public final class GameImpl implements Game {
 			notify();
 		}
 	}
-
-	@Override
-	public Collection<String> getPlayerUsernames() {
-		Set<String> usernames = new LinkedHashSet<String>();
-		usernames.addAll(players.keySet());
-		usernames.addAll(playersOnPause.keySet());
-		return usernames;
-	}
-
-	public int getMapWidth() {
-        return this.gameConfiguration.getMapWidth();
-    }
-
-    public int getMapHeight() {
-        return this.gameConfiguration.getMapHeight();
-    }
 
     /**
      * Pauses the game for the player with the given username
@@ -212,14 +203,14 @@ public final class GameImpl implements Game {
 			final Position pos = bombermanPos[bombermanId];
 			final char[][] map = gameState.getMap();
 			map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
-			Bomberman bomberman = new Bomberman(pos, player.getController(), agentId,
-												gameConfiguration.getbSpeed(), gameConfiguration.getTimeBetweenBombs(),
-												gameConfiguration.getExplosionRange(),
+			Bomberman bomberman = new Bomberman(pos, player.getController(), agentId, gameConfiguration.getbSpeed(),
 												gameConfiguration.getExplosionDuration(),
+												gameConfiguration.getTimeBetweenBombs(),
+												gameConfiguration.getExplosionRange(),
+												gameConfiguration.getTimeToExplode(),
 												gameConfiguration.getPointRobot(),
 												gameConfiguration.getPointOpponent());
 			gameState.addAgent(bomberman);
-			player.setAgentId(agentId);
 			playersAgent.put(username, bomberman);
 		}
 	}
@@ -233,7 +224,7 @@ public final class GameImpl implements Game {
         Log.i(TAG, "Game has started");
 
         for (Player p : players.values()) {
-            p.onGameStart(wallPositions);
+            p.onGameStart(level, wallPositions);
         }
     }
 
@@ -250,7 +241,7 @@ public final class GameImpl implements Game {
 
     private Map<String, Integer> checkScores() {
         final Map<String, Integer> scores = new TreeMap<String, Integer>();
-        for (Map.Entry<String, Player> entry : players.entrySet()) {
+        for (Map.Entry<String, Bomberman> entry : playersAgent.entrySet()) {
             scores.put(entry.getKey(), entry.getValue().getScore());
         }
         return scores;
@@ -260,14 +251,14 @@ public final class GameImpl implements Game {
     /**
      * Updates the state (new frame).
      */
-    private synchronized void update() {
+    private synchronized void update(long dt) {
         // Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
-        gameState.playAll();
+        gameState.playAll(dt);
 		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
 
 		final long timeBeforeUpdate = System.currentTimeMillis();
-        updatePlayers();
+		updatePlayers();
 		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
 		// remove agents after update
@@ -297,6 +288,7 @@ public final class GameImpl implements Game {
 				createTimeMsg(writer);
 				createNumPlayersMsg(writer);
 				createAgentsMsg(writer);
+				createDeathMsg(writer, entry.getKey());
 
 				writer.endObject();
 				writer.close();
@@ -330,6 +322,10 @@ public final class GameImpl implements Game {
 			object.toJson(wr);
 		}
 		wr.endArray();
+	}
+
+	private void createDeathMsg(final JsonWriter wr, final String username) throws IOException {
+		wr.name("Dead").value(playersAgent.get(username).isDestroyed());
 	}
 
     /**

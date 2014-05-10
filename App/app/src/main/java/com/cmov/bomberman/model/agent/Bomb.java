@@ -10,27 +10,29 @@ import java.io.IOException;
 import java.util.List;
 
 public class Bomb extends Agent {
-	private static final int EXPLOSION_MAX_STEP = 4;
+	private static final int EXPLOSION_MAX_STEP = 7;
 	private static final int BOMB_MAX_STEP = 3;
 
 	private final String TAG = this.getClass().getSimpleName();
 
 	private final Bomberman owner;
+	private final float explosionDuration;
 	private final int range;
 
 	private int rangeRight;
 	private int rangeLeft;
 	private int rangeUp;
-    private int rangeDown;
-	private int explosionStepIncr;
+	private int rangeDown;
 	private boolean explosion;
 	private boolean destroyed;
+	private float timeSinceExplosion;
 
-	public Bomb(final Position startingPos, int id, int range, int timeout, Bomberman owner) {
+	public Bomb(final Position startingPos, int id, final float explosionDuration, int range, float timeout,
+				Bomberman owner) {
 		super(startingPos, new BombAlgorithm(timeout), id);
-		this.setStep(0);
+		super.setStep(0);
+		this.explosionDuration = explosionDuration;
 		this.range = range;
-		this.explosionStepIncr = 1;
 		this.owner = owner;
 	}
 
@@ -47,24 +49,27 @@ public class Bomb extends Agent {
 			if (this.getCurrentAction().equals(Actions.EXPLODE.toString())) {
 				processExplosion(state);
 				explosion = true;
+				timeSinceExplosion = 0;
 			}
 		}
 
 		if (explosion) {
 			// during the explosion, the steps displayed should be [0 1 2 3 2 1 0]
-			if (this.getStep() < EXPLOSION_MAX_STEP) {
-				this.setStep(this.getStep() + explosionStepIncr);
+			final int[] sprite = new int[] { 0, 1, 2, 3, 2, 1, 0 };
+			int step = (int) Math.floor(timeSinceExplosion * sprite.length / explosionDuration);
+
+			if (timeSinceExplosion > explosionDuration) {
+				destroyed = true;
+			} else {
+				super.setStep(sprite[step]);
 			}
 
-			if (this.getStep() == EXPLOSION_MAX_STEP) {
-				explosionStepIncr = -1;
-				this.setStep(this.getStep() - 1);
-			} else if (this.getStep() == 0 && explosionStepIncr == -1) {
-				destroyed = true;
-			}
+			timeSinceExplosion += dt;
 		} else {
 			this.setStep((this.getStep() + 1) % BOMB_MAX_STEP);
 		}
+
+		state.setMapEntry(getPosition(), State.DrawingType.BOMB);
 	}
 
 	/**
@@ -203,9 +208,11 @@ public class Bomb extends Agent {
 				break;
 			}
 		}
-        state.changeMapPosition(bombMapX,bombMapY, State.DrawingType.EMPTY.toChar());
-        System.out.println("THE BOMB IS NO MORE!");
-		Log.i(TAG, "Bomb range: Left= " + rangeLeft + " Right=" + rangeRight + " Up:" + rangeUp + " Down:" + rangeDown);
+
+		state.setMapEntry(getPosition(), State.DrawingType.EMPTY);
+
+		Log.i(TAG, "Bomb range: Left= " + rangeLeft + " Right=" + rangeRight + " Up:" + rangeUp + " Down:" +
+				   rangeDown);
 	}
 
 	@Override
@@ -229,9 +236,9 @@ public class Bomb extends Agent {
 			writer.name("lastStep").value(this.getLastStep());
 
 			writer.name("rangeRight").value(this.rangeRight);
-            writer.name("rangeLeft").value(this.rangeLeft);
-            writer.name("rangeUp").value(this.rangeUp);
-            writer.name("rangeDown").value(this.rangeDown);
+			writer.name("rangeLeft").value(this.rangeLeft);
+			writer.name("rangeUp").value(this.rangeUp);
+			writer.name("rangeDown").value(this.rangeDown);
 
 			writer.name("currentAction").value(this.getCurrentAction());
 			writer.name("lastAction").value(this.getLastAction());

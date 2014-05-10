@@ -17,11 +17,11 @@ import org.w3c.dom.Text;
 public class CreateSinglePlayerGameActivity extends Activity {
 	private static final String DEFAULT_USERNAME = "Bomberman";
 	private static final int MIN_LEVEL = 1;
-    private static final int MAX_LEVEL = 2;
-    private static int[] mapPreviewId;
+	private static final int MAX_LEVEL = 3;
 
-    private NumberPicker levelPicker;
+	private NumberPicker levelPicker;
 
+<<<<<<< HEAD
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +40,30 @@ public class CreateSinglePlayerGameActivity extends Activity {
     }
 
     public void startGame(View v) {
+=======
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_create_game);
+
+		levelPicker = (NumberPicker) findViewById(R.id.levelPicker);
+		levelPicker.setMinValue(MIN_LEVEL);
+		levelPicker.setMaxValue(MAX_LEVEL);
+		levelPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+			@Override
+			public void onValueChange(final NumberPicker numberPicker, final int oldVal, final int newVal) {
+				final ImageView mapPreview = (ImageView) findViewById(R.id.imageView1);
+				mapPreview.setImageDrawable(getResources().getDrawable(R.drawable.first_level));
+			}
+		});
+	}
+
+	public void startGame(View v) {
+>>>>>>> origin/develop
 		// Go to the GameActivity
 		final Intent intent = new Intent(this, SinglePlayerGameActivity.class);
 		intent.putExtra("level", levelPicker.getValue());
 		intent.putExtra("username", DEFAULT_USERNAME);
-        startActivity(intent);
-    }
+		startActivity(intent);
+	}
 }

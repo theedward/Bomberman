@@ -10,26 +10,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true">
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="10dp"
-        android:id ="@+id/bombermanimg"
-        />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:id ="@+id/bombermanimg"
+            />
 
-    <TextView
-        android:id="@+id/bombermantxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Bomberman"
-        android:textSize="50dp"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="20dp"
-        />
-
+        <TextView
+            android:id="@+id/bombermantxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Bomberman"
+            android:textSize="50dp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"
+            />
     </LinearLayout>
 
     <Button

@@ -1,17 +1,6 @@
 package com.cmov.bomberman.model;
 
-import com.cmov.bomberman.model.drawing.Drawing;
-import com.cmov.bomberman.model.drawing.WallDrawing;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 public class GameConfiguration {
-    private final List<WallDrawing> wallDrawings;
-    private final Map<Integer, Drawing> mutableDrawings;
-
     private int mapWidth;
     private int mapHeight;
     private int numUpdatesPerSecond;
@@ -19,25 +8,20 @@ public class GameConfiguration {
     private int timeLimit;
 
     // Bomberman variables
-    private int bSpeed;
+	private float bSpeed;
 
     // Robot variables
-    private int rSpeed;
+	private float rSpeed;
 
     // Bomb variables
-    private int timeToExplode;
-    private int explosionDuration;
-    private int explosionRange;
+	private float timeToExplode;
+	private int explosionRange;
     private float timeBetweenBombs;
+	private float explosionDuration;
 
     // Points variables
     private int pointRobot;
     private int pointOpponent;
-
-    public GameConfiguration() {
-        wallDrawings = new LinkedList<WallDrawing>();
-        mutableDrawings = new HashMap<Integer, Drawing>();
-    }
 
     public int getNumUpdatesPerSecond() {
         return numUpdatesPerSecond;
@@ -63,36 +47,28 @@ public class GameConfiguration {
         this.timeLimit = timeLimit;
     }
 
-    public int getbSpeed() {
-        return bSpeed;
+	public float getbSpeed() {
+		return bSpeed;
     }
 
-    public void setbSpeed(final int bSpeed) {
-        this.bSpeed = bSpeed;
+	public void setbSpeed(final float bSpeed) {
+		this.bSpeed = bSpeed;
     }
 
-    public int getrSpeed() {
-        return rSpeed;
+	public float getrSpeed() {
+		return rSpeed;
     }
 
-    public void setrSpeed(final int rSpeed) {
-        this.rSpeed = rSpeed;
+	public void setrSpeed(final float rSpeed) {
+		this.rSpeed = rSpeed;
     }
 
-    public int getTimeToExplode() {
-        return timeToExplode;
+	public float getTimeToExplode() {
+		return timeToExplode;
     }
 
-    public void setTimeToExplode(final int timeToExplode) {
-        this.timeToExplode = timeToExplode;
-    }
-
-    public int getExplosionDuration() {
-        return explosionDuration;
-    }
-
-    public void setExplosionDuration(final int explosionDuration) {
-        this.explosionDuration = explosionDuration;
+	public void setTimeToExplode(final float timeToExplode) {
+		this.timeToExplode = timeToExplode;
     }
 
     public int getExplosionRange() {
@@ -103,8 +79,16 @@ public class GameConfiguration {
         this.explosionRange = explosionRange;
     }
 
-    public int getPointRobot() {
-        return pointRobot;
+	public float getExplosionDuration() {
+		return explosionDuration;
+	}
+
+	public void setExplosionDuration(final float explosionDuration) {
+		this.explosionDuration = explosionDuration;
+	}
+
+	public int getPointRobot() {
+		return pointRobot;
     }
 
     public void setPointRobot(final int pointRobot) {

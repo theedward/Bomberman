@@ -11,11 +11,6 @@ public class State {
     private List<Agent> pausedCharacters;
     private int idCounter;
 
-    /**
-     * The time of the last update.
-     */
-    private long lastUpdate;
-
     public State() {
         agents = new LinkedList<Agent>();
         pausedCharacters = new LinkedList<Agent>();
@@ -25,10 +20,6 @@ public class State {
      * Sets the last update time to now.
      * This method is called after the game starts.
      */
-    public void startCountingNow() {
-        this.lastUpdate = System.currentTimeMillis();
-    }
-
     public void setLastId(int id) {
         this.idCounter = id;
     }
@@ -69,15 +60,12 @@ public class State {
     /**
      * This method calls the method play of each agent.
      */
-    public void playAll() {
-        final long now = System.currentTimeMillis();
-        final float dt = (now - lastUpdate) / 1000.0f;
+    public void playAll(final long dt) {
+        final float dtInSeconds = dt / 1000.0f;
 
         for (Agent agent : new LinkedList<Agent>(agents)) {
-            agent.play(this, dt);
+            agent.play(this, dtInSeconds);
         }
-
-        this.lastUpdate = System.currentTimeMillis();
     }
 
     public void addAgent(Agent object) {
@@ -108,15 +96,6 @@ public class State {
     }
 
     /**
-     * Moves the content of one position to the other position in the map.
-     */
-    public void setMapPosition(Position newPosition, Position oldPosition) {
-        char c = map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()];
-        map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()] = DrawingType.EMPTY.toChar();
-        map[newPosition.yToDiscrete()][newPosition.xToDiscrete()] = c;
-    }
-
-    /**
      * Adds the agent of the player to the pause list.
      *
      * @param agent the player's agent who's going to be paused
@@ -125,8 +104,8 @@ public class State {
         if (agent != null) {
             agents.remove(agent);
             pausedCharacters.add(agent);
-            cleanMapEntry(agent.getPosition());
-        }
+			setMapEntry(agent.getPosition(), DrawingType.EMPTY);
+		}
     }
 
     /**
@@ -139,8 +118,8 @@ public class State {
         if (agent != null) {
             pausedCharacters.remove(agent);
             agents.add(agent);
-            addMapEntry(agent.getPosition());
-        }
+			setMapEntry(agent.getPosition(), DrawingType.BOMBERMAN);
+		}
     }
 
     /**
@@ -150,20 +129,16 @@ public class State {
     public List<Agent> getAgentByPosition(Position pos) {
         List<Agent> agentsList = new LinkedList<Agent>();
         for (Agent agent : agents) {
-            if (agent.getPosition().equals(pos)) {
+            if (agent.getPosition().equalsInMap(pos)) {
                 agentsList.add(agent);
             }
         }
         return agentsList;
     }
 
-    private void cleanMapEntry(Position position) {
-        map[position.yToDiscrete()][position.xToDiscrete()] = DrawingType.EMPTY.toChar();
-    }
-
-    private void addMapEntry(Position position) {
-        map[position.yToDiscrete()][position.xToDiscrete()] = DrawingType.BOMBERMAN.toChar();
-    }
+	public void setMapEntry(Position position, DrawingType type) {
+		map[position.yToDiscrete()][position.xToDiscrete()] = type.toChar();
+	}
 
     public enum DrawingType {
         EMPTY('-'), WALL('W'), ROBOT('R'), BOMBERMAN('M'), OBSTACLE('O'), BOMB('B');

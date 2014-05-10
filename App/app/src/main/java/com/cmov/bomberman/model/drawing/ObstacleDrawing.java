@@ -2,7 +2,6 @@ package com.cmov.bomberman.model.drawing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
 import com.cmov.bomberman.model.GameUtils;
 import com.cmov.bomberman.model.Position;
 
@@ -14,7 +13,7 @@ public class ObstacleDrawing extends Drawing {
         this.setStep(step);
 
         if (sprite == null) {
-            sprite = GameUtils.readObstacleSprite();
+            sprite = GameUtils.getInstance().readObstacleSprite();
         }
     }
 

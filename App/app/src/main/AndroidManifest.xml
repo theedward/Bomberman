@@ -1,59 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cmov.bomberman" >
+          package="com.cmov.bomberman">
 
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name="com.cmov.bomberman.controller.HomeActivity"
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@style/AppTheme">
+        <activity
+                android:name="com.cmov.bomberman.controller.HomeActivity"
+                android:label="@string/app_name"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".controller.CreateSinglePlayerGameActivity"
-            android:label="@string/title_activity_new_game"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+                android:name="com.cmov.bomberman.controller.CreateSinglePlayerGameActivity"
+                android:label="@string/title_activity_new_game"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
         <activity
-            android:name="com.cmov.bomberman.controller.MultiplayerActivity"
-            android:label="@string/title_activity_multiplayer"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+                android:name="com.cmov.bomberman.controller.MultiplayerActivity"
+                android:label="@string/title_activity_multiplayer"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
         <activity
-            android:name="com.cmov.bomberman.controller.AboutActivity"
-            android:label="@string/title_activity_about"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+                android:name="com.cmov.bomberman.controller.AboutActivity"
+                android:label="@string/title_activity_about"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
         <activity
-            android:name=".controller.SinglePlayerGameActivity"
-            android:label="@string/title_activity_game"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+                android:name="com.cmov.bomberman.controller.SinglePlayerGameActivity"
+                android:label="@string/title_activity_game"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
-
-        <service
-            android:name="com.cmov.bomberman.model.GameProxy"
-            android:enabled="true"
-            android:exported="false" >
-        </service>
+        <activity
+                android:name="com.cmov.bomberman.controller.MultiPlayerGameActivity"
+                android:label="@string/title_activity_multi_player_game"
+                >
+        </activity>
     </application>
 
 </manifest>

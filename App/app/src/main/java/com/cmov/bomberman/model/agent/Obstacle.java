@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.agent;
 
 import android.util.JsonWriter;
-
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 

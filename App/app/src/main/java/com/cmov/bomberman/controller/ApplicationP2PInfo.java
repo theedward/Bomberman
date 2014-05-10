@@ -15,10 +15,8 @@ import android.util.Log;
 
 import java.net.InetAddress;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class ApplicationP2PInfo extends Application {
 
@@ -33,7 +31,6 @@ public class ApplicationP2PInfo extends Application {
     static InetAddress groupOwnerAddress;
     static Collection<WifiP2pDevice> groupClients;
     static List<String> groupClientsNames;
-    static Map<String, WifiP2pDevice> groupClientsDevices = new HashMap<String, WifiP2pDevice>();
 
     public void onCreate(){
         super.onCreate();
@@ -42,6 +39,7 @@ public class ApplicationP2PInfo extends Application {
         mChannel = ApplicationP2PInfo.mManager.initialize(this, getMainLooper(), null);
         mReceiver = new WifiBroadcastReceiver(mManager, mChannel);
 
+        Log.i("AppInfo", "created app info , manager ,channel etc...");
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -49,6 +47,10 @@ public class ApplicationP2PInfo extends Application {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
     }
 
+    /*
+    * Creates a peer to peer group with the current device as owner
+    * It this operation is successful requests group information and
+    * */
     static public void createP2PGroup(final String tag) {
 
         mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
@@ -66,12 +68,14 @@ public class ApplicationP2PInfo extends Application {
         });
     }
 
+
     static public void requestP2PGroupInfo() {
         mManager.requestGroupInfo(ApplicationP2PInfo.mChannel, new WifiP2pManager.GroupInfoListener() {
             @Override
             public void onGroupInfoAvailable(WifiP2pGroup wifiP2pGroup) {
                 groupOwnerDevice = wifiP2pGroup.getOwner();
                 groupOwner = groupOwnerDevice.deviceName;
+                Log.i("app info", "owner device name" + groupOwner);
                 groupClients = wifiP2pGroup.getClientList();
                 groupClientsNames = listDeviceToListName(groupClients);
             }

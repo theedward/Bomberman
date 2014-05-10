@@ -13,7 +13,7 @@ public interface PlayerActionListener {
 
 	void onMapSizeChange(int width, int height);
 
-	void onScoresChange(Map<String, Integer> scores);
+	void onFinalScores(Map<String, Integer> scores);
 
 	void onDeath();
 }

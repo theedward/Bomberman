@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 public class GameClient implements Game {
 	private static final int GAME_SERVER_PORT = 8888;
 
+	private Socket gameSocket;
 	private ObjectInputStream gameInputStream;
 	private ObjectOutputStream gameOutputStream;
 	private ExecutorService executor;
@@ -22,16 +23,13 @@ public class GameClient implements Game {
 	/**
 	 * Client constructor
 	 */
-	public GameClient(String hostname, String username) {
+	public GameClient(String hostname) {
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
 		// read server host
 		try {
 			// connect to the server
-			Socket gameSocket = new Socket(hostname, GAME_SERVER_PORT);
-
-			// handle game requests
-			handleGameRequests(username, gameSocket);
+			gameSocket = new Socket(hostname, GAME_SERVER_PORT);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -91,6 +89,14 @@ public class GameClient implements Game {
 
 	public void join(final String username, final Player player) {
 		localPlayer = player;
+
+		// handle game requests
+		try {
+			handleGameRequests(username, this.gameSocket);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		try {
 			gameOutputStream.writeUTF("join");

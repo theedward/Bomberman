@@ -65,7 +65,7 @@ public class PlayerImpl implements Player {
 
 	public void onGameEnd(final Map<String, Integer> scores) {
 		if (actionListener != null) {
-			actionListener.onScoresChange(scores);
+			actionListener.onFinalScores(scores);
 		}
 	}
 

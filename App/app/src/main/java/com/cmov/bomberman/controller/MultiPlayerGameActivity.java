@@ -19,10 +19,12 @@ import android.widget.Toast;
 import com.cmov.bomberman.R;
 import com.cmov.bomberman.model.*;
 import com.cmov.bomberman.model.agent.Controllable;
+import com.cmov.bomberman.model.net.GameClient;
+import com.cmov.bomberman.model.net.GameServer;
 
 import java.util.Map;
 
-public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
+public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
 	private final String TAG = this.getClass().getSimpleName();
 
 	private boolean gamePaused;
@@ -45,13 +47,18 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 		GameUtils.createInstance(getApplicationContext());
 
 		int level = 1;
-		String username = "";
+		boolean isServer = false;
+		String hostname = "";
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			level = extras.getInt("level");
-			username = extras.getString("username");
-		} else {
-			Log.e(TAG, "Didn't receive the level or the username in the bundle");
+			isServer = extras.getBoolean("isServer");
+			this.username = extras.getString("username");
+
+			if (isServer) {
+				level = extras.getInt("level");
+			} else {
+				hostname = extras.getString("hostname");
+			}
 		}
 
 		// Handle the touch events on the arrows and bomb buttons.
@@ -149,10 +156,6 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 		final TextView usernameView = (TextView) findViewById(R.id.playerName);
 		usernameView.setText(username);
 
-		// Create game
-		this.game = new GameImpl(level);
-		this.username = username;
-
 		// Create player and its controller
 		this.playerController = new Controllable();
 
@@ -160,6 +163,13 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 		this.gameView.setScreen(screen);
 		this.player = new PlayerImpl(playerController, screen);
 		this.player.setPlayerActionListener(this);
+
+		if (isServer) {
+			this.game = new GameServer(level);
+			game.join(username, player);
+		} else {
+			this.game = new GameClient(hostname);
+		}
 	}
 
 	@Override
@@ -226,7 +236,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 
 	private void unpauseGame() {
 		if (game != null) {
-			game.unpause();
+			game.unpause(username);
 		} else {
 			Log.e(TAG, "Can't unpause an uninitialized game");
 		}
@@ -236,7 +246,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 
 	private void pauseGame() {
 		if (game != null) {
-			game.pause();
+			game.pause(username);
 		} else {
 			Log.e(TAG, "Can't pause an uninitialized game");
 		}
@@ -278,7 +288,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 					sb.append(" points\n");
 				}
 
-				final AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayerGameActivity.this);
+				final AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerGameActivity.this);
 				builder.setMessage(sb.toString()).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						quitGame();
@@ -330,7 +340,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(SinglePlayerGameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MultiPlayerGameActivity.this, "You lost the game :(", Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -354,3 +364,4 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 		}
 	}
 }
+

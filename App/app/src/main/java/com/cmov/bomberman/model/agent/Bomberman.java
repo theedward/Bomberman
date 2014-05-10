@@ -101,6 +101,10 @@ public class Bomberman extends MovableAgent {
             final int id = state.createNewId();
 
 			state.addAgent(new Bomb(bombPos, id, explosionDuration, explosionRange, explosionTimeout, this));
+
+			int bombPosX = bombPos.xToDiscrete();
+			int bombPosY = bombPos.yToDiscrete();
+			state.changeMapPosition(bombPosX, bombPosY, State.DrawingType.BOMB.toChar());
 			this.timeSinceLastBomb = 0;
         } else if (this.getCurrentAction().equals(Agent.Actions.DESTROY.toString())) {
             if (this.getStep() < MAX_DIE_STEP) {

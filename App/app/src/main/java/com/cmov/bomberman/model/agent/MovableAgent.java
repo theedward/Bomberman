@@ -5,6 +5,7 @@ import com.cmov.bomberman.model.State;
 
 public abstract class MovableAgent extends Agent {
 	private static final float ROTATE_MARGIN = 0.25f;
+	private final String TAG = this.getClass().getSimpleName();
 
 	private final float speed;
 	private Axis lastAxis;
@@ -88,9 +89,10 @@ public abstract class MovableAgent extends Agent {
 					final int mapLeftX = Position.toDiscrete(leftX);
 
 					char c = map[mapY][mapLeftX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+						c == State.DrawingType.BOMB.toChar()) {
 						// move right
-						curX = (float) (Math.floor(leftX + 1) + Agent.WIDTH / 2);
+						curX = mapLeftX + 1 + Agent.WIDTH / 2;
 					}
 				} else if (action == Actions.MOVE_UP) {
 					// top corner
@@ -99,9 +101,10 @@ public abstract class MovableAgent extends Agent {
 					final int mapTopY = Position.toDiscrete(topY);
 
 					char c = map[mapTopY][mapX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+						c == State.DrawingType.BOMB.toChar()) {
 						// move bottom
-						curY = (float) (Math.floor(topY + 1) + Agent.HEIGHT / 2);
+						curY = mapTopY + 1 + Agent.HEIGHT / 2;
 					}
 				} else if (action == Actions.MOVE_RIGHT) {
 					// right corner
@@ -110,21 +113,23 @@ public abstract class MovableAgent extends Agent {
 					final int mapRightX = Position.toDiscrete(rightX);
 
 					char c = map[mapY][mapRightX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+						c == State.DrawingType.BOMB.toChar()) {
 						// move left
-						curX = (float) (Math.ceil(rightX - 1) - Agent.WIDTH / 2);
+						curX = mapRightX - Agent.WIDTH / 2;
 					}
 
 				} else if (action == Actions.MOVE_DOWN) {
 					// bottom corner
 					curY += dist;
 					final float bottomY = curY + Agent.HEIGHT / 2;
-					final int mapTopY = Position.toDiscrete(bottomY);
+					final int mapBottomY = Position.toDiscrete(bottomY);
 
-					char c = map[mapTopY][mapX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar()) {
+					char c = map[mapBottomY][mapX];
+					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+						c == State.DrawingType.BOMB.toChar()) {
 						// move bottom
-						curY = (float) (Math.ceil(bottomY - 1) - Agent.HEIGHT / 2);
+						curY = mapBottomY - Agent.HEIGHT / 2;
 					}
 				}
 

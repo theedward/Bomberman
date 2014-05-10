@@ -11,6 +11,6 @@
 	"MapWidth": "19",
 	"MapHeight": "13",
 	"MaxNumPlayers": "3",
-	"BombermanSpeed": "1",
+	"BombermanSpeed": "4",
 	"NumUpdatesPerSecond": "10"
 }

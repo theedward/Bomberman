@@ -36,6 +36,10 @@ public class State {
         this.map = map;
     }
 
+	public void changeMapPosition(int x, int y, char newVal) {
+		map[y][x] = newVal;
+	}
+
     /**
      * @return the list of active agents in the state.
      */

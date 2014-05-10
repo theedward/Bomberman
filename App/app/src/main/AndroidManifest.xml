@@ -48,12 +48,5 @@
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
-
-        <service
-                android:name=".model.net.GameServer"
-                android:enabled="true"
-                android:exported="false">
-        </service>
     </application>
-
 </manifest>

@@ -206,7 +206,7 @@ public class Bomb extends Agent {
 			}
 		}
 
-		state.changeMapPosition(bombMapX, bombMapY, State.DrawingType.EMPTY.toChar());
+		state.setMapEntry(getPosition(), State.DrawingType.EMPTY);
 
 		Log.i(TAG, "Bomb range: Left= " + rangeLeft + " Right=" + rangeRight + " Up:" + rangeUp + " Down:" +
 				   rangeDown);

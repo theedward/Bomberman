@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class State {
-	private final String TAG = this.getClass().getSimpleName();
     private char[][] map;
     private List<Agent> agents;
     private List<Agent> pausedCharacters;
@@ -35,10 +34,6 @@ public class State {
     public void setMap(final char[][] map) {
         this.map = map;
     }
-
-	public void changeMapPosition(int x, int y, char newVal) {
-		map[y][x] = newVal;
-	}
 
     /**
      * @return the list of active agents in the state.
@@ -86,15 +81,6 @@ public class State {
     }
 
     /**
-     * Moves the content of one position to the other position in the map.
-     */
-    public void setMapPosition(Position newPosition, Position oldPosition) {
-        char c = map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()];
-        map[oldPosition.yToDiscrete()][oldPosition.xToDiscrete()] = DrawingType.EMPTY.toChar();
-        map[newPosition.yToDiscrete()][newPosition.xToDiscrete()] = c;
-    }
-
-    /**
      * Adds the agent of the player to the pause list.
      *
      * @param agent the player's agent who's going to be paused
@@ -103,8 +89,8 @@ public class State {
         if (agent != null) {
             agents.remove(agent);
             pausedCharacters.add(agent);
-            cleanMapEntry(agent.getPosition());
-        }
+			setMapEntry(agent.getPosition(), DrawingType.EMPTY);
+		}
     }
 
     /**
@@ -117,8 +103,8 @@ public class State {
         if (agent != null) {
             pausedCharacters.remove(agent);
             agents.add(agent);
-            addMapEntry(agent.getPosition());
-        }
+			setMapEntry(agent.getPosition(), DrawingType.BOMBERMAN);
+		}
     }
 
     /**
@@ -135,13 +121,9 @@ public class State {
         return agentsList;
     }
 
-    private void cleanMapEntry(Position position) {
-        map[position.yToDiscrete()][position.xToDiscrete()] = DrawingType.EMPTY.toChar();
-    }
-
-    private void addMapEntry(Position position) {
-        map[position.yToDiscrete()][position.xToDiscrete()] = DrawingType.BOMBERMAN.toChar();
-    }
+	public void setMapEntry(Position position, DrawingType type) {
+		map[position.yToDiscrete()][position.xToDiscrete()] = type.toChar();
+	}
 
     public enum DrawingType {
         EMPTY('-'), WALL('W'), ROBOT('R'), BOMBERMAN('M'), OBSTACLE('O'), BOMB('B');

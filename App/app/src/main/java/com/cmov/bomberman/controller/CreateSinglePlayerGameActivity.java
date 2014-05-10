@@ -2,11 +2,17 @@ package com.cmov.bomberman.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.TextView;
+
 import com.cmov.bomberman.R;
+
+import org.w3c.dom.Text;
 
 public class CreateSinglePlayerGameActivity extends Activity {
 	private static final String DEFAULT_USERNAME = "Bomberman";
@@ -20,19 +26,17 @@ public class CreateSinglePlayerGameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
-
-        mapPreviewId = new int[]{R.drawable.first_level, R.drawable.second_level};
+        Typeface blockFonts = Typeface.createFromAsset(getAssets(), "Inconsolata-Regular.ttf");
+        TextView bomberman = (TextView) findViewById(R.id.bombermantxt);
+        TextView level = (TextView) findViewById(R.id.level);
+        level.setTypeface(blockFonts);
+        Button startbtn = (Button) findViewById(R.id.startbtn);
+        startbtn.setTypeface(blockFonts);
+        bomberman.setTypeface(blockFonts);
 
         levelPicker = (NumberPicker) findViewById(R.id.levelPicker);
         levelPicker.setMinValue(MIN_LEVEL);
         levelPicker.setMaxValue(MAX_LEVEL);
-        levelPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(final NumberPicker numberPicker, final int oldVal, final int newVal) {
-                final ImageView mapPreview = (ImageView) findViewById(R.id.imageView1);
-                mapPreview.setImageDrawable(getResources().getDrawable(mapPreviewId[newVal - 1]));
-            }
-        });
     }
 
     public void startGame(View v) {

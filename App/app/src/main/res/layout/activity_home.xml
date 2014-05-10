@@ -1,31 +1,94 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/container"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@drawable/home_background"
-                tools:context="com.android.bomberman.HomeActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/holo_red_dark"
+    tools:context="com.android.bomberman.HomeActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="10dp"
+        android:id ="@+id/bombermanimg"
+        />
+
+    <TextView
+        android:id="@+id/bombermantxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Bomberman"
+        android:textSize="50dp"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="20dp"
+        />
+
+    </LinearLayout>
 
     <Button
-            style="@style/ButtonText"
-            android:id="@+id/newgamebtn"
-            android:layout_marginTop="50dp"
-            android:text="@string/new_game"
-            android:onClick="newGame" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:id="@+id/singleplayerbtn"
+        android:layout_marginTop="125dp"
+        android:layout_marginLeft="20dp"
+        android:text="Single Player"
+        android:textSize = "30dp"
+        android:onClick="newGame"
+        android:textColor="@android:color/white"
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/singleplayerbtn"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/white" />
 
     <Button
-            style="@style/ButtonText"
-            android:id="@+id/multiplayerbtn"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="142dp"
-            android:text="@string/multiplayer"
-            android:onClick="multiplayerGame" />
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:layout_below="@id/singleplayerbtn"
+    android:id="@+id/multiplayerbtn"
+    android:layout_marginTop="30dp"
+    android:layout_marginLeft="20dp"
+    android:text="@string/multiplayer"
+    android:textSize = "30dp"
+    android:onClick="multiplayerGame"
+    android:textColor="@android:color/white"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/multiplayerbtn"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/white" />
 
     <Button
-            style="@style/ButtonText"
-            android:id="@+id/aboutbtn"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="38dp"
-            android:text="@string/about"
-            android:onClick="about"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:layout_below="@id/multiplayerbtn"
+        android:id="@+id/aboutbtn"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:text="@string/about"
+        android:textSize = "30dp"
+        android:onClick="about"
+        android:textColor="@android:color/white"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/aboutbtn"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/white" />
 </RelativeLayout>

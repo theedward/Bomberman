@@ -2,8 +2,12 @@ package com.cmov.bomberman.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
 import com.cmov.bomberman.R;
 
 public class HomeActivity extends Activity {
@@ -12,6 +16,18 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Typeface blockFonts = Typeface.createFromAsset(getAssets(), "Inconsolata-Regular.ttf");
+        TextView bomberman = (TextView) findViewById(R.id.bombermantxt);
+        Button singlePlayer = (Button) findViewById(R.id.singleplayerbtn);
+        Button multiPlayer = (Button) findViewById(R.id.multiplayerbtn);
+        Button about = (Button) findViewById(R.id.aboutbtn);
+        singlePlayer.setTypeface(blockFonts);
+        multiPlayer.setTypeface(blockFonts);
+        bomberman.setTypeface(blockFonts);
+        about.setTypeface(blockFonts);
+
+
+
     }
 
     public void newGame(View v) {

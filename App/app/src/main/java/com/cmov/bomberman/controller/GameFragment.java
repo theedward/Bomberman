@@ -211,6 +211,7 @@ public class GameFragment extends Fragment implements SurfaceHolder.Callback {
 						quitGame();
 					}
 				});
+                builder.setCancelable(false);
 				final Dialog dialog = builder.create();
 				dialog.show();
 			}

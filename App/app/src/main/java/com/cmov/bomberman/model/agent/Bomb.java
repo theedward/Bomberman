@@ -68,6 +68,8 @@ public class Bomb extends Agent {
 		} else {
 			this.setStep((this.getStep() + 1) % BOMB_MAX_STEP);
 		}
+
+		state.setMapEntry(getPosition(), State.DrawingType.BOMB);
 	}
 
 	/**

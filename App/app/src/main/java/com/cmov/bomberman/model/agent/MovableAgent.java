@@ -147,6 +147,7 @@ public abstract class MovableAgent extends Agent {
 				}
 
 				setPosition(new Position(curX, curY));
+
 				currentState.setMapEntry(oldPosition, State.DrawingType.EMPTY);
 				currentState.setMapEntry(getPosition(), State.DrawingType.valueOf(getType().toUpperCase()));
 			}

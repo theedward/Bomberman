@@ -77,15 +77,17 @@ public class GameServer implements Game {
 	/**
 	 * if I'm not the server I only need to send a message to it with the right protocol
 	 * if I am the server I just need to call the function with the right player's username
+	 *
 	 * @param username the player's username
 	 */
-    public void pause(final String username) {
+	public void pause(final String username) {
 		game.pause(username);
 	}
 
 	/**
 	 * if I'm not the server I only need to send a message to it with the right protocol
 	 * if I am the server I just need to call the function with the right player's username
+	 *
 	 * @param username the player's username
 	 */
 	public void unpause(final String username) {
@@ -95,6 +97,7 @@ public class GameServer implements Game {
 	/**
 	 * if I'm not the server I only need to send a message to it with the right protocol
 	 * if I am the server I just need to call the function with the right player's username
+	 *
 	 * @param username the player's username
 	 */
 	public void quit(final String username) {

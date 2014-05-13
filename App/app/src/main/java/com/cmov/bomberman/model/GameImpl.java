@@ -18,71 +18,71 @@ import java.util.*;
 public final class GameImpl implements Game {
 	private final String TAG = this.getClass().getSimpleName();
 	private final int level;
-    private final Map<String, Player> players;
-    private final Map<String, Player> playersOnPause;
+	private final Map<String, Player> players;
+	private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
 	private final int bombermanIds[];
 	private final Position bombermanPos[];
-    private final State gameState;
-    private final GameConfiguration gameConfiguration;
+	private final State gameState;
+	private final GameConfiguration gameConfiguration;
 	private boolean isPaused;
 	private List<Position> wallPositions;
-    /**
-     * The number of updates the game will have.
-     */
-    private int numRoundsLeft;
+	/**
+	 * The number of updates the game will have.
+	 */
+	private int numRoundsLeft;
 
-    /**
-     * This constructor performs all the necessary steps to start the game right next.
-     * However, the game would be without any player.
-     *
-     * @param level the level to be played in this game
-     */
-    public GameImpl(final int level) {
+	/**
+	 * This constructor performs all the necessary steps to start the game right next.
+	 * However, the game would be without any player.
+	 *
+	 * @param level the level to be played in this game
+	 */
+	public GameImpl(final int level) {
 		this.level = level;
 		this.isPaused = false;
-        this.players = new HashMap<String, Player>();
-        this.playersOnPause = new HashMap<String, Player>();
+		this.players = new HashMap<String, Player>();
+		this.playersOnPause = new HashMap<String, Player>();
 		this.playersAgent = new HashMap<String, Bomberman>();
-        this.gameState = new State();
+		this.gameState = new State();
 
-        // Read data from files
-        this.gameState.setMap(GameUtils.getInstance().readLevelFromFile(level));
-        this.gameConfiguration = GameUtils.getInstance().readConfigurationFile(level);
-        this.numRoundsLeft = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
+		// Read data from files
+		this.gameState.setMap(GameUtils.getInstance().readLevelFromFile(level));
+		this.gameConfiguration = GameUtils.getInstance().readConfigurationFile(level);
+		this.numRoundsLeft = gameConfiguration.getTimeLimit() * gameConfiguration.getNumUpdatesPerSecond();
 
 		this.bombermanPos = new Position[gameConfiguration.getMaxNumPlayers()];
 		this.bombermanIds = new int[gameConfiguration.getMaxNumPlayers()];
 		populateGame();
-    }
+	}
 
-    /**
-     * Creates all the objects and populates the game state.
-     * Attributes each player a Bomberman.
-     */
-    private void populateGame() {
+	/**
+	 * Creates all the objects and populates the game state.
+	 * Attributes each player a Bomberman.
+	 */
+	private void populateGame() {
 		final String[] usernames = new String[players.size()];
-        final PlayerImpl[] characterOwners = new PlayerImpl[players.size()];
+		final PlayerImpl[] characterOwners = new PlayerImpl[players.size()];
 		players.keySet().toArray(usernames);
-        players.values().toArray(characterOwners);
+		players.values().toArray(characterOwners);
 
 		wallPositions = new LinkedList<Position>();
 
 		int idCounter = 0;
 		final char[][] map = gameState.getMap();
-        for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
-            for (int colIdx = 0; colIdx < map[rowIdx].length; colIdx++) {
+		for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
+			for (int colIdx = 0; colIdx < map[rowIdx].length; colIdx++) {
 				// the position will be right in the middle
-				final Position pos = new Position(colIdx + Agent.HEIGHT/2, rowIdx + Agent.WIDTH/2);
+				final Position pos = new Position(colIdx + Agent.HEIGHT / 2, rowIdx + Agent.WIDTH / 2);
 				final char character = map[rowIdx][colIdx];
 
-                if (character == State.DrawingType.OBSTACLE.toChar()) {
-                    gameState.addAgent(new Obstacle(pos, idCounter));
-                    idCounter++;
-                } else if (character == State.DrawingType.ROBOT.toChar()) {
-                    gameState.addAgent(new Robot(pos, idCounter, gameConfiguration.getrSpeed()));
-                    idCounter++;
-                } else if (character == State.DrawingType.WALL.toChar()) {
+				if (character == State.DrawingType.OBSTACLE.toChar()) {
+					gameState.addAgent(new Obstacle(pos, idCounter));
+					idCounter++;
+				} else if (character == State.DrawingType.ROBOT.toChar()) {
+					gameState.addAgent(new Robot(pos, idCounter, gameConfiguration.getrSpeed()));
+					idCounter++;
+				} else if (character == State.DrawingType.WALL.toChar()) {
 					wallPositions.add(new Position(colIdx, rowIdx));
 				} else {
 					// Let's see if it's a Bomberman
@@ -95,16 +95,17 @@ public final class GameImpl implements Game {
 						bombermanIds[bombermanId] = idCounter;
 						map[rowIdx][colIdx] = State.DrawingType.EMPTY.toChar();
 						idCounter++;
-					} catch (NumberFormatException e) {
+					}
+					catch (NumberFormatException e) {
 						// Not a Bomberman
 					}
 				}
 			}
 		}
 
-        // must pass counter id to game state for posterior object creations, such as bombs
-        gameState.setLastId(idCounter);
-    }
+		// must pass counter id to game state for posterior object creations, such as bombs
+		gameState.setLastId(idCounter);
+	}
 
 	public void start() {
 		this.begin();
@@ -155,34 +156,35 @@ public final class GameImpl implements Game {
 		}
 	}
 
-    /**
-     * Pauses the game for the player with the given username
-     *
-     * @param username the player's username
-     */
-    public synchronized void pause(String username) {
+	/**
+	 * Pauses the game for the player with the given username
+	 *
+	 * @param username the player's username
+	 */
+	public synchronized void pause(String username) {
 		Player p = players.get(username);
 		playersOnPause.put(username, p);
 		players.remove(username);
 
-        gameState.pauseAgent(playersAgent.get(username));
-    }
+		gameState.pauseAgent(playersAgent.get(username));
+	}
 
-    /**
-     * Unpauses the game for the player with the given username
-     *
-     * @param username the player's username
-     */
-    public synchronized void unpause(String username) {
+	/**
+	 * Unpauses the game for the player with the given username
+	 *
+	 * @param username the player's username
+	 */
+	public synchronized void unpause(String username) {
 		Player p = playersOnPause.get(username);
 		playersOnPause.remove(username);
 		players.put(username, p);
 
-        gameState.unpauseAgent(playersAgent.get(username));
-    }
+		gameState.unpauseAgent(playersAgent.get(username));
+	}
 
 	/**
 	 * A player leaves the game.
+	 *
 	 * @param username the player's username
 	 */
 	public synchronized void quit(String username) {
@@ -191,6 +193,7 @@ public final class GameImpl implements Game {
 
 	/**
 	 * A player joins the game.
+	 *
 	 * @param username the player's username
 	 */
 	public synchronized void join(String username, Player player) {
@@ -215,46 +218,46 @@ public final class GameImpl implements Game {
 		}
 	}
 
-    /**
-     * Creates all the agents in the map.
-     * Calls Player#onGameStart for every registered player.
-     * Starts the game loop
-     */
-    private synchronized void begin() {
-        Log.i(TAG, "Game has started");
+	/**
+	 * Creates all the agents in the map.
+	 * Calls Player#onGameStart for every registered player.
+	 * Starts the game loop
+	 */
+	private synchronized void begin() {
+		Log.i(TAG, "Game has started");
 
-        for (Player p : players.values()) {
-            p.onGameStart(level, wallPositions);
-        }
-    }
+		for (Player p : players.values()) {
+			p.onGameStart(level, wallPositions);
+		}
+	}
 
 	/**
 	 * Calls method onGameEnd of every player. It sends the final scores of the game.
 	 */
-    private synchronized void end() {
+	private synchronized void end() {
 		Log.i(TAG, "Game has ended.");
 
-        for (Player p : players.values()) {
-            p.onGameEnd(checkScores());
-        }
-    }
+		for (Player p : players.values()) {
+			p.onGameEnd(checkScores());
+		}
+	}
 
-    private Map<String, Integer> checkScores() {
-        final Map<String, Integer> scores = new TreeMap<String, Integer>();
-        for (Map.Entry<String, Bomberman> entry : playersAgent.entrySet()) {
-            scores.put(entry.getKey(), entry.getValue().getScore());
-        }
-        return scores;
+	private Map<String, Integer> checkScores() {
+		final Map<String, Integer> scores = new TreeMap<String, Integer>();
+		for (Map.Entry<String, Bomberman> entry : playersAgent.entrySet()) {
+			scores.put(entry.getKey(), entry.getValue().getScore());
+		}
+		return scores;
 
-    }
+	}
 
-    /**
-     * Updates the state (new frame).
-     */
-    private synchronized void update(long dt) {
-        // Update the state
+	/**
+	 * Updates the state (new frame).
+	 */
+	private synchronized void update(long dt) {
+		// Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
-        gameState.playAll(dt);
+		gameState.playAll(dt);
 		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
 
 		final long timeBeforeUpdate = System.currentTimeMillis();
@@ -262,24 +265,24 @@ public final class GameImpl implements Game {
 		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
 		// remove agents after update
-        gameState.removeDestroyedAgents();
-        numRoundsLeft--;
+		gameState.removeDestroyedAgents();
+		numRoundsLeft--;
 
-        if (this.hasFinished()) {
-            this.end();
-        }
-    }
+		if (this.hasFinished()) {
+			this.end();
+		}
+	}
 
-    /**
-     * Calls Player#update with the new state.
-     */
-    private void updatePlayers() {
-        // Get all the character positions
-        final StringWriter msg = new StringWriter();
-        final JsonWriter writer = new JsonWriter(msg);
+	/**
+	 * Calls Player#update with the new state.
+	 */
+	private void updatePlayers() {
+		// Get all the character positions
+		final StringWriter msg = new StringWriter();
+		final JsonWriter writer = new JsonWriter(msg);
 
-        // Update every player with the character positions
-        for (Map.Entry<String, Player> entry : players.entrySet()) {
+		// Update every player with the character positions
+		for (Map.Entry<String, Player> entry : players.entrySet()) {
 			try {
 				writer.setIndent("  ");
 				writer.beginObject();
@@ -292,13 +295,14 @@ public final class GameImpl implements Game {
 
 				writer.endObject();
 				writer.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				Log.e(TAG, "Error creating json message.");
 			}
 
-            entry.getValue().update(msg.toString());
-        }
-    }
+			entry.getValue().update(msg.toString());
+		}
+	}
 
 	private void createScoreMsg(final JsonWriter wr, final String username) throws IOException {
 		final Bomberman playerAgent = playersAgent.get(username);
@@ -328,35 +332,36 @@ public final class GameImpl implements Game {
 		wr.name("Dead").value(playersAgent.get(username).isDestroyed());
 	}
 
-    /**
-     * Verifies if the game has already finished.
-     * A game finishes when the game numRoundsLeft reaches 0, when only a player is alive and the other robots and players
+	/**
+	 * Verifies if the game has already finished.
+	 * A game finishes when the game numRoundsLeft reaches 0, when only a player is alive and the other robots and
+	 * players
 	 * are dead or when all players are dead and some robots still exist.
-     */
-    private synchronized boolean hasFinished() {
-        if (numRoundsLeft == 0) {
-            return true;
-        }
+	 */
+	private synchronized boolean hasFinished() {
+		if (numRoundsLeft == 0) {
+			return true;
+		}
 
-        // check how many are still alive
-        int numBombermans = 0;
-        int numRobots = 0;
-        for (Agent agent : gameState.getObjects()) {
-            if (agent.getType().equals("Bomberman")) {
-                numBombermans++;
-            } else if (agent.getType().equals("Robot")) {
-                numRobots++;
-            }
-        }
+		// check how many are still alive
+		int numBombermans = 0;
+		int numRobots = 0;
+		for (Agent agent : gameState.getObjects()) {
+			if (agent.getType().equals("Bomberman")) {
+				numBombermans++;
+			} else if (agent.getType().equals("Robot")) {
+				numRobots++;
+			}
+		}
 
-        for (Agent agent : gameState.getPausedCharacters()) {
-            if (agent.getType().equals("Bomberman")) {
-                numBombermans++;
-            } else if (agent.getType().equals("Robot")) {
-                numRobots++;
-            }
-        }
+		for (Agent agent : gameState.getPausedCharacters()) {
+			if (agent.getType().equals("Bomberman")) {
+				numBombermans++;
+			} else if (agent.getType().equals("Robot")) {
+				numRobots++;
+			}
+		}
 
-        return (numBombermans == 0) || (numBombermans == 1 && numRobots == 0);
-    }
+		return (numBombermans == 0) || (numBombermans == 1 && numRobots == 0);
+	}
 }

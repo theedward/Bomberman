@@ -18,6 +18,8 @@ import java.util.LinkedList;
  */
 public class GameUtils {
 	private static GameUtils instance;
+	private int IMG_WIDTH = 30;
+	private int IMG_HEIGHT = 30;
 	/**
 	 * The width any bitmap will occupy in the canvas.
 	 */
@@ -177,8 +179,10 @@ public class GameUtils {
 	 * has 30px width and 30px height.
 	 */
 	private Bitmap getBitmap(final Bitmap src, final int row, final int column) {
-		return Bitmap.createBitmap(src, (column - 1) * imgCanvasWidth, (row - 1) * imgCanvasHeight, imgCanvasWidth,
-								   imgCanvasHeight);
+		final int width = imgCanvasWidth < IMG_WIDTH ? imgCanvasWidth : IMG_WIDTH;
+		final int height = imgCanvasHeight < IMG_HEIGHT ? imgCanvasHeight : IMG_HEIGHT;
+		Bitmap bitmap = Bitmap.createBitmap(src, (column - 1) * width, (row - 1) * height, width, height);
+		return Bitmap.createScaledBitmap(bitmap, imgCanvasWidth, imgCanvasHeight, true);
 	}
 
 	/**

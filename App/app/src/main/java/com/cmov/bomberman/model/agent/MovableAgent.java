@@ -29,9 +29,6 @@ public abstract class MovableAgent extends Agent {
 	 * @param dt           the time passed since the last update
 	 */
 	public void move(State currentState, Actions action, float dt) {
-
-        currentState.printMap();
-
 		final Axis moveAxis =
 				(action == Actions.MOVE_UP || action == Actions.MOVE_DOWN) ? Axis.VERTICAL : Axis.HORIZONTAL;
 		final Position oldPosition = getPosition();

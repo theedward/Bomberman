@@ -2,12 +2,17 @@ package com.cmov.bomberman.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.cmov.bomberman.R;
+
+import org.w3c.dom.Text;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +32,13 @@ public class CreateServerActivity extends Activity implements WifiP2PListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_server);
+        Typeface blockFonts = Typeface.createFromAsset(getAssets(), "Inconsolata-Regular.ttf");
+        TextView bombermanTxt = (TextView) findViewById(R.id.bombermantxt);
+        TextView playersGame = (TextView) findViewById(R.id.playersGame);
+        Button startGameBtn = (Button) findViewById(R.id.startgamebtn);
+        bombermanTxt.setTypeface(blockFonts);
+        playersGame.setTypeface(blockFonts);
+        startGameBtn.setTypeface(blockFonts);
 
         Bundle extras = getIntent().getExtras();
         myUsername = (String) extras.get("username");

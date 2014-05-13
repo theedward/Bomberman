@@ -6,32 +6,68 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@android:color/holo_red_dark"
     tools:context="com.cmov.bomberman.controller.net.JoinServerActivity">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id = "@+id/bigthing"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:id ="@+id/bombermanimg"
+            />
+
+        <TextView
+            android:id="@+id/bombermantxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Bomberman"
+            android:textSize="50dp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
     <TextView
         android:text="Choose a server to join:"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/choseServers"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/bigthing"
+        android:textSize="30dp"
+        android:textColor="@android:color/white"
+        />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView2"
-        android:layout_below="@+id/textView2"
+        android:id="@+id/serversList"
+        android:layout_below="@+id/choseServers"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/button" />
+        android:layout_above="@+id/joinServer" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        android:text="Join Server"
+        android:id="@+id/joinServer"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_alignStart="@+id/textView2" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

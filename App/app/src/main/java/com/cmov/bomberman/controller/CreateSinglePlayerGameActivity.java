@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+
 import com.cmov.bomberman.R;
+
 
 public class CreateSinglePlayerGameActivity extends Activity {
 	private static final String DEFAULT_USERNAME = "Bomberman";

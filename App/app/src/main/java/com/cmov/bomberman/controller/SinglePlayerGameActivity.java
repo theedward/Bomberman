@@ -284,6 +284,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 						quitGame();
 					}
 				});
+                builder.setCancelable(false);
 				final Dialog dialog = builder.create();
 				dialog.show();
 			}

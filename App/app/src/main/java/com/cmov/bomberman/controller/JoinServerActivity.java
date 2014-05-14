@@ -18,7 +18,7 @@ import com.cmov.bomberman.R;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JoinServerActivity extends Activity implements WifiP2PListener {
+public class JoinServerActivity extends Activity {
 
     final String TAG = getClass().getSimpleName();
     String myUsername;
@@ -41,8 +41,6 @@ public class JoinServerActivity extends Activity implements WifiP2PListener {
         listView = (ListView) findViewById(R.id.serversList);
         Bundle extras = getIntent().getExtras();
         myUsername = (String) extras.get("username");
-
-        ApplicationP2PInfo.mReceiver.setWifiP2PListener(this);
     }
 
 

@@ -12,12 +12,10 @@ import android.widget.TextView;
 
 import com.cmov.bomberman.R;
 
-import org.w3c.dom.Text;
-
 import java.util.LinkedList;
 import java.util.List;
 
-public class CreateServerActivity extends Activity implements WifiP2PListener {
+public class CreateServerActivity extends Activity {
 
     final String TAG = getClass().getSimpleName();
 
@@ -43,7 +41,6 @@ public class CreateServerActivity extends Activity implements WifiP2PListener {
         Bundle extras = getIntent().getExtras();
         myUsername = (String) extras.get("username");
 
-        ApplicationP2PInfo.mReceiver.setWifiP2PListener(this);
         ApplicationP2PInfo.createP2PGroup(TAG);
         updateMyPlayersThread = new Runnable() {
             @Override
@@ -63,8 +60,6 @@ public class CreateServerActivity extends Activity implements WifiP2PListener {
     }
 
     // metodo que mostra a minha lista de players
-
-    @Override
     public void onUpdateListView(List<String> list) {
         myPlayers = list;
 

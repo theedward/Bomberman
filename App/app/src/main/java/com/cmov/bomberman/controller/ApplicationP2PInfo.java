@@ -23,7 +23,7 @@ public class ApplicationP2PInfo extends Application {
     static Context context;
     static public WifiP2pManager mManager;
     static public Channel mChannel;
-    static public WifiBroadcastReceiver mReceiver;
+    static public SimWifiP2pBroadcastReceiver mReceiver;
     static public IntentFilter mIntentFilter;
     static public WifiP2pDevice groupOwnerDevice;
 
@@ -37,7 +37,7 @@ public class ApplicationP2PInfo extends Application {
         context = getApplicationContext();
         mManager = (WifiP2pManager) context.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = ApplicationP2PInfo.mManager.initialize(this, getMainLooper(), null);
-        mReceiver = new WifiBroadcastReceiver(mManager, mChannel);
+//        mReceiver = new SimWifiP2pBroadcastReceiver(mManager, mChannel);
 
         Log.i("AppInfo", "created app info , manager ,channel etc...");
         mIntentFilter = new IntentFilter();

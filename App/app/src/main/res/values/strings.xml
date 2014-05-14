@@ -19,7 +19,7 @@
     <string name="player_score">Player Score</string>
     <string name="time_left">Time Left</string>
     <string name="number_player">Number Players</string>
-    <string name="my_device">My device:</string>string>
+    <string name="my_device">My device:</string>
     <string name="pause">Pause</string>
     <string name="quit">Quit</string>
     <string name="bomb">Bomb</string>
@@ -32,7 +32,7 @@
     <string name="must_enter_username">You must enter a username</string>
     <string name="choose_server">Please choose a server to join:</string>
     <string name="my_game_players">My game Players:</string>
-    <string name="choose_level">Choose game level:</string>>
+    <string name="choose_level">Choose game level:</string>
     <string name="enter_servername_here">Enter server name here</string>
     <string name="players">Players:</string>
     <string name="waitingGameStart">Waiting for game to start..</string>
@@ -47,5 +47,17 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_multi_player_game">MultiPlayerGameActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_simple_chat">SimpleChatActivity</string>
+
+    <!-- SimpleChatActivity strings -->
+    <string name="port">10001</string>
+    <string name="hello">Hello World, SimpleChatActivity!</string>
+    <string name="sendButton">Send</string>
+    <string name="connectButton">Connect</string>
+    <string name="disconnectButton">Disconnect</string>
+    <string name="serviceButton">WiFi On</string>
+    <string name="cancelButton">WiFi Off</string>
+    <string name="inRangeButton">In Range</string>
+    <string name="inGroupButton">In Network</string>
 
 </resources>

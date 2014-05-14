@@ -4,14 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.WpsInfo;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pGroup;
-import android.net.wifi.p2p.WifiP2pInfo;
-import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.*;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.util.Log;
-
 
 import java.net.InetAddress;
 import java.util.Collection;

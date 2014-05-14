@@ -1,12 +1,11 @@
 package pt.utl.ist.cmov.wifidirect.sockets;
 
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
 
 public class SimWifiP2pSocketBroadcastReceiver extends BroadcastReceiver {
 

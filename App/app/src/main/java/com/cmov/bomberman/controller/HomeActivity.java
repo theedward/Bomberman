@@ -36,6 +36,8 @@ public class HomeActivity extends Activity {
 	public void multiplayerGame(View v) {
 		//        Intent intent = new Intent(HomeActivity.this, MultiplayerActivity.class);
 		//        startActivity(intent);
+		Intent intent = new Intent(HomeActivity.this, SimpleChatActivity.class);
+		startActivity(intent);
 	}
 
 	public void about(View v) {

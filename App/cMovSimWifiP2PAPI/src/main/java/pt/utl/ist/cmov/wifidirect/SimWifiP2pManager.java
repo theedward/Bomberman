@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-
 import pt.utl.ist.cmov.wifidirect.util.AsyncChannel;
 import pt.utl.ist.cmov.wifidirect.util.Protocol;
 

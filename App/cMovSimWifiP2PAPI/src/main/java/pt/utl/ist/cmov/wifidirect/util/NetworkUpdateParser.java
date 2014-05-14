@@ -1,16 +1,11 @@
 package pt.utl.ist.cmov.wifidirect.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeMap;
-
 import android.util.Log;
-
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pDevice;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
+
+import java.util.*;
 
 public class NetworkUpdateParser {
 	

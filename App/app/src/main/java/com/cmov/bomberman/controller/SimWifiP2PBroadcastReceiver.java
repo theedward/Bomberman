@@ -1,18 +1,17 @@
 package com.cmov.bomberman.controller;
 
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
 
-public class SimWifiP2PBroadcastReceiver extends BroadcastReceiver {
+public class SimWifiP2pBroadcastReceiver extends BroadcastReceiver {
 
 	private SimpleChatActivity mActivity;
 
-	public SimWifiP2PBroadcastReceiver(SimpleChatActivity activity) {
+	public SimWifiP2pBroadcastReceiver(SimpleChatActivity activity) {
 		super();
 		this.mActivity = activity;
 	}

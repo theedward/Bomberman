@@ -1,5 +1,13 @@
 package pt.utl.ist.cmov.wifidirect.sockets;
 
+import android.content.Context;
+import android.content.IntentFilter;
+import android.util.Log;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pDevice;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,15 +16,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import android.content.Context;
-import android.content.IntentFilter;
-import android.util.Log;
-
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pDevice;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
 
 public class SimWifiP2pSocketManager {
 

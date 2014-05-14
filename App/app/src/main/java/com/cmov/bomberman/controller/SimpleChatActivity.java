@@ -1,33 +1,8 @@
 package com.cmov.bomberman.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.UnknownHostException;
-
-import com.cmov.bomberman.R;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pDevice;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.Channel;
-import pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService;
-import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
-import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketManager;
-import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketServer;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.PeerListListener;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.GroupInfoListener;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-
+import android.content.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -37,9 +12,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.cmov.bomberman.R;
+import pt.utl.ist.cmov.wifidirect.*;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.Channel;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.GroupInfoListener;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.PeerListListener;
+import pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService;
+import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
+import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketManager;
+import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketServer;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 
 public class SimpleChatActivity extends Activity implements
-												 PeerListListener, GroupInfoListener {
+										 PeerListListener, GroupInfoListener {
 
 	public static final String TAG = "simplechat";
 

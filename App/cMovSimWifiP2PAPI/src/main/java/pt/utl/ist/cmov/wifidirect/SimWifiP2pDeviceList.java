@@ -1,11 +1,7 @@
 package pt.utl.ist.cmov.wifidirect;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A class representing a Wi-Fi P2p device list.

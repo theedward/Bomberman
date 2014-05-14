@@ -1,12 +1,12 @@
 package pt.utl.ist.cmov.wifidirect;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import android.util.Log;
 
 public class SimWifiP2pInfo implements Serializable {
 

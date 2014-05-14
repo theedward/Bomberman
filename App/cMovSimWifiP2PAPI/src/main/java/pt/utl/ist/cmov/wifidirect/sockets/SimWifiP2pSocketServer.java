@@ -1,8 +1,8 @@
 package pt.utl.ist.cmov.wifidirect.sockets;
 
-import java.io.IOException;
-
 import android.util.Log;
+
+import java.io.IOException;
 
 public class SimWifiP2pSocketServer implements SimWifiP2pSocketWrapper {
 	

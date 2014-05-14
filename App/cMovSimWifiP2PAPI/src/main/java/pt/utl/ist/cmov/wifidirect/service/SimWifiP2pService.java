@@ -1,11 +1,10 @@
 package pt.utl.ist.cmov.wifidirect.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
-
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.os.RemoteException;
+import android.util.Log;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
@@ -14,11 +13,11 @@ import pt.utl.ist.cmov.wifidirect.util.AsyncService;
 import pt.utl.ist.cmov.wifidirect.util.NetworkUpdateParser;
 import pt.utl.ist.cmov.wifidirect.util.Protocol;
 
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
-import android.os.RemoteException;
-import android.util.Log;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class SimWifiP2pService extends AsyncService {
 

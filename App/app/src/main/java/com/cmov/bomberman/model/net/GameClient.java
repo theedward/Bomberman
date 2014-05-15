@@ -7,8 +7,6 @@ import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Only starts receiving updates after it has performed join.
@@ -18,7 +16,6 @@ public class GameClient implements Game {
 
 	private final String TAG = getClass().getSimpleName();
 
-	private ExecutorService executor;
 	private CommunicationChannel commChan;
 
 	private Player localPlayer;
@@ -27,8 +24,6 @@ public class GameClient implements Game {
 	 * Client constructor
 	 */
 	public GameClient(final String hostname) {
-		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
 		// keeps trying to connect to the server until it successfully connects
 		while (true) {
 			try {
@@ -46,7 +41,7 @@ public class GameClient implements Game {
 	}
 
 	public void pause(final String username) {
-		executor.execute(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -59,11 +54,11 @@ public class GameClient implements Game {
 					e.printStackTrace();
 				}
 			}
-		});
+		}).start();
 	}
 
 	public void unpause(final String username) {
-		executor.execute(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -76,11 +71,11 @@ public class GameClient implements Game {
 					e.printStackTrace();
 				}
 			}
-		});
+		}).start();
 	}
 
 	public void quit(final String username) {
-		executor.execute(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -93,19 +88,18 @@ public class GameClient implements Game {
 					e.printStackTrace();
 				}
 			}
-		});
+		}).start();
 	}
 
 	public void join(final String username, final Player player) {
-		Log.i(TAG, "Executing join");
-		executor.execute(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				localPlayer = player;
 
 				// handle game requests
 				try {
-					executor.submit(new PlayerConnectionHandler(localPlayer, commChan));
+					new Thread(new PlayerConnectionHandler(username, localPlayer, commChan)).start();
 				}
 				catch (IOException e) {
 					e.printStackTrace();
@@ -123,7 +117,7 @@ public class GameClient implements Game {
 					e.printStackTrace();
 				}
 			}
-		});
+		}).start();
 	}
 
 	public void start() {
@@ -139,7 +133,7 @@ public class GameClient implements Game {
 	}
 
 	public void onDestroy() {
-		executor.execute(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -149,10 +143,7 @@ public class GameClient implements Game {
 					// Stream already closed
 				}
 			}
-		});
-
-		// Shutdown other threads
-		executor.shutdownNow();
+		}).start();
 
 		Log.i(TAG, "OnDestroy was successful");
 	}

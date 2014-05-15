@@ -26,6 +26,10 @@ public class PlayerProxy implements Player {
 		this.controllerProxy = new ControllableProxy(in, out);
 	}
 
+	public void setNextActionName(String action) {
+		controllerProxy.setNextActionName(action);
+	}
+
 	@Override
 	public void update(final String msg) {
 		try {

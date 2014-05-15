@@ -1,7 +1,6 @@
 package com.cmov.bomberman.model.net;
 
 import android.util.Log;
-import com.cmov.bomberman.model.Game;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -19,18 +18,18 @@ public class GameConnectionHandler implements Runnable {
 		put("pause", new PauseCommand());
 		put("unpause", new UnpauseCommand());
 		put("quit", new QuitCommand());
+		put("setNextActionName", new SetNextActionNameCommand());
 	}};
 
-	private final Game game;
+	private final GameServer game;
 	private final CommunicationChannel commChan;
 
-	public GameConnectionHandler(Game game, CommunicationChannel commChan) throws IOException {
+	public GameConnectionHandler(GameServer game, CommunicationChannel commChan) throws IOException {
 		this.game = game;
 		this.commChan = commChan;
-
-
 	}
 
+	@Override
 	public void run() {
 		Log.i(TAG, "Handling a game connection");
 
@@ -43,7 +42,9 @@ public class GameConnectionHandler implements Runnable {
 				Log.i(TAG, "Received command: " + commandType);
 
 				GameCommand command = commandList.get(commandType);
-				command.execute(game, in, out);
+				if (command != null) {
+					command.execute(game, in, out);
+				}
 			}
 		}
 		catch (SocketException e) {

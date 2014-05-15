@@ -22,14 +22,14 @@ public class PlayerConnectionHandler implements Runnable {
 		put("handleEvent", new HandleEventCommand());
 	}};
 
+	private final String username;
 	private final Player player;
 	private final CommunicationChannel commChan;
 
-	public PlayerConnectionHandler(Player player, CommunicationChannel commChan) throws IOException {
+	public PlayerConnectionHandler(String username, Player player, CommunicationChannel commChan) throws IOException {
+		this.username = username;
 		this.player = player;
 		this.commChan = commChan;
-
-
 	}
 
 	public void run() {
@@ -44,7 +44,7 @@ public class PlayerConnectionHandler implements Runnable {
 				Log.i(TAG, "Received command: " + commandType);
 
 				PlayerCommand command = commandList.get(commandType);
-				command.execute(player, in, out);
+				command.execute(username, player, in, out);
 			}
 		}
 		catch (SocketException e) {

@@ -11,29 +11,29 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class GameServer implements Game {
 	private static final int GAME_SERVER_PORT = 10001;
 
 	private final String TAG = getClass().getSimpleName();
+	private final Map<String, PlayerProxy> playerProxies;
 
 	private Game game;
-	private ExecutorService executor;
 	private SimWifiP2pSocketServer serverSocket;
 	private List<CommunicationChannel> commChannels;
 
 	public GameServer(int level) {
 		game = new GameImpl(level);
-		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		playerProxies = new TreeMap<String, PlayerProxy>();
 		commChannels = new LinkedList<CommunicationChannel>();
 
 		acceptPlayers();
 	}
 
 	private void acceptPlayers() {
-		executor.execute(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -42,18 +42,17 @@ public class GameServer implements Game {
 						final SimWifiP2pSocket clientSocket = serverSocket.accept();
 						final CommunicationChannel commChan = new CommunicationChannel(clientSocket);
 
+						Log.i(TAG, "Found a client");
 						commChannels.add(commChan);
-						executor.submit(new GameConnectionHandler(GameServer.this, commChan));
+						new Thread(new GameConnectionHandler(GameServer.this, commChan)).start();
 					}
-				}
-				catch (SocketException e) {
+				} catch (SocketException e) {
 					// Socket was closed
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-		});
+		}).start();
 	}
 
 	/**
@@ -102,6 +101,17 @@ public class GameServer implements Game {
 		// Nothing to do here
 	}
 
+	public void setNextActionName(String username, String action) {
+		if (playerProxies.containsKey(username)) {
+			PlayerProxy proxy = playerProxies.get(username);
+			proxy.setNextActionName(action);
+		}
+	}
+
+	public void addProxy(String username, PlayerProxy proxy) {
+		playerProxies.put(username, proxy);
+	}
+
 	public void onDestroy() {
 		// Stop accepting new requests
 		try {
@@ -119,9 +129,6 @@ public class GameServer implements Game {
 				// Socket already closed
 			}
 		}
-
-		// Shutdown other threads
-		executor.shutdownNow();
 
 		Log.i(TAG, "OnDestroy was successful");
 	}

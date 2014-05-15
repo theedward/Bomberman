@@ -10,10 +10,19 @@ import java.io.ObjectOutputStream;
 public class ControllableProxy implements Algorithm {
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
+	private String nextActionName;
 
 	public ControllableProxy(final ObjectInputStream in, final ObjectOutputStream out) {
 		this.in = in;
 		this.out = out;
+	}
+
+	public void setNextActionName(String action) {
+		nextActionName = action;
+
+		synchronized (this) {
+			this.notify();
+		}
 	}
 
 	@Override
@@ -21,7 +30,16 @@ public class ControllableProxy implements Algorithm {
 		try {
 			out.writeUTF("getNextActionName");
 			out.flush();
-			return in.readUTF();
+
+			// Waits for the setNextActionName
+			synchronized (this) {
+				try {
+					this.wait();
+					return nextActionName;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();

@@ -286,12 +286,12 @@ public final class GameImpl implements Game {
 	 * Calls Player#update with the new state.
 	 */
 	private void updatePlayers() {
-		// Get all the character positions
-		final StringWriter msg = new StringWriter();
-		final JsonWriter writer = new JsonWriter(msg);
-
 		// Update every player with the character positions
 		for (Map.Entry<String, Player> entry : players.entrySet()) {
+			// Get all the character positions
+			final StringWriter msg = new StringWriter();
+			final JsonWriter writer = new JsonWriter(msg);
+
 			try {
 				writer.setIndent("  ");
 				writer.beginObject();

@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class UnpauseCommand implements GameCommand {
+public class SetNextActionNameCommand implements GameCommand {
 	@Override
 	public void execute(final GameServer game, final ObjectInputStream in, final ObjectOutputStream out) {
 		try {
 			String username = in.readUTF();
-			game.unpause(username);
-		}
-		catch (IOException e) {
+			String action = in.readUTF();
+			game.setNextActionName(username, action);
+		} catch (IOException e){
 			e.printStackTrace();
 		}
 	}

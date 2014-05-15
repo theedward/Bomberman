@@ -11,7 +11,7 @@ import java.util.LinkedList;
 public class OnGameStartCommand implements PlayerCommand {
 	@Override
 	@SuppressWarnings("unchecked")
-	public void execute(final Player player, final ObjectInputStream in, final ObjectOutputStream out) {
+	public void execute(final String username, final Player player, final ObjectInputStream in, final ObjectOutputStream out) {
 		try {
 			int level = in.readInt();
 			LinkedList<Position> wallPositions = (LinkedList<Position>) in.readObject();

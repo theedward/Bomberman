@@ -6,7 +6,6 @@ import com.cmov.bomberman.model.Player;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,10 +18,8 @@ public class GameClient implements Game {
 
 	private final String TAG = getClass().getSimpleName();
 
-	private SimWifiP2pSocket gameSocket;
-	private ObjectInputStream gameInputStream;
-	private ObjectOutputStream gameOutputStream;
 	private ExecutorService executor;
+	private CommunicationChannel commChan;
 
 	private Player localPlayer;
 
@@ -35,7 +32,8 @@ public class GameClient implements Game {
 		// keeps trying to connect to the server until it successfully connects
 		while (true) {
 			try {
-				gameSocket = new SimWifiP2pSocket(hostname, GAME_SERVER_PORT);
+				SimWifiP2pSocket gameSocket = new SimWifiP2pSocket(hostname, GAME_SERVER_PORT);
+				this.commChan = new CommunicationChannel(gameSocket);
 				break;
 			}
 			catch (IOException e) {
@@ -43,24 +41,8 @@ public class GameClient implements Game {
 				Log.e(TAG, "Failed to join the game server");
 			}
 		}
-	}
 
-	private void handleGameRequests(String username, final SimWifiP2pSocket gameSocket) throws IOException {
-		ObjectOutputStream out = new ObjectOutputStream(gameSocket.getOutputStream());
-
-		// Send identification to server
-		identifyToServer(username, out);
-
-		// Set streams for later use
-		this.gameInputStream = new ObjectInputStream(gameSocket.getInputStream());
-		this.gameOutputStream = out;
-
-		executor.submit(new PlayerConnectionHandler(localPlayer, this.gameInputStream, this.gameOutputStream));
-	}
-
-	private void identifyToServer(String username, ObjectOutputStream out) throws IOException {
-		out.writeUTF(username);
-		out.flush();
+		Log.i(TAG, "Successfully joined the game server");
 	}
 
 	public void pause(final String username) {
@@ -68,9 +50,10 @@ public class GameClient implements Game {
 			@Override
 			public void run() {
 				try {
-					gameOutputStream.writeUTF("pause");
-					gameOutputStream.writeUTF(username);
-					gameOutputStream.flush();
+					ObjectOutputStream out = commChan.getOut();
+					out.writeUTF("pause");
+					out.writeUTF(username);
+					out.flush();
 				}
 				catch (IOException e) {
 					e.printStackTrace();
@@ -84,9 +67,10 @@ public class GameClient implements Game {
 			@Override
 			public void run() {
 				try {
-					gameOutputStream.writeUTF("unpause");
-					gameOutputStream.writeUTF(username);
-					gameOutputStream.flush();
+					ObjectOutputStream out = commChan.getOut();
+					out.writeUTF("unpause");
+					out.writeUTF(username);
+					out.flush();
 				}
 				catch (IOException e) {
 					e.printStackTrace();
@@ -100,9 +84,10 @@ public class GameClient implements Game {
 			@Override
 			public void run() {
 				try {
-					gameOutputStream.writeUTF("quit");
-					gameOutputStream.writeUTF(username);
-					gameOutputStream.flush();
+					ObjectOutputStream out = commChan.getOut();
+					out.writeUTF("quit");
+					out.writeUTF(username);
+					out.flush();
 				}
 				catch (IOException e) {
 					e.printStackTrace();
@@ -112,6 +97,7 @@ public class GameClient implements Game {
 	}
 
 	public void join(final String username, final Player player) {
+		Log.i(TAG, "Executing join");
 		executor.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -119,16 +105,18 @@ public class GameClient implements Game {
 
 				// handle game requests
 				try {
-					handleGameRequests(username, GameClient.this.gameSocket);
+					executor.submit(new PlayerConnectionHandler(localPlayer, commChan));
 				}
 				catch (IOException e) {
 					e.printStackTrace();
 				}
 
 				try {
-					gameOutputStream.writeUTF("join");
-					gameOutputStream.writeUTF(username);
-					gameOutputStream.flush();
+					ObjectOutputStream out = commChan.getOut();
+					out.writeUTF("join");
+					out.writeUTF(username);
+					out.flush();
+
 					Log.i(TAG, "Sent the join message");
 				}
 				catch (IOException e) {
@@ -155,8 +143,7 @@ public class GameClient implements Game {
 			@Override
 			public void run() {
 				try {
-					gameInputStream.close();
-					gameOutputStream.close();
+					commChan.close();
 				}
 				catch (IOException e) {
 					// Stream already closed
@@ -167,6 +154,6 @@ public class GameClient implements Game {
 		// Shutdown other threads
 		executor.shutdownNow();
 
-		System.out.println("GameClient#onDestroy() was successful");
+		Log.i(TAG, "OnDestroy was successful");
 	}
 }

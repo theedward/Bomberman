@@ -23,21 +23,26 @@ public class PlayerConnectionHandler implements Runnable {
 	}};
 
 	private final Player player;
-	private final ObjectInputStream in;
-	private final ObjectOutputStream out;
+	private final CommunicationChannel commChan;
 
-	public PlayerConnectionHandler(Player player, ObjectInputStream in, ObjectOutputStream out) {
+	public PlayerConnectionHandler(Player player, CommunicationChannel commChan) throws IOException {
 		this.player = player;
-		this.in = in;
-		this.out = out;
+		this.commChan = commChan;
+
+
 	}
 
 	public void run() {
 		Log.i(TAG, "Handling a player connection");
+
 		try {
 			while (true) {
+				ObjectOutputStream out = commChan.getOut();
+				ObjectInputStream in = commChan.getIn();
 				String commandType = in.readUTF();
+
 				Log.i(TAG, "Received command: " + commandType);
+
 				PlayerCommand command = commandList.get(commandType);
 				command.execute(player, in, out);
 			}

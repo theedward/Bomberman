@@ -266,7 +266,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 
 	private void unpauseGame() {
 		if (game != null) {
-			game.unpause();
+			game.unpause(username);
 		} else {
 			Log.e(TAG, "Can't unpause an uninitialized game");
 		}

@@ -296,6 +296,7 @@ public final class GameImpl implements Game {
 				writer.setIndent("  ");
 				writer.beginObject();
 
+				createAgentIdMsg(writer, entry.getKey());
 				createScoreMsg(writer, entry.getKey());
 				createTimeMsg(writer);
 				createNumPlayersMsg(writer);
@@ -311,6 +312,11 @@ public final class GameImpl implements Game {
 
 			entry.getValue().update(msg.toString());
 		}
+	}
+
+	private void createAgentIdMsg(final JsonWriter wr, final String username) throws IOException {
+		final Bomberman playerAgent = playersAgent.get(username);
+		wr.name("AgentId").value(playerAgent.getId());
 	}
 
 	private void createScoreMsg(final JsonWriter wr, final String username) throws IOException {

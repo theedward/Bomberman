@@ -20,6 +20,7 @@ public class PlayerImpl implements Player {
 	/**
 	 * Information to be shown in the views
 	 */
+	private int agentId;
 	private int score;
 	private int timeLeft;
 	private int numPlayers;
@@ -41,7 +42,6 @@ public class PlayerImpl implements Player {
 	/**
 	 * This method is called when the game starts.
 	 * It initializes the map with all the walls
-	 * TODO: can also be used to tell the player which player he is.
 	 *
 	 * @param wallPositions the position of every wall
 	 */
@@ -83,7 +83,9 @@ public class PlayerImpl implements Player {
 			while (rd.hasNext()) {
 				String name = rd.nextName();
 				if (name != null) {
-					if (name.equals("Score")) {
+					if (name.equals("AgentId")) {
+						parseAgentId(rd);
+					} else if (name.equals("Score")) {
 						parseScore(rd);
 					} else if (name.equals("TimeLeft")) {
 						parseTimeLeft(rd);
@@ -102,6 +104,8 @@ public class PlayerImpl implements Player {
 			Log.e(TAG, "Error while parsing the message");
 		}
 	}
+
+	private void parseAgentId(final JsonReader rd) throws IOException { this.agentId = rd.nextInt(); }
 
 	private void parseScore(final JsonReader rd) throws IOException {
 		this.score = rd.nextInt();
@@ -182,7 +186,7 @@ public class PlayerImpl implements Player {
 								 rangeLeft,
 								 rangeUp, rangeDown, isDestroyed);
 		} else {
-			screen.createDrawing(type, drawingId, pos, rangeRight, rangeLeft, rangeUp, rangeDown);
+			screen.createDrawing(drawingId == agentId, type, drawingId, pos, rangeRight, rangeLeft, rangeUp, rangeDown);
 		}
 	}
 

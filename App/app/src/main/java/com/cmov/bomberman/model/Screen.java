@@ -54,13 +54,13 @@ public class Screen {
 		}
 	}
 
-	public void createDrawing(String type, int id, Position pos, int rangeRight, int rangeLeft, int rangeUp, int rangeDown) {
+	public void createDrawing(boolean isMine, String type, int id, Position pos, int rangeRight, int rangeLeft, int rangeUp, int rangeDown) {
 		final int initialStep = 0;
 		final String initialAction = "";
 
 		// create object and insert
 		if (type.equals("Bomberman")) {
-			drawings.put(id, new BombermanDrawing(pos, initialStep, initialAction));
+			drawings.put(id, new BombermanDrawing(isMine, pos, initialStep, initialAction));
 		} else if (type.equals("Robot")) {
 			drawings.put(id, new RobotDrawing(pos, initialStep, initialAction));
 		} else if (type.equals("Obstacle")) {

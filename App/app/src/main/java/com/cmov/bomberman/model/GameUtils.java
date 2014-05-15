@@ -275,6 +275,32 @@ public class GameUtils {
 	}
 
 	/**
+	 * Reads the bomberman sprite from the resource file.
+	 * The order in which the bitmaps are in the array is:
+	 * (Down, Left, Up, Right, PowerUp?, Destroyed)
+	 *
+	 * @return the bomberman img for each possible action (there are 6 different actions) and for
+	 * each step (there are 3 steps)
+	 */
+	public Bitmap[][] readOtherBombermanSprite() {
+		Bitmap bombermanSprite = BitmapFactory
+				.decodeResource(context.getResources(), R.drawable.bomberman_bomberman_sheet_black);
+		final int numActions = 6;
+		final int numSteps = 3;
+
+		Bitmap[][] bombermanImg = new Bitmap[numActions][numSteps];
+		final int distanceBetweenActions = 2;
+		final int distanceBetweenSteps = 2;
+		for (int actionIdx = 0; actionIdx < numActions; actionIdx++) {
+			for (int stepIdx = 0; stepIdx < numSteps; stepIdx++) {
+				bombermanImg[actionIdx][stepIdx] = getBitmap(bombermanSprite, 1 + distanceBetweenSteps * stepIdx,
+															 1 + distanceBetweenActions * actionIdx);
+			}
+		}
+		return bombermanImg;
+	}
+
+	/**
 	 * Reads the obstacle sprite from the resource file.
 	 *
 	 * @return the obstacle img for each step (there are 7 steps)

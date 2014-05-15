@@ -10,14 +10,19 @@ import com.cmov.bomberman.model.agent.MovableAgent;
 
 public class BombermanDrawing extends Drawing {
 	private static Bitmap[][] sprite;
+	private static Bitmap[][] otherSprite;
 
-	public BombermanDrawing(final Position position, final int step, final String currentAction) {
+	private final boolean isMine;
+
+	public BombermanDrawing(final boolean isMine, final Position position, final int step, final String currentAction) {
 		super(position);
 		this.setStep(step);
 		this.setCurrentAction(currentAction);
+		this.isMine = isMine;
 
 		if (sprite == null) {
 			sprite = GameUtils.getInstance().readBombermanSprite();
+			otherSprite = GameUtils.getInstance().readOtherBombermanSprite();
 		}
 	}
 
@@ -52,6 +57,11 @@ public class BombermanDrawing extends Drawing {
 			spriteIndex = getSpriteByAction(getLastAction());
 			drawStep = this.getLastStep();
 		}
-		canvas.drawBitmap(sprite[spriteIndex][drawStep], x, y, null);
+
+		if (isMine) {
+			canvas.drawBitmap(sprite[spriteIndex][drawStep], x, y, null);
+		} else {
+			canvas.drawBitmap(otherSprite[spriteIndex][drawStep], x, y, null);
+		}
 	}
 }

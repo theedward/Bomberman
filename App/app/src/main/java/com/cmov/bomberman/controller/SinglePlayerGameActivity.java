@@ -9,10 +9,7 @@ import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -160,6 +157,49 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 		this.gameView.setScreen(screen);
 		this.player = new PlayerImpl(playerController, screen);
 		this.player.setPlayerActionListener(this);
+	}
+
+	@Override
+	public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				playerController.keyPressed('L');
+				return true;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				playerController.keyPressed('R');
+				return true;
+			case KeyEvent.KEYCODE_DPAD_UP:
+				playerController.keyPressed('U');
+				return true;
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				playerController.keyPressed('D');
+				return true;
+			case KeyEvent.KEYCODE_B:
+				playerController.keyPressed('B');
+				return true;
+			case KeyEvent.KEYCODE_P:
+				pressedPause(null);
+				return true;
+			case KeyEvent.KEYCODE_Q:
+				pressedQuit(null);
+				return true;
+			default:
+				return super.onKeyUp(keyCode, event);
+		}
+	}
+
+	@Override
+	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+			case KeyEvent.KEYCODE_DPAD_UP:
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+					playerController.keyPressed(' ');
+				return true;
+			default:
+				return super.onKeyUp(keyCode, event);
+		}
 	}
 
 	@Override

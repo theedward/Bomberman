@@ -89,6 +89,8 @@ public class GameClient implements Game {
 				}
 			}
 		}).start();
+
+		onDestroy();
 	}
 
 	public void join(final String username, final Player player) {
@@ -121,14 +123,6 @@ public class GameClient implements Game {
 	}
 
 	public void start() {
-		// Nothing to do here
-	}
-
-	public void pause() {
-		// Nothing to do here
-	}
-
-	public void unpause() {
 		// Nothing to do here
 	}
 

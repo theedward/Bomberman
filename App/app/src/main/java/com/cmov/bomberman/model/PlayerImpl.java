@@ -25,10 +25,12 @@ public class PlayerImpl implements Player {
 	private int timeLeft;
 	private int numPlayers;
 	private boolean isDead;
+	private boolean alertDeathOnce;
 
 	public PlayerImpl(Controllable controller, Screen screen) {
 		this.controller = controller;
 		this.screen = screen;
+		this.alertDeathOnce = true;
 	}
 
 	public void setPlayerActionListener(PlayerActionListener listener) {
@@ -212,8 +214,9 @@ public class PlayerImpl implements Player {
 			actionListener.onTimeChange(this.timeLeft);
 			actionListener.onNumPlayersChange(this.numPlayers);
 
-			if (isDead) {
+			if (isDead && alertDeathOnce) {
 				actionListener.onDeath();
+				alertDeathOnce = false;
 			}
 		}
 	}

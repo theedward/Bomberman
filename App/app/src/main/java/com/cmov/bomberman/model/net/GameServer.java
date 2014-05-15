@@ -83,6 +83,7 @@ public class GameServer implements Game {
 	 */
 	public void quit(final String username) {
 		game.quit(username);
+		onDestroy();
 	}
 
 	public void join(final String username, Player player) {
@@ -91,14 +92,6 @@ public class GameServer implements Game {
 
 	public void start() {
 		game.start();
-	}
-
-	public void pause() {
-		// Nothing to do here
-	}
-
-	public void unpause() {
-		// Nothing to do here
 	}
 
 	public void setNextActionName(String username, String action) {

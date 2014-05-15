@@ -13,7 +13,6 @@ import java.util.*;
 
 /**
  * This is where all the game will be processed.
- * TODO remove synchronized and put smaller region locks
  */
 public final class GameImpl implements Game {
 	private final String TAG = this.getClass().getSimpleName();
@@ -22,9 +21,9 @@ public final class GameImpl implements Game {
 	private final Map<String, Player> players;
 	private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
+	private final State gameState;
 	private final int bombermanIds[];
 	private final Position bombermanPos[];
-	private final State gameState;
 	private final GameConfiguration gameConfiguration;
 
 	private boolean started;
@@ -146,13 +145,11 @@ public final class GameImpl implements Game {
 		}
 	}
 
-	@Override
-	public void pause() {
+	private void pause() {
 		isPaused = true;
 	}
 
-	@Override
-	public void unpause() {
+	private void unpause() {
 		isPaused = false;
 		synchronized (this) {
 			notify();
@@ -196,7 +193,7 @@ public final class GameImpl implements Game {
 	 * @param username the player's username
 	 */
 	public synchronized void quit(String username) {
-		// TODO
+
 	}
 
 	/**

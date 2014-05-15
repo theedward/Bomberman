@@ -185,6 +185,8 @@ public final class GameImpl implements Game {
 		playersOnPause.remove(username);
 		players.put(username, p);
 
+        if (players.size() == 1)
+            unpause();
 		gameState.unpauseAgent(playersAgent.get(username));
 	}
 

@@ -193,6 +193,14 @@ public final class GameImpl implements Game {
 	 * @param username the player's username
 	 */
 	public synchronized void quit(String username) {
+        if (players.containsKey(username))
+            players.remove(username);
+        if (playersOnPause.containsKey(username))
+            playersOnPause.remove(username);
+        if (playersAgent.containsKey(username)) {
+            gameState.destroyAgent(playersAgent.get(username));
+            playersAgent.remove(username);
+        }
 
 	}
 

@@ -267,11 +267,11 @@ public final class GameImpl implements Game {
 		// Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
 		gameState.playAll(dt);
-		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
+//		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
 
 		final long timeBeforeUpdate = System.currentTimeMillis();
 		updatePlayers();
-		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
+//		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
 		// remove agents after update
 		gameState.removeDestroyedAgents();

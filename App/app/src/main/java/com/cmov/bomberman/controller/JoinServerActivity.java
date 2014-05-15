@@ -57,7 +57,9 @@ public class JoinServerActivity extends Activity implements OnWifiP2pState {
 
     public void joinServer(final View view) {
         if (groupOwner != null) {
-			Toast.makeText(this, "JOINING GAME CUARALHO", Toast.LENGTH_SHORT).show();
+			String text = "Joining to client: " + groupOwner.deviceName + " ip: " + groupOwner.getVirtIp() + " port: " + groupOwner.getVirtPort();
+			Log.i(TAG, text);
+			Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 
 			// jump to the game activity
             Intent intent = new Intent(JoinServerActivity.this, MultiPlayerGameActivity.class);

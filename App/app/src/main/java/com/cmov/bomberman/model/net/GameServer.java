@@ -67,7 +67,7 @@ public class GameServer implements Game {
 		clientInputStream.put(username, in);
 		clientOutputStream.put(username, out);
 
-		executor.submit(new GameConnectionHandler(GameServer.this, in, out));
+		executor.submit(new GameConnectionHandler(this, in, out));
 	}
 
 	private String parseIdentification(ObjectInputStream in) throws IOException {

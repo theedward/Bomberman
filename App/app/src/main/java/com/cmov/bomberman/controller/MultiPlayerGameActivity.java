@@ -168,33 +168,20 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 
 
 		if (isServer) {
-			AsyncTask task = new GameServerAsyncTask().execute(level);
-			try {
-				game = (Game) task.get();
-			} catch (InterruptedException e) {
-				return;
-			} catch (ExecutionException e) {
-				return;
-			}
-
-			game.join(username, player);
+				game = new GameServer(level);
+				game.join(username, player);
 		} else {
 			AsyncTask task = new GameClientAsyncTask().execute(hostname);
 			try {
 				game = (Game) task.get();
+				game.join(username, player);
 			} catch (InterruptedException e) {
 				// Empty on purpose
 			} catch (ExecutionException e) {
 				// Empty on purpose
 			}
 		}
-	}
 
-	private class GameServerAsyncTask extends AsyncTask<Integer, Void, Game> {
-		@Override
-		protected Game doInBackground(final Integer... params) {
-			return new GameServer(params[0]);
-		}
 	}
 
 	private class GameClientAsyncTask extends AsyncTask<String, Void, Game> {
@@ -266,8 +253,6 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 	private void unpauseGame() {
 		if (game != null && gamePaused) {
 			game.unpause(username);
-		} else {
-			Log.e(TAG, "Can't unpause an uninitialized game");
 		}
 
 		gamePaused = false;

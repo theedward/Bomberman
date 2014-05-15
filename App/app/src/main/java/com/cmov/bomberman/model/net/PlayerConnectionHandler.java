@@ -1,5 +1,6 @@
 package com.cmov.bomberman.model.net;
 
+import android.util.Log;
 import com.cmov.bomberman.model.Player;
 
 import java.io.EOFException;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerConnectionHandler implements Runnable {
+	private final String TAG = getClass().getSimpleName();
+
 	private final Map<String, PlayerCommand> commandList = new HashMap<String, PlayerCommand>() {{
 		put("update", new UpdateCommand());
 		put("onGameStart", new OnGameStartCommand());
@@ -30,9 +33,11 @@ public class PlayerConnectionHandler implements Runnable {
 	}
 
 	public void run() {
+		Log.i(TAG, "Handling a player connection");
 		try {
 			while (true) {
 				String commandType = in.readUTF();
+				Log.i(TAG, "Received command: " + commandType);
 				PlayerCommand command = commandList.get(commandType);
 				command.execute(player, in, out);
 			}

@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.*;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.util.Log;
 import android.widget.Toast;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
@@ -49,8 +48,6 @@ public class P2pApplication extends Application implements OnWifiP2pState {
 		super.onCreate();
 
 		instance = this;
-
-		Log.i(TAG, "onCreate...");
 
 		// initialize the WDSim API
 		SimWifiP2pSocketManager.Init(getApplicationContext());

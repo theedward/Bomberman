@@ -11,6 +11,9 @@ import java.io.ObjectOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Only starts receiving updates after it has performed join.
+ */
 public class GameClient implements Game {
 	private static final int GAME_SERVER_PORT = 10001;
 
@@ -26,21 +29,18 @@ public class GameClient implements Game {
 	/**
 	 * Client constructor
 	 */
-	public GameClient(String hostname) {
+	public GameClient(final String hostname) {
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-		// read server host
+		// keeps trying to connect to the server until it successfully connects
 		while (true) {
 			try {
-				// connect to the server
 				gameSocket = new SimWifiP2pSocket(hostname, GAME_SERVER_PORT);
-				Log.i(TAG, "Successfully joined the game server");
 				break;
 			}
 			catch (IOException e) {
 				// Server is still not available
 				Log.e(TAG, "Failed to join the game server");
-				Log.e(TAG, e.getMessage());
 			}
 		}
 	}
@@ -64,57 +64,78 @@ public class GameClient implements Game {
 	}
 
 	public void pause(final String username) {
-		try {
-			gameOutputStream.writeUTF("pause");
-			gameOutputStream.writeUTF(username);
-			gameOutputStream.flush();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					gameOutputStream.writeUTF("pause");
+					gameOutputStream.writeUTF(username);
+					gameOutputStream.flush();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public void unpause(final String username) {
-		try {
-			gameOutputStream.writeUTF("unpause");
-			gameOutputStream.writeUTF(username);
-			gameOutputStream.flush();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					gameOutputStream.writeUTF("unpause");
+					gameOutputStream.writeUTF(username);
+					gameOutputStream.flush();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public void quit(final String username) {
-		try {
-			gameOutputStream.writeUTF("quit");
-			gameOutputStream.writeUTF(username);
-			gameOutputStream.flush();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					gameOutputStream.writeUTF("quit");
+					gameOutputStream.writeUTF(username);
+					gameOutputStream.flush();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public void join(final String username, final Player player) {
-		localPlayer = player;
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				localPlayer = player;
 
-		// handle game requests
-		try {
-			handleGameRequests(username, this.gameSocket);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+				// handle game requests
+				try {
+					handleGameRequests(username, GameClient.this.gameSocket);
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
 
-		try {
-			gameOutputStream.writeUTF("join");
-			gameOutputStream.writeUTF(username);
-			gameOutputStream.flush();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+				try {
+					gameOutputStream.writeUTF("join");
+					gameOutputStream.writeUTF(username);
+					gameOutputStream.flush();
+					Log.i(TAG, "Sent the join message");
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public void start() {
@@ -130,13 +151,18 @@ public class GameClient implements Game {
 	}
 
 	public void onDestroy() {
-		try {
-			gameInputStream.close();
-			gameOutputStream.close();
-		}
-		catch (IOException e) {
-			// Stream already closed
-		}
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					gameInputStream.close();
+					gameOutputStream.close();
+				}
+				catch (IOException e) {
+					// Stream already closed
+				}
+			}
+		});
 
 		// Shutdown other threads
 		executor.shutdownNow();

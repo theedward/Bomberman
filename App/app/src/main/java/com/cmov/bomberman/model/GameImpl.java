@@ -22,9 +22,9 @@ public final class GameImpl implements Game {
 	private final Map<String, Player> players;
 	private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
+    private final State gameState;
 	private final int bombermanIds[];
 	private final Position bombermanPos[];
-	private final State gameState;
 	private final GameConfiguration gameConfiguration;
 
 	private boolean started;
@@ -196,7 +196,15 @@ public final class GameImpl implements Game {
 	 * @param username the player's username
 	 */
 	public synchronized void quit(String username) {
-		// TODO
+        if (players.containsKey(username))
+            players.remove(username);
+        if (playersOnPause.containsKey(username))
+            playersOnPause.remove(username);
+        if (playersAgent.containsKey(username)) {
+            gameState.destroyAgent(playersAgent.get(username));
+            playersAgent.remove(username);
+        }
+
 	}
 
 	/**

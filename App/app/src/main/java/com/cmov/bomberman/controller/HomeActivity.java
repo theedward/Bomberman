@@ -24,8 +24,6 @@ public class HomeActivity extends Activity {
 		multiPlayer.setTypeface(blockFonts);
 		bomberman.setTypeface(blockFonts);
 		about.setTypeface(blockFonts);
-
-
 	}
 
 	public void newGame(View v) {
@@ -34,9 +32,7 @@ public class HomeActivity extends Activity {
 	}
 
 	public void multiplayerGame(View v) {
-		//        Intent intent = new Intent(HomeActivity.this, MultiplayerActivity.class);
-		//        startActivity(intent);
-		Intent intent = new Intent(HomeActivity.this, SimpleChatActivity.class);
+		Intent intent = new Intent(HomeActivity.this, MultiplayerActivity.class);
 		startActivity(intent);
 	}
 

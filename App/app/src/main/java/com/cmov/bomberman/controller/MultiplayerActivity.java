@@ -9,11 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.cmov.bomberman.R;
 
 public class MultiplayerActivity extends Activity {
-
     private String username;
     private boolean isServer;
 
@@ -21,18 +19,20 @@ public class MultiplayerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multiplayer);
+
         Typeface blockFonts = Typeface.createFromAsset(getAssets(), "Inconsolata-Regular.ttf");
+
         TextView bombermanTxt = (TextView) findViewById(R.id.bombermantxt);
         TextView usernameTxt = (TextView) findViewById(R.id.txtUsername);
         TextView choseUsername = (TextView) findViewById(R.id.choose_username);
         Button createServer = (Button) findViewById(R.id.create_server_button);
         Button joinServer = (Button) findViewById(R.id.join_server_button);
+
         bombermanTxt.setTypeface(blockFonts);
         usernameTxt.setTypeface(blockFonts);
         choseUsername.setTypeface(blockFonts);
         createServer.setTypeface(blockFonts);
         joinServer.setTypeface(blockFonts);
-
     }
 
     public void joinServer(View v) {
@@ -68,7 +68,7 @@ public class MultiplayerActivity extends Activity {
 
     private boolean obtainUsername() {
         final EditText usernameBox = (EditText)findViewById(R.id.txtUsername);
-        if (usernameBox.getText() != null) {
+        if (usernameBox.getText() != null && usernameBox.getText().length() != 0) {
             username = usernameBox.getText().toString();
             return true;
         } else {

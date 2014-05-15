@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.cmov.bomberman.model.net.GameClient;
 import com.cmov.bomberman.model.net.GameServer;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
 	private final String TAG = this.getClass().getSimpleName();
@@ -164,11 +166,41 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 		this.player = new PlayerImpl(playerController, screen);
 		this.player.setPlayerActionListener(this);
 
+
 		if (isServer) {
-			this.game = new GameServer(level);
+			AsyncTask task = new GameServerAsyncTask().execute(level);
+			try {
+				game = (Game) task.get();
+			} catch (InterruptedException e) {
+				return;
+			} catch (ExecutionException e) {
+				return;
+			}
+
 			game.join(username, player);
 		} else {
-			this.game = new GameClient(hostname);
+			AsyncTask task = new GameClientAsyncTask().execute(hostname);
+			try {
+				game = (Game) task.get();
+			} catch (InterruptedException e) {
+				// Empty on purpose
+			} catch (ExecutionException e) {
+				// Empty on purpose
+			}
+		}
+	}
+
+	private class GameServerAsyncTask extends AsyncTask<Integer, Void, Game> {
+		@Override
+		protected Game doInBackground(final Integer... params) {
+			return new GameServer(params[0]);
+		}
+	}
+
+	private class GameClientAsyncTask extends AsyncTask<String, Void, Game> {
+		@Override
+		protected Game doInBackground(final String... params) {
+			return new GameClient(params[0]);
 		}
 	}
 
@@ -198,9 +230,6 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 	public void surfaceChanged(final SurfaceHolder surfaceHolder, final int i, final int i2, final int i3) {
 		if (game != null) {
 			if (!gameStarted) {
-				// Before starting the game, let the player join it
-				game.join(username, player);
-
 				// Start game
 				new Thread(new Runnable() {
 					@Override
@@ -235,7 +264,7 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 	}
 
 	private void unpauseGame() {
-		if (game != null) {
+		if (game != null && gamePaused) {
 			game.unpause(username);
 		} else {
 			Log.e(TAG, "Can't unpause an uninitialized game");
@@ -245,7 +274,7 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 	}
 
 	private void pauseGame() {
-		if (game != null) {
+		if (game != null && !gamePaused) {
 			game.pause(username);
 		} else {
 			Log.e(TAG, "Can't pause an uninitialized game");

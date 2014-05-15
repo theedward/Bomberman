@@ -92,7 +92,6 @@ public class SimWifiP2pInfo implements Serializable {
 	}
 
 	public void print() {
-		
 		Log.d(TAG, "DeviceName:" + mDeviceName);
 		Log.d(TAG, "IsClient:" + ((mIsClient)?"Yes":"No"));
 		Log.d(TAG, "HomeGroups:" + mHomeGroups.toString());
@@ -117,7 +116,7 @@ public class SimWifiP2pInfo implements Serializable {
 
 	public boolean askIsClient() {
 		
-		return mIsGo;
+		return mIsClient;
 	}
 
 	public boolean askHasGroupMembershipChanged(SimWifiP2pInfo update) {
@@ -169,4 +168,8 @@ public class SimWifiP2pInfo implements Serializable {
 	/*
 	 * If necessary, extend with additional introspection methods...
 	 */
+
+	public TreeMap<String, ArrayList<String>> getExistingGroups() {
+		return mGroups;
+	}
 }

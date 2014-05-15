@@ -17,6 +17,7 @@ import java.util.*;
  */
 public final class GameImpl implements Game {
 	private final String TAG = this.getClass().getSimpleName();
+
 	private final int level;
 	private final Map<String, Player> players;
 	private final Map<String, Player> playersOnPause;
@@ -25,6 +26,8 @@ public final class GameImpl implements Game {
 	private final Position bombermanPos[];
 	private final State gameState;
 	private final GameConfiguration gameConfiguration;
+
+	private boolean started;
 	private boolean isPaused;
 	private List<Position> wallPositions;
 	/**
@@ -215,6 +218,11 @@ public final class GameImpl implements Game {
 												gameConfiguration.getPointOpponent());
 			gameState.addAgent(bomberman);
 			playersAgent.put(username, bomberman);
+
+			// Happens when the player joins during the game
+			if (started) {
+				player.onGameStart(level, wallPositions);
+			}
 		}
 	}
 
@@ -225,6 +233,7 @@ public final class GameImpl implements Game {
 	 */
 	private synchronized void begin() {
 		Log.i(TAG, "Game has started");
+		this.started = true;
 
 		for (Player p : players.values()) {
 			p.onGameStart(level, wallPositions);

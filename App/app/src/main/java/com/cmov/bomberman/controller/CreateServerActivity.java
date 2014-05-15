@@ -2,83 +2,109 @@ package com.cmov.bomberman.controller;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 import com.cmov.bomberman.R;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
-public class CreateServerActivity extends Activity {
+public class CreateServerActivity extends Activity implements OnWifiP2pState {
+    private final String TAG = getClass().getSimpleName();
+	private final int LEVEL_DEFAULT = 1;
+	// TODO support more levels
 
-    final String TAG = getClass().getSimpleName();
+	private int level = LEVEL_DEFAULT;
+	private String username;
+	private SimWifiP2pDeviceList deviceList;
 
-    String myUsername;
-    Handler handler = new Handler();
-    List<String> myPlayers = new LinkedList<String>();
-    ListView listView;
-    int clickedItemPosition;
-    Runnable updateMyPlayersThread;
+	private Button startButton;
+	private ArrayAdapter<String> devicesAdapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_server);
-        Typeface blockFonts = Typeface.createFromAsset(getAssets(), "Inconsolata-Regular.ttf");
-        TextView bombermanTxt = (TextView) findViewById(R.id.bombermantxt);
-        TextView playersGame = (TextView) findViewById(R.id.playersGame);
-        Button startGameBtn = (Button) findViewById(R.id.startgamebtn);
-        bombermanTxt.setTypeface(blockFonts);
-        playersGame.setTypeface(blockFonts);
-        startGameBtn.setTypeface(blockFonts);
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_create_server);
 
-        Bundle extras = getIntent().getExtras();
-        myUsername = (String) extras.get("username");
+		devicesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
 
-        ApplicationP2PInfo.createP2PGroup(TAG);
-        updateMyPlayersThread = new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    ApplicationP2PInfo.requestP2PGroupInfo();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            onUpdateListView(ApplicationP2PInfo.groupClientsNames);
-                        }
-                    });
-                }
+		startButton = (Button) findViewById(R.id.startgamebtn);
+		startButton.setEnabled(false);
 
-            }
-        };
-    }
+		ListView playersList = (ListView) findViewById(R.id.playersList);
+		playersList.setAdapter(devicesAdapter);
 
-    // metodo que mostra a minha lista de players
-    public void onUpdateListView(List<String> list) {
-        myPlayers = list;
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			username = extras.getString("username");
+		} else {
+			Log.e(TAG, "Bundle is null");
+		}
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, myPlayers);
+		P2pApplication.getInstance().setOnWifiP2pState(this);
+	}
 
-        // Assign adapter to ListView
-        listView.setAdapter(adapter);
-        //adapter.notifyDataSetChanged();
-    }
+	public void startGame(final View view) {
+		Toast.makeText(this, "STARTING GAME CUARALHO", Toast.LENGTH_SHORT).show();
 
-    // metodo starGame para botao
-    public void onClickStartGame() {
+		// jump to the game activity
+		Intent intent = new Intent(this, MultiPlayerGameActivity.class);
+		intent.putExtra("isServer", true);
+		intent.putExtra("username", username);
+		intent.putExtra("level", level);
+		startActivity(intent);
+	}
 
-        ApplicationP2PInfo.connectToP2POwner(TAG);
+	@Override
+	public void onWifiOn() {
+		// Empty on purpose
+		Toast.makeText(this, "WiFi Direct enabled", Toast.LENGTH_SHORT).show();
+	}
 
-        Intent intent = new Intent(CreateServerActivity.this, MultiPlayerGameActivity.class);
-        intent.putExtra("isServer", true);
-        intent.putExtra("username", myUsername);
-        intent.putExtra("hostname", ApplicationP2PInfo.groupOwnerAddress.getHostAddress());
-        intent.putExtra("level", 1);
-        startActivity(intent);
-    }
+	@Override
+	public void onWifiOff() {
+		Toast.makeText(this, "WiFi Direct disabled", Toast.LENGTH_SHORT).show();
+
+		startButton.setEnabled(false);
+	}
+
+	@Override
+	public void onPeersChanged() {
+		// Empty on purpose
+		Toast.makeText(this, "Peer list changed", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onNetworkMembershipChanged(final SimWifiP2pInfo info) {
+		Toast.makeText(this, "Network membership changed", Toast.LENGTH_SHORT).show();
+
+		// get group info (device names and corresponding sockets)
+		P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
+			@Override
+			public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
+				deviceList = devices;
+			}
+		});
+
+		// update list view
+		devicesAdapter.clear();
+		devicesAdapter.addAll(info.getDevicesInNetwork());
+		devicesAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onGroupOwnershipChanged(final SimWifiP2pInfo info) {
+		Toast.makeText(this, "Group ownership changed", Toast.LENGTH_SHORT).show();
+
+		if (info.askIsGO()) {
+			startButton.setEnabled(true);
+		}
+	}
 }

@@ -62,12 +62,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
         android:textColor="@android:color/white"
         android:textSize="30dp"
         android:text="Join Server"
         android:id="@+id/joinServer"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="joinServer" />
 
 </RelativeLayout>

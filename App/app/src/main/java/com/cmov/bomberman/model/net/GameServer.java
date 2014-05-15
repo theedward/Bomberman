@@ -1,14 +1,15 @@
 package com.cmov.bomberman.model.net;
 
+import android.util.Log;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.GameImpl;
 import com.cmov.bomberman.model.Player;
+import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
+import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketServer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.SocketException;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,24 +17,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GameServer implements Game {
-	private static final int GAME_SERVER_PORT = 8888;
+	private static final int GAME_SERVER_PORT = 10001;
 
+	private final String TAG = getClass().getSimpleName();
 	private final Map<String, ObjectInputStream> clientInputStream = new TreeMap<String, ObjectInputStream>();
 	private final Map<String, ObjectOutputStream> clientOutputStream = new TreeMap<String, ObjectOutputStream>();
 
 	private Game game;
 	private ExecutorService executor;
-	private ServerSocket serverSocket;
+	private SimWifiP2pSocketServer serverSocket;
 
 	public GameServer(int level) {
 		game = new GameImpl(level);
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-		executor.submit(new Runnable() {
-			@Override
-			public void run() {
-				acceptPlayers();
-			}
-		});
+
+		acceptPlayers();
 	}
 
 	private void acceptPlayers() {
@@ -41,9 +39,9 @@ public class GameServer implements Game {
 			@Override
 			public void run() {
 				try {
-					serverSocket = new ServerSocket(GAME_SERVER_PORT);
+					serverSocket = new SimWifiP2pSocketServer(GAME_SERVER_PORT);
 					while (true) {
-						final Socket clientSocket = serverSocket.accept();
+						final SimWifiP2pSocket clientSocket = serverSocket.accept();
 						handlePlayerRequests(clientSocket);
 					}
 				}
@@ -57,11 +55,13 @@ public class GameServer implements Game {
 		});
 	}
 
-	private void handlePlayerRequests(final Socket clientSocket) throws IOException {
+	private void handlePlayerRequests(final SimWifiP2pSocket clientSocket) throws IOException {
 		ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 
 		// Get the username
 		String username = parseIdentification(in);
+
+		Log.i(TAG, "Communicating with " + username);
 
 		ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 		clientInputStream.put(username, in);

@@ -3,17 +3,15 @@ package com.cmov.bomberman.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
 import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
 
 public class SimWifiP2pBroadcastReceiver extends BroadcastReceiver {
+	private P2pApplication mApplication;
 
-	private SimpleChatActivity mActivity;
-
-	public SimWifiP2pBroadcastReceiver(SimpleChatActivity activity) {
+	public SimWifiP2pBroadcastReceiver(final P2pApplication mApplication) {
 		super();
-		this.mActivity = activity;
+		this.mApplication = mApplication;
 	}
 
 	@Override
@@ -27,37 +25,27 @@ public class SimWifiP2pBroadcastReceiver extends BroadcastReceiver {
 
 			int state = intent.getIntExtra(SimWifiP2pBroadcast.EXTRA_WIFI_STATE, -1);
 			if (state == SimWifiP2pBroadcast.WIFI_P2P_STATE_ENABLED) {
-				Toast.makeText(mActivity, "WiFi Direct enabled",
-							   Toast.LENGTH_SHORT).show();
+				mApplication.onWifiOn();
 			} else {
-				Toast.makeText(mActivity, "WiFi Direct disabled",
-							   Toast.LENGTH_SHORT).show();
+				mApplication.onWifiOff();
 			}
-
 		} else if (SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-
 			// Request available peers from the wifi p2p manager. This is an
 			// asynchronous call and the calling activity is notified with a
 			// callback on PeerListListener.onPeersAvailable()
-
-			Toast.makeText(mActivity, "Peer list changed",
-						   Toast.LENGTH_SHORT).show();
-
+			mApplication.onPeersChanged();
 		} else if (SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION.equals(action)) {
-
 			SimWifiP2pInfo ginfo = (SimWifiP2pInfo) intent.getSerializableExtra(
 					SimWifiP2pBroadcast.EXTRA_GROUP_INFO);
 			ginfo.print();
-			Toast.makeText(mActivity, "Network membership changed",
-						   Toast.LENGTH_SHORT).show();
 
+			mApplication.onNetworkMembershipChanged(ginfo);
 		} else if (SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION.equals(action)) {
-
 			SimWifiP2pInfo ginfo = (SimWifiP2pInfo) intent.getSerializableExtra(
 					SimWifiP2pBroadcast.EXTRA_GROUP_INFO);
 			ginfo.print();
-			Toast.makeText(mActivity, "Group ownership changed",
-						   Toast.LENGTH_SHORT).show();
+
+			mApplication.onGroupOwnershipChanged(ginfo);
 		}
 	}
 }

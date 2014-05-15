@@ -110,8 +110,16 @@ public final class GameImpl implements Game {
 	}
 
 	public void start() {
-		this.begin();
+		Log.i(TAG, "Game has started");
 
+		begin();
+		gameLoop();
+		end();
+
+		Log.i(TAG, "Game has ended");
+	}
+
+	private void gameLoop() {
 		final int timeSleep = 1000 / gameConfiguration.getNumUpdatesPerSecond();
 		long lastTime = System.currentTimeMillis();
 		while (!hasFinished()) {
@@ -126,7 +134,7 @@ public final class GameImpl implements Game {
 					}
 				}
 
-				Log.v(TAG, "Updating...");
+				Log.v(TAG, "Update:");
 
 				final long now = System.currentTimeMillis();
 				update(now - lastTime);
@@ -184,6 +192,7 @@ public final class GameImpl implements Game {
 
         if (players.size() == 1)
             unpause();
+
 		gameState.unpauseAgent(playersAgent.get(username));
 	}
 
@@ -195,13 +204,20 @@ public final class GameImpl implements Game {
 	public synchronized void quit(String username) {
         if (players.containsKey(username))
             players.remove(username);
-        if (playersOnPause.containsKey(username))
-            playersOnPause.remove(username);
+
+        if (playersOnPause.containsKey(username)) {
+			playersOnPause.remove(username);
+		}
+
         if (playersAgent.containsKey(username)) {
             gameState.destroyAgent(playersAgent.get(username));
             playersAgent.remove(username);
         }
 
+		if (players.isEmpty() && playersOnPause.isEmpty()) {
+			Log.i(TAG, "Unlocking possible paused game");
+			notify();
+		}
 	}
 
 	/**
@@ -242,9 +258,7 @@ public final class GameImpl implements Game {
 	 * Starts the game loop
 	 */
 	private synchronized void begin() {
-		Log.i(TAG, "Game has started");
 		this.started = true;
-
 		for (Player p : players.values()) {
 			p.onGameStart(level, wallPositions);
 		}
@@ -254,8 +268,6 @@ public final class GameImpl implements Game {
 	 * Calls method onGameEnd of every player. It sends the final scores of the game.
 	 */
 	private synchronized void end() {
-		Log.i(TAG, "Game has ended.");
-
 		for (Player p : players.values()) {
 			p.onGameEnd(checkScores());
 		}
@@ -266,8 +278,8 @@ public final class GameImpl implements Game {
 		for (Map.Entry<String, Bomberman> entry : playersAgent.entrySet()) {
 			scores.put(entry.getKey(), entry.getValue().getScore());
 		}
-		return scores;
 
+		return scores;
 	}
 
 	/**
@@ -277,19 +289,15 @@ public final class GameImpl implements Game {
 		// Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
 		gameState.playAll(dt);
-//		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
+		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
 
 		final long timeBeforeUpdate = System.currentTimeMillis();
 		updatePlayers();
-//		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
+		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
 		// remove agents after update
 		gameState.removeDestroyedAgents();
 		numRoundsLeft--;
-
-		if (this.hasFinished()) {
-			this.end();
-		}
 	}
 
 	/**

@@ -79,6 +79,7 @@ public class State {
 		Position pos = object.getPosition();
 		this.map[pos.yToDiscrete()][pos.xToDiscrete()] = DrawingType.EMPTY.toChar();
 		this.agents.remove(object);
+		this.pausedCharacters.remove(object);
 	}
 
 	/**

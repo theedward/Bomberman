@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ControllableProxy implements Algorithm {
+	private final String TAG = getClass().getSimpleName();
+
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private String nextActionName;
@@ -17,28 +19,23 @@ public class ControllableProxy implements Algorithm {
 		this.out = out;
 	}
 
-	public void setNextActionName(String action) {
+	public synchronized void setNextActionName(String action) {
 		nextActionName = action;
-
-		synchronized (this) {
-			this.notify();
-		}
+		this.notify();
 	}
 
 	@Override
-	public String getNextActionName() {
+	public synchronized String getNextActionName() {
 		try {
 			out.writeUTF("getNextActionName");
 			out.flush();
 
 			// Waits for the setNextActionName
-			synchronized (this) {
-				try {
-					this.wait();
-					return nextActionName;
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			try {
+				this.wait();
+				return nextActionName;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 		catch (IOException e) {
@@ -48,7 +45,7 @@ public class ControllableProxy implements Algorithm {
 	}
 
 	@Override
-	public void handleEvent(final Event event) {
+	public synchronized void handleEvent(final Event event) {
 		try {
 			out.writeUTF("handleEvent");
 			out.writeUTF(event.name());

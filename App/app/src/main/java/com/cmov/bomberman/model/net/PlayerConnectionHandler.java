@@ -26,7 +26,7 @@ public class PlayerConnectionHandler implements Runnable {
 	private final Player player;
 	private final CommunicationChannel commChan;
 
-	public PlayerConnectionHandler(String username, Player player, CommunicationChannel commChan) throws IOException {
+	public PlayerConnectionHandler(String username, Player player, CommunicationChannel commChan) {
 		this.username = username;
 		this.player = player;
 		this.commChan = commChan;
@@ -41,7 +41,7 @@ public class PlayerConnectionHandler implements Runnable {
 				ObjectInputStream in = commChan.getIn();
 				String commandType = in.readUTF();
 
-				Log.i(TAG, "Received command: " + commandType);
+				Log.v(TAG, "Received command: " + commandType);
 
 				PlayerCommand command = commandList.get(commandType);
 				command.execute(username, player, in, out);

@@ -21,9 +21,11 @@ public final class GameImpl implements Game {
 	private final Map<String, Player> players;
 	private final Map<String, Player> playersOnPause;
 	private final Map<String, Bomberman> playersAgent;
+	private final Map<String, Integer> playerAgentIdx;
 	private final State gameState;
 	private final int bombermanIds[];
 	private final Position bombermanPos[];
+	private final boolean bombermanUsed[];
 	private final GameConfiguration gameConfiguration;
 
 	private boolean started;
@@ -46,6 +48,7 @@ public final class GameImpl implements Game {
 		this.players = new HashMap<String, Player>();
 		this.playersOnPause = new HashMap<String, Player>();
 		this.playersAgent = new HashMap<String, Bomberman>();
+		this.playerAgentIdx = new HashMap<String, Integer>();
 		this.gameState = new State();
 
 		// Read data from files
@@ -55,6 +58,7 @@ public final class GameImpl implements Game {
 
 		this.bombermanPos = new Position[gameConfiguration.getMaxNumPlayers()];
 		this.bombermanIds = new int[gameConfiguration.getMaxNumPlayers()];
+		this.bombermanUsed = new boolean[gameConfiguration.getMaxNumPlayers()];
 		populateGame();
 	}
 
@@ -214,6 +218,12 @@ public final class GameImpl implements Game {
             playersAgent.remove(username);
         }
 
+		if (playerAgentIdx.containsKey(username)) {
+			int idx = playerAgentIdx.get(username);
+			bombermanUsed[idx] = false;
+			playerAgentIdx.remove(username);
+		}
+
 		if (players.isEmpty() && playersOnPause.isEmpty()) {
 			Log.i(TAG, "Unlocking possible paused game");
 			notify();
@@ -229,13 +239,22 @@ public final class GameImpl implements Game {
 		if (playersAgent.size() < gameConfiguration.getMaxNumPlayers()) {
 			players.put(username, player);
 
-			// The next bomberman to be chosen
-			final int bombermanId = playersAgent.size();
-			final int agentId = bombermanIds[bombermanId];
-			final Position pos = bombermanPos[bombermanId];
+			// Selecting the bomberman to be used by this player
+			int bombermanIdx = 0;
+			for (int i = 0; i < bombermanUsed.length; i++) {
+				if (!bombermanUsed[i]) {
+					bombermanIdx = i;
+					bombermanUsed[i] = true;
+					playerAgentIdx.put(username, i);
+					break;
+				}
+			}
+
+			final int bombermanId = bombermanIds[bombermanIdx];
+			final Position pos = bombermanPos[bombermanIdx];
 			final char[][] map = gameState.getMap();
 			map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
-			Bomberman bomberman = new Bomberman(pos, player.getController(), agentId, gameConfiguration.getbSpeed(),
+			Bomberman bomberman = new Bomberman(pos, player.getController(), bombermanId, gameConfiguration.getbSpeed(),
 												gameConfiguration.getExplosionDuration(),
 												gameConfiguration.getTimeBetweenBombs(),
 												gameConfiguration.getExplosionRange(),
@@ -289,11 +308,11 @@ public final class GameImpl implements Game {
 		// Update the state
 		final long timeBeforePlay = System.currentTimeMillis();
 		gameState.playAll(dt);
-		Log.i(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
+		Log.v(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
 
 		final long timeBeforeUpdate = System.currentTimeMillis();
 		updatePlayers();
-		Log.i(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
+		Log.v(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
 		// remove agents after update
 		gameState.removeDestroyedAgents();

@@ -18,8 +18,8 @@ public class GameServer implements Game {
 	private static final int GAME_SERVER_PORT = 10001;
 
 	private final String TAG = getClass().getSimpleName();
-	private final Map<String, PlayerProxy> playerProxies;
 
+	private final Map<String, PlayerProxy> playerProxies;
 	private Game game;
 	private SimWifiP2pSocketServer serverSocket;
 	private List<CommunicationChannel> commChannels;
@@ -38,18 +38,28 @@ public class GameServer implements Game {
 			public void run() {
 				try {
 					serverSocket = new SimWifiP2pSocketServer(GAME_SERVER_PORT);
-					while (true) {
-						final SimWifiP2pSocket clientSocket = serverSocket.accept();
-						final CommunicationChannel commChan = new CommunicationChannel(clientSocket);
-
-						Log.i(TAG, "Found a client");
-						commChannels.add(commChan);
-						new Thread(new GameConnectionHandler(GameServer.this, commChan)).start();
-					}
-				} catch (SocketException e) {
-					// Socket was closed
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.e(TAG, "Can't create server socket");
+					return;
+				}
+
+				SimWifiP2pSocket clientSocket;
+				CommunicationChannel commChan;
+				while (true) {
+					try {
+						clientSocket = serverSocket.accept();
+						commChan = new CommunicationChannel(clientSocket);
+					} catch (SocketException e) {
+						Log.e(TAG, "Server socket is closed");
+						return;
+					} catch (IOException e) {
+						Log.e(TAG, "Error creating streams around client socket");
+						continue;
+					}
+
+					Log.i(TAG, "Found a client");
+					commChannels.add(commChan);
+					new Thread(new GameConnectionHandler(GameServer.this, commChan)).start();
 				}
 			}
 		}).start();
@@ -83,7 +93,16 @@ public class GameServer implements Game {
 	 */
 	public void quit(final String username) {
 		game.quit(username);
-		onDestroy();
+
+		if (playerProxies.containsKey(username)) {
+			PlayerProxy proxy = playerProxies.get(username);
+			proxy.onDestroy();
+			playerProxies.remove(username);
+		} else {
+			// TODO send game state to another client
+			// local player is quitting
+			onDestroy();
+		}
 	}
 
 	public void join(final String username, Player player) {

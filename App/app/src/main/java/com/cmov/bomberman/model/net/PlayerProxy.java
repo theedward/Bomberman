@@ -1,5 +1,6 @@
 package com.cmov.bomberman.model.net;
 
+import android.util.Log;
 import com.cmov.bomberman.model.Player;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.agent.Algorithm;
@@ -16,6 +17,8 @@ import java.util.TreeMap;
  * The only thing this class does is send all the requests through the output stream.
  */
 public class PlayerProxy implements Player {
+	private final String TAG = getClass().getSimpleName();
+
 	private ControllableProxy controllerProxy;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
@@ -31,19 +34,19 @@ public class PlayerProxy implements Player {
 	}
 
 	@Override
-	public void update(final String msg) {
+	public synchronized void update(final String msg) {
 		try {
 			out.writeUTF("update");
 			out.writeUTF(msg);
 			out.flush();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, "Error sending update to client");
 		}
 	}
 
 	@Override
-	public void onGameStart(final int level, List<Position> wallPositions) {
+	public synchronized void onGameStart(final int level, List<Position> wallPositions) {
 		try {
 			out.writeUTF("onGameStart");
 			out.writeInt(level);
@@ -51,24 +54,31 @@ public class PlayerProxy implements Player {
 			out.flush();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, "Error sending onGameStart to client");
 		}
 	}
 
 	@Override
-	public void onGameEnd(final Map<String, Integer> scores) {
+	public synchronized void onGameEnd(final Map<String, Integer> scores) {
 		try {
 			out.writeUTF("onGameEnd");
 			out.writeObject(new TreeMap<String, Integer>(scores));
 			out.flush();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, "Error sending onGameEnd to client");
 		}
 	}
 
 	@Override
-	public Algorithm getController() {
+	public synchronized Algorithm getController() {
 		return controllerProxy;
+	}
+
+	/**
+	 * Unlock all possible locks
+	 */
+	public synchronized void onDestroy() {
+		notifyAll();
 	}
 }

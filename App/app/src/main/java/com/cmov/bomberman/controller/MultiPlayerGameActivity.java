@@ -19,21 +19,14 @@ import com.cmov.bomberman.model.*;
 import com.cmov.bomberman.model.agent.Controllable;
 import com.cmov.bomberman.model.net.GameClient;
 import com.cmov.bomberman.model.net.GameServer;
-import com.cmov.bomberman.model.net.OnGameOwnerChangedListener;
-import com.cmov.bomberman.model.net.dto.GameDto;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pDevice;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
-import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener,
-																 OnWifiP2pState, OnGameOwnerChangedListener {
+public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
 	private final String TAG = this.getClass().getSimpleName();
 
+	private boolean isServer;
 	private boolean gamePaused;
 	private boolean gameStarted;
 	private Game game;
@@ -54,7 +47,6 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 		GameUtils.createInstance(getApplicationContext());
 
 		int level = 1;
-		boolean isServer = false;
 		String hostname = "";
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -172,23 +164,21 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 		this.player.setPlayerActionListener(this);
 
 		if (isServer) {
-				game = new GameServer(level);
-				game.join(username, player);
+			game = new GameServer(level);
+			game.join(username, player);
 		} else {
 			AsyncTask task = new GameClientAsyncTask().execute(hostname);
 			try {
-				GameClient gameClient = (GameClient) task.get();
-				gameClient.setOnGameOwnerChangedListener(this);
-				game = gameClient;
+				game = (GameClient) task.get();
 				game.join(username, player);
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
 				// Empty on purpose
-			} catch (ExecutionException e) {
+			}
+			catch (ExecutionException e) {
 				// Empty on purpose
 			}
 		}
-
-		P2pApplication.getInstance().setOnWifiP2pState(this);
 	}
 
 	@Override
@@ -234,13 +224,6 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 		}
 	}
 
-	private class GameClientAsyncTask extends AsyncTask<String, Void, GameClient> {
-		@Override
-		protected GameClient doInBackground(final String... params) {
-			return new GameClient(params[0]);
-		}
-	}
-
 	@Override
 	public void onBackPressed() {
 		pressedPause(null);
@@ -265,21 +248,28 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 
 	@Override
 	public void surfaceChanged(final SurfaceHolder surfaceHolder, final int i, final int i2, final int i3) {
-		if (game != null) {
-			if (!gameStarted) {
-				// Start game
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						game.start();
-					}
-				}).start();
+		if (isServer) {
+			if (game != null) {
+				if (!gameStarted) {
+					// Start game
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							game.start();
+						}
+					}).start();
 
-				gamePaused = false;
-				gameStarted = true;
+					gamePaused = false;
+					gameStarted = true;
+				}
+			} else {
+				Log.e(TAG, "Game is not initialized in surfaceChanged");
 			}
 		} else {
-			Log.e(TAG, "Game is not initialized in surfaceChanged");
+			// Notifies possible thread that is waiting for the canvas size to change
+			synchronized (this) {
+				notify();
+			}
 		}
 	}
 
@@ -386,6 +376,18 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 
 	@Override
 	public void onMapSizeChange(final int width, final int height) {
+		if (gameView.getWidth() == 0 || gameView.getHeight() == 0) {
+			// Wait for the screen to appear
+			synchronized (this) {
+				try {
+					wait();
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
 		final int imgSize = Math.min(gameView.getWidth() / width, gameView.getHeight() / height);
 		// Set values on GameUtils
 		GameUtils.getInstance().setImageSizeOnCanvas(imgSize, imgSize);
@@ -428,104 +430,11 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 		}
 	}
 
-	@Override
-	public void onWifiOn() {
-		// Empty on purpose
-	}
-
-	@Override
-	public void onWifiOff() {
-		// Empty on purpose
-	}
-
-	@Override
-	public void onPeersChanged() {
-		// Empty on purpose
-	}
-
-	@Override
-	public void onNetworkMembershipChanged(final SimWifiP2pInfo info) {
-		// Empty on purpose
-	}
-
-	@Override
-	public void onGroupOwnershipChanged(final SimWifiP2pInfo info) {
-		Log.i(TAG, "Group ownership changed");
-
-		if (info.askIsGO()) {
-			GameClient gameClient = (GameClient) game;
-			GameDto gameDto = gameClient.onGameOwner();
-			gameClient.onDestroy();
-
-			Log.i(TAG, "Got the game dto successfully");
-
-			game = new GameServer(gameDto);
-
-            // Start game
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    game.start();
-                }
-            }).start();
-
-            gamePaused = false;
-            gameStarted = true;
-
-			Log.i(TAG, "Created the new game server");
-		} else if (info.askIsClient()) {
-			// Give some time for the new game server to get the game state (gameDto)
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			// Contact other players that the server owner has changed
-			GameServer gameServer = (GameServer) game;
-			gameServer.notifyPlayersOwnerChanged();
-			gameServer.onDestroy();
-
-			Log.i(TAG, "notified the players that the owner has changed");
-
-			findAndConnectToNewOwner();
+	private class GameClientAsyncTask extends AsyncTask<String, Void, GameClient> {
+		@Override
+		protected GameClient doInBackground(final String... params) {
+			return new GameClient(params[0]);
 		}
-	}
-
-	@Override
-	public void onGameOwnerChange() {
-		findAndConnectToNewOwner();
-	}
-
-	private void findAndConnectToNewOwner() {
-		// Request the group info to obtain the server address
-		P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
-			@Override
-			public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
-				Map<String, ArrayList<String>> groups = groupInfo.getExistingGroups();
-				for (SimWifiP2pDevice device : devices.getDeviceList()) {
-					// if the device is the group owner and it's connectable, it's a valid choice
-					if (groups.containsKey(device.deviceName) && groupInfo.askIsConnectionPossible(device.deviceName)) {
-						String hostname = device.getVirtIp();
-						AsyncTask task = new GameClientAsyncTask().execute(hostname);
-						try {
-							GameClient gameClient = (GameClient) task.get();
-							gameClient.setOnGameOwnerChangedListener(MultiPlayerGameActivity.this);
-							game = gameClient;
-							game.join(username, player);
-						} catch (InterruptedException e) {
-							// Empty on purpose
-						} catch (ExecutionException e) {
-							// Empty on purpose
-						}
-
-						// Now it can proceed join the game.
-						final Button joinServer = (Button) findViewById(R.id.joinServer);
-						joinServer.setEnabled(true);
-					}
-				}
-			}
-		});
 	}
 }
 

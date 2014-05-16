@@ -37,9 +37,6 @@ public class GameImpl implements Game, Serializable {
 	 */
 	private int numRoundsLeft;
 
-	public GameImpl() {
-	}
-
 	/**
 	 * This constructor performs all the necessary steps to start the game right next.
 	 * However, the game would be without any player.
@@ -66,116 +63,12 @@ public class GameImpl implements Game, Serializable {
 		populateGame();
 	}
 
-    public int getLevel() {
-        return level;
-    }
-
-    public Map<String, Player> getPlayers() {
-        return players;
-    }
-
-    public Map<String, Player> getPlayersOnPause() {
-        return playersOnPause;
-    }
-
-    public Map<String, Bomberman> getPlayersAgent() {
-        return playersAgent;
-    }
-
-    public Map<String, Integer> getPlayerAgentIdx() {
-        return playerAgentIdx;
-    }
-
-    public State getGameState() {
-        return gameState;
-    }
-
-    public int[] getBombermanIds() {
-        return bombermanIds;
-    }
-
-    public Position[] getBombermanPos() {
-        return bombermanPos;
-    }
-
-    public boolean[] getBombermanUsed() {
-        return bombermanUsed;
-    }
-
-    public GameConfiguration getGameConfiguration() {
-        return gameConfiguration;
-    }
-
-    public boolean isStarted() {
-        return started;
-    }
-
-    public boolean isPaused() {
-        return isPaused;
-    }
-
-    public List<Position> getWallPositions() {
-        return wallPositions;
-    }
-
-    public int getNumRoundsLeft() {
-        return numRoundsLeft;
-    }
+	public int getLevel() {
+		return level;
+	}
 
 	public void setLevel(final int level) {
 		this.level = level;
-	}
-
-	public void setPlayers(final Map<String, Player> players) {
-		this.players = players;
-	}
-
-	public void setPlayersOnPause(final Map<String, Player> playersOnPause) {
-		this.playersOnPause = playersOnPause;
-	}
-
-	public void setPlayersAgent(final Map<String, Bomberman> playersAgent) {
-		this.playersAgent = playersAgent;
-	}
-
-	public void setPlayerAgentIdx(final Map<String, Integer> playerAgentIdx) {
-		this.playerAgentIdx = playerAgentIdx;
-	}
-
-	public void setGameState(final State gameState) {
-		this.gameState = gameState;
-	}
-
-	public void setBombermanIds(final int[] bombermanIds) {
-		this.bombermanIds = bombermanIds;
-	}
-
-	public void setBombermanPos(final Position[] bombermanPos) {
-		this.bombermanPos = bombermanPos;
-	}
-
-	public void setBombermanUsed(final boolean[] bombermanUsed) {
-		this.bombermanUsed = bombermanUsed;
-	}
-
-	public void setGameConfiguration(final GameConfiguration gameConfiguration) {
-		this.gameConfiguration = gameConfiguration;
-	}
-
-	public void setStarted(final boolean started) {
-		this.started = started;
-	}
-
-	public void setPaused(final boolean isPaused) {
-		this.isPaused = isPaused;
-	}
-
-	public void setWallPositions(final List<Position> wallPositions) {
-		this.wallPositions = wallPositions;
-	}
-
-	public void setNumRoundsLeft(final int numRoundsLeft) {
-		this.numRoundsLeft = numRoundsLeft;
 	}
 
 	/**
@@ -273,11 +166,13 @@ public class GameImpl implements Game, Serializable {
 		}
 	}
 
-	private void pause() {
+	@Override
+	public void pause() {
 		isPaused = true;
 	}
 
-	private void unpause() {
+	@Override
+	public void unpause() {
 		isPaused = false;
 		synchronized (this) {
 			notify();
@@ -294,8 +189,9 @@ public class GameImpl implements Game, Serializable {
 		playersOnPause.put(username, p);
 		players.remove(username);
 
-        if(players.size() == 0)
-            pause();
+		if (players.size() == 0) {
+			pause();
+		}
 
 		gameState.pauseAgent(playersAgent.get(username));
 	}
@@ -310,8 +206,9 @@ public class GameImpl implements Game, Serializable {
 		playersOnPause.remove(username);
 		players.put(username, p);
 
-        if (players.size() == 1)
-            unpause();
+		if (players.size() == 1) {
+			unpause();
+		}
 
 		gameState.unpauseAgent(playersAgent.get(username));
 	}
@@ -322,17 +219,18 @@ public class GameImpl implements Game, Serializable {
 	 * @param username the player's username
 	 */
 	public synchronized void quit(String username) {
-        if (players.containsKey(username))
-            players.remove(username);
+		if (players.containsKey(username)) {
+			players.remove(username);
+		}
 
-        if (playersOnPause.containsKey(username)) {
+		if (playersOnPause.containsKey(username)) {
 			playersOnPause.remove(username);
 		}
 
-        if (playersAgent.containsKey(username)) {
-            gameState.destroyAgent(playersAgent.get(username));
-            playersAgent.remove(username);
-        }
+		if (playersAgent.containsKey(username)) {
+			gameState.destroyAgent(playersAgent.get(username));
+			playersAgent.remove(username);
+		}
 
 		if (playerAgentIdx.containsKey(username)) {
 			int idx = playerAgentIdx.get(username);
@@ -371,7 +269,8 @@ public class GameImpl implements Game, Serializable {
 				Position pos = bombermanPos[bombermanIdx];
 				char[][] map = gameState.getMap();
 				map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
-				Bomberman bomberman = new Bomberman(pos, player.getController(), bombermanId, gameConfiguration.getbSpeed(),
+				Bomberman bomberman = new Bomberman(pos, player.getController(), bombermanId,
+													gameConfiguration.getbSpeed(),
 													gameConfiguration.getExplosionDuration(),
 													gameConfiguration.getTimeBetweenBombs(),
 													gameConfiguration.getExplosionRange(),

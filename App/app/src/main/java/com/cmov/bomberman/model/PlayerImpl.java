@@ -54,8 +54,6 @@ public class PlayerImpl implements Player {
 			actionListener.onMapSizeChange(config.getMapWidth(), config.getMapHeight());
 		}
 
-
-
 		for (Position pos : wallPositions) {
 			screen.createWallDrawing(pos);
 		}
@@ -210,7 +208,8 @@ public class PlayerImpl implements Player {
 								 rangeLeft,
 								 rangeUp, rangeDown, isDestroyed);
 		} else {
-			screen.createDrawing(drawingId == agentId, type, drawingId, pos, rangeRight, rangeLeft, rangeUp, rangeDown);
+			screen.createDrawing(drawingId == agentId, type, drawingId, pos, rangeRight, rangeLeft, rangeUp,
+								 rangeDown);
 		}
 
 		return drawingId;

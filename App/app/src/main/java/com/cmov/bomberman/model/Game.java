@@ -10,4 +10,8 @@ public interface Game {
 	void quit(String username);
 
 	void join(String username, Player player);
+
+	void pause();
+
+	void unpause();
 }

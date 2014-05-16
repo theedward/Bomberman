@@ -6,7 +6,6 @@ import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.agent.Algorithm;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,13 +19,11 @@ public class PlayerProxy implements Player {
 	private final String TAG = getClass().getSimpleName();
 
 	private ControllableProxy controllerProxy;
-	private ObjectInputStream in;
 	private ObjectOutputStream out;
 
-	public PlayerProxy(final ObjectInputStream in, final ObjectOutputStream out) {
-		this.in = in;
+	public PlayerProxy(final ObjectOutputStream out) {
 		this.out = out;
-		this.controllerProxy = new ControllableProxy(in, out);
+		this.controllerProxy = new ControllableProxy(out);
 	}
 
 	public void setNextActionName(String action) {

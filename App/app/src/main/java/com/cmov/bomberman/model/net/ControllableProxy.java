@@ -4,24 +4,16 @@ import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.agent.Algorithm;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ControllableProxy implements Algorithm {
 	private final String TAG = getClass().getSimpleName();
 
-	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private String nextActionName;
 
-	public ControllableProxy(final ObjectInputStream in, final ObjectOutputStream out) {
-		this.in = in;
+	public ControllableProxy(final ObjectOutputStream out) {
 		this.out = out;
-	}
-
-	public synchronized void setNextActionName(String action) {
-		nextActionName = action;
-		this.notify();
 	}
 
 	@Override
@@ -34,7 +26,8 @@ public class ControllableProxy implements Algorithm {
 			try {
 				this.wait();
 				return nextActionName;
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -42,6 +35,11 @@ public class ControllableProxy implements Algorithm {
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	public synchronized void setNextActionName(String action) {
+		nextActionName = action;
+		this.notify();
 	}
 
 	@Override

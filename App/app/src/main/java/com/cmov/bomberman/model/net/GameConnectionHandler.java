@@ -20,7 +20,6 @@ public class GameConnectionHandler implements Runnable {
 		put("unpause", new UnpauseCommand());
 		put("quit", new QuitCommand());
 		put("setNextActionName", new SetNextActionNameCommand());
-		put("getGameState", new GetGameStateCommand());
 	}};
 
 	private final GameServer game;

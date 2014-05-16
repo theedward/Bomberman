@@ -25,17 +25,12 @@ public class PlayerConnectionHandler implements Runnable {
 
 	private final String username;
 	private final Player player;
-	private final GameClient gameClient;
 	private final CommunicationChannel commChan;
 
-	public PlayerConnectionHandler(String username, Player player, GameClient gameClient, CommunicationChannel commChan) {
+	public PlayerConnectionHandler(String username, Player player, CommunicationChannel commChan) {
 		this.username = username;
 		this.player = player;
-		this.gameClient = gameClient;
 		this.commChan = commChan;
-
-		commandList.put("gameState", new GameStateCommand(gameClient));
-		commandList.put("groupOwnerChanged", new GroupOwnerChangedCommand(gameClient));
 	}
 
 	public void run() {

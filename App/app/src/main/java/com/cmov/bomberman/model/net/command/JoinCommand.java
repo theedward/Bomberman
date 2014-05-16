@@ -17,7 +17,7 @@ public class JoinCommand implements GameCommand {
 			String username = in.readUTF();
 			Log.i(TAG, username);
 
-			PlayerProxy proxy = new PlayerProxy(in, out);
+			PlayerProxy proxy = new PlayerProxy(out);
 			game.join(username, proxy);
 			game.addProxy(username, proxy);
 		}

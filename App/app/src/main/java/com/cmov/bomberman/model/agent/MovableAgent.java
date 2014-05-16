@@ -95,7 +95,7 @@ public abstract class MovableAgent extends Agent {
 						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
 							c == State.DrawingType.BOMB.toChar()) {
 							if (getType().equals("Bomberman")) {
-								Log.i(TAG, "Collided with a " + c);
+								Log.v(TAG, "Collided with a " + c);
 							}
 							// move right
 							curX = mapLeftX + 1 + Agent.WIDTH / 2;
@@ -112,7 +112,7 @@ public abstract class MovableAgent extends Agent {
 						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
 							c == State.DrawingType.BOMB.toChar()) {
 							if (getType().equals("Bomberman")) {
-								Log.i(TAG, "Collided with a " + c);
+								Log.v(TAG, "Collided with a " + c);
 							}
 							// move bottom
 							curY = mapTopY + 1 + Agent.HEIGHT / 2;
@@ -129,7 +129,7 @@ public abstract class MovableAgent extends Agent {
 						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
 							c == State.DrawingType.BOMB.toChar()) {
 							if (getType().equals("Bomberman")) {
-								Log.i(TAG, "Collided with a " + c);
+								Log.v(TAG, "Collided with a " + c);
 							}
 							// move left
 							curX = mapRightX - Agent.WIDTH / 2;
@@ -146,7 +146,7 @@ public abstract class MovableAgent extends Agent {
 						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
 							c == State.DrawingType.BOMB.toChar()) {
 							if (getType().equals("Bomberman")) {
-								Log.i(TAG, "Collided with a " + c);
+								Log.v(TAG, "Collided with a " + c);
 							}
 							// move bottom
 							curY = mapBottomY - Agent.HEIGHT / 2;

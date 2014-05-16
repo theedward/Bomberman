@@ -17,7 +17,7 @@ import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
 import java.util.ArrayList;
 
 public class CreateServerActivity extends Activity implements OnWifiP2pState {
-    private final String TAG = getClass().getSimpleName();
+	private final String TAG = getClass().getSimpleName();
 	private final int LEVEL_DEFAULT = 1;
 	// TODO support more levels
 
@@ -53,6 +53,12 @@ public class CreateServerActivity extends Activity implements OnWifiP2pState {
 
 		// Update group network if already exists
 		updateGroup();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		P2pApplication.getInstance().setOnWifiP2pState(null);
 	}
 
 	public void startGame(final View view) {

@@ -3,7 +3,6 @@ package com.cmov.bomberman.model.net;
 import android.util.Log;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.Player;
-import com.cmov.bomberman.model.net.dto.GameDto;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
 
 import java.io.IOException;
@@ -19,16 +18,11 @@ public class GameClient implements Game {
 
 	private Player localPlayer;
 	private CommunicationChannel commChan;
-	private GameDto gameDto;
-	private boolean becameOwner;
-	private OnGameOwnerChangedListener onGameOwnerChangedListener;
 
 	/**
 	 * Client constructor
 	 */
 	public GameClient(final String hostname) {
-		this.becameOwner = false;
-
 		// keeps trying to connect to the server until it successfully connects
 		while (true) {
 			try {
@@ -41,17 +35,14 @@ public class GameClient implements Game {
 				Log.e(TAG, "Failed to join the game server");
 				try {
 					Thread.sleep(1000);
-				} catch (InterruptedException ie) {
+				}
+				catch (InterruptedException ie) {
 					return;
 				}
 			}
 		}
 
 		Log.i(TAG, "Successfully joined the game server");
-	}
-
-	public void setOnGameOwnerChangedListener(final OnGameOwnerChangedListener listener) {
-		this.onGameOwnerChangedListener = listener;
 	}
 
 	@Override
@@ -118,15 +109,13 @@ public class GameClient implements Game {
 				localPlayer = player;
 
 				// handle game requests
-					new Thread(new PlayerConnectionHandler(username, localPlayer, GameClient.this,commChan)).start();
+				new Thread(new PlayerConnectionHandler(username, localPlayer, commChan)).start();
 
 				try {
 					ObjectOutputStream out = commChan.getOut();
 					out.writeUTF("join");
 					out.writeUTF(username);
 					out.flush();
-
-					Log.i(TAG, "Sent the join message");
 				}
 				catch (IOException e) {
 					e.printStackTrace();
@@ -137,6 +126,16 @@ public class GameClient implements Game {
 
 	@Override
 	public synchronized void start() {
+		// Nothing to do here
+	}
+
+	@Override
+	public void pause() {
+		// Nothing to do here
+	}
+
+	@Override
+	public void unpause() {
 		// Nothing to do here
 	}
 
@@ -154,43 +153,5 @@ public class GameClient implements Game {
 		}).start();
 
 		Log.i(TAG, "OnDestroy was successful");
-	}
-
-	/**
-	 * Called when this client becomes the owner of the game
-	 */
-	public synchronized GameDto onGameOwner() {
-		this.becameOwner = true;
-
-		// Get game state
-		try {
-			ObjectOutputStream out = commChan.getOut();
-			out.writeUTF("getGameState");
-			out.flush();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// Wait until the server replies with the set game state
-		try {
-			this.wait();
-		} catch (InterruptedException e) {
-			return null;
-		}
-
-		// Here the server has the dto, return it to the activity
-		return this.gameDto;
-	}
-
-	public void setGameDto(GameDto dto) {
-		this.gameDto = dto;
-	}
-
-	public void serverOwnerChanged() {
-		if (!this.becameOwner && onGameOwnerChangedListener != null) {
-			// alert listener
-			onGameOwnerChangedListener.onGameOwnerChange();
-		}
 	}
 }

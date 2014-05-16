@@ -7,6 +7,7 @@ import com.cmov.bomberman.model.agent.Controllable;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -122,14 +123,33 @@ public class PlayerImpl implements Player {
 	}
 
 	private void parseAgents(final JsonReader rd) throws IOException {
+		LinkedList<Integer> updatedAgentIds = new LinkedList<Integer>();
+
 		rd.beginArray();
 		while (rd.hasNext()) {
-			parseAgent(rd);
+			int updatedAgentId = parseAgent(rd);
+			updatedAgentIds.add(updatedAgentId);
 		}
 		rd.endArray();
+
+		// remove agents that were not updated
+		List<Integer> agentIds = screen.currentDrawingIds();
+		for (int agentId : agentIds) {
+			boolean wasUpdated = false;
+			for (int updatedId : updatedAgentIds) {
+				if (agentId == updatedId) {
+					wasUpdated = true;
+					break;
+				}
+			}
+
+			if (!wasUpdated) {
+				screen.removeDrawing(agentId);
+			}
+		}
 	}
 
-	private void parseAgent(final JsonReader rd) throws IOException {
+	private int parseAgent(final JsonReader rd) throws IOException {
 		Position pos = null;
 		int step = 0;
 		int lastStep = 0;
@@ -190,6 +210,8 @@ public class PlayerImpl implements Player {
 		} else {
 			screen.createDrawing(drawingId == agentId, type, drawingId, pos, rangeRight, rangeLeft, rangeUp, rangeDown);
 		}
+
+		return drawingId;
 	}
 
 	private void parseDeath(final JsonReader rd) throws IOException {

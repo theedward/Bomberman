@@ -79,6 +79,8 @@ public abstract class MovableAgent extends Agent {
 				final float dist = nMoves > 1 ? 1 : nMoves;
 				// handle collisions
 				final char[][] map = currentState.getMap();
+				final int mapHeight = map.length;
+				final int mapWidth = map.length > 0 ? map[0].length : 0;
 				final int mapX = Position.toDiscrete(curX);
 				final int mapY = Position.toDiscrete(curY);
 
@@ -88,14 +90,16 @@ public abstract class MovableAgent extends Agent {
 					final float leftX = curX - Agent.WIDTH / 2;
 					final int mapLeftX = Position.toDiscrete(leftX);
 
-					char c = map[mapY][mapLeftX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
-						c == State.DrawingType.BOMB.toChar()) {
-						if (getType().equals("Bomberman")) {
-							Log.i(TAG, "Collided with a " + c);
+					if (mapLeftX > -1) {
+						char c = map[mapY][mapLeftX];
+						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+							c == State.DrawingType.BOMB.toChar()) {
+							if (getType().equals("Bomberman")) {
+								Log.i(TAG, "Collided with a " + c);
+							}
+							// move right
+							curX = mapLeftX + 1 + Agent.WIDTH / 2;
 						}
-						// move right
-						curX = mapLeftX + 1 + Agent.WIDTH / 2;
 					}
 				} else if (action == Actions.MOVE_UP) {
 					// top corner
@@ -103,14 +107,16 @@ public abstract class MovableAgent extends Agent {
 					final float topY = curY - Agent.HEIGHT / 2;
 					final int mapTopY = Position.toDiscrete(topY);
 
-					char c = map[mapTopY][mapX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
-						c == State.DrawingType.BOMB.toChar()) {
-						if (getType().equals("Bomberman")) {
-							Log.i(TAG, "Collided with a " + c);
+					if (mapTopY > -1) {
+						char c = map[mapTopY][mapX];
+						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+							c == State.DrawingType.BOMB.toChar()) {
+							if (getType().equals("Bomberman")) {
+								Log.i(TAG, "Collided with a " + c);
+							}
+							// move bottom
+							curY = mapTopY + 1 + Agent.HEIGHT / 2;
 						}
-						// move bottom
-						curY = mapTopY + 1 + Agent.HEIGHT / 2;
 					}
 				} else if (action == Actions.MOVE_RIGHT) {
 					// right corner
@@ -118,30 +124,33 @@ public abstract class MovableAgent extends Agent {
 					final float rightX = curX + Agent.WIDTH / 2;
 					final int mapRightX = Position.toDiscrete(rightX);
 
-					char c = map[mapY][mapRightX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
-						c == State.DrawingType.BOMB.toChar()) {
-						if (getType().equals("Bomberman")) {
-							Log.i(TAG, "Collided with a " + c);
+					if (mapRightX < mapWidth) {
+						char c = map[mapY][mapRightX];
+						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+							c == State.DrawingType.BOMB.toChar()) {
+							if (getType().equals("Bomberman")) {
+								Log.i(TAG, "Collided with a " + c);
+							}
+							// move left
+							curX = mapRightX - Agent.WIDTH / 2;
 						}
-						// move left
-						curX = mapRightX - Agent.WIDTH / 2;
 					}
-
 				} else if (action == Actions.MOVE_DOWN) {
 					// bottom corner
 					curY += dist;
 					final float bottomY = curY + Agent.HEIGHT / 2;
 					final int mapBottomY = Position.toDiscrete(bottomY);
 
-					char c = map[mapBottomY][mapX];
-					if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
-						c == State.DrawingType.BOMB.toChar()) {
-						if (getType().equals("Bomberman")) {
-							Log.i(TAG, "Collided with a " + c);
+					if (mapBottomY < mapHeight) {
+						char c = map[mapBottomY][mapX];
+						if (c == State.DrawingType.WALL.toChar() || c == State.DrawingType.OBSTACLE.toChar() ||
+							c == State.DrawingType.BOMB.toChar()) {
+							if (getType().equals("Bomberman")) {
+								Log.i(TAG, "Collided with a " + c);
+							}
+							// move bottom
+							curY = mapBottomY - Agent.HEIGHT / 2;
 						}
-						// move bottom
-						curY = mapBottomY - Agent.HEIGHT / 2;
 					}
 				}
 

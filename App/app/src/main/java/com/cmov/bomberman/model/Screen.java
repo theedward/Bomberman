@@ -76,6 +76,19 @@ public class Screen {
 		wallDrawings.add(new WallDrawing(pos));
 	}
 
+	public void removeDrawing(int id) {
+		drawings.remove(id);
+	}
+
+	public List<Integer> currentDrawingIds() {
+	    LinkedList<Integer> drawingIds = new LinkedList<Integer>();
+		for (int i = 0; i < drawings.size(); i++) {
+			drawingIds.add(drawings.keyAt(i));
+		}
+
+		return drawingIds;
+	}
+
     /**
      * Draws the walls after the rest of the objects because when an explosion occurs,
      * it doesn't know what is in the other position.

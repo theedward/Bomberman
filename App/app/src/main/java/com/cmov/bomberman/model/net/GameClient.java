@@ -110,7 +110,7 @@ public class GameClient implements Game {
 				localPlayer = player;
 
 				// handle game requests
-					new Thread(new PlayerConnectionHandler(username, localPlayer, commChan)).start();
+					new Thread(new PlayerConnectionHandler(username, localPlayer, GameClient.this,commChan)).start();
 
 				try {
 					ObjectOutputStream out = commChan.getOut();

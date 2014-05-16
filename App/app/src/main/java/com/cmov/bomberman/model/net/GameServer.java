@@ -124,6 +124,7 @@ public class GameServer implements Game {
             playerProxies.remove(username);
         } else {
             // TODO send game state to another client
+            sendGame();
             // local player is quitting
             onDestroy();
         }

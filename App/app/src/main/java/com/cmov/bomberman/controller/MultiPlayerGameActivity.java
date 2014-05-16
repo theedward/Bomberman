@@ -448,8 +448,18 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 			// TODO create game server
 			GameClient gameClient = (GameClient) game;
 			GameDto gameDto = gameClient.onGameOwner();
-			GameServer gameServer = new GameServer(gameDto);
-			// TODO to continue
+			game = new GameServer(gameDto);
+
+            // Start game
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    game.start();
+                }
+            }).start();
+
+            gamePaused = false;
+            gameStarted = true;
 		} else if (info.askIsClient()) {
 			// Give some time for the new game server to get the game state (gameDto)
 			try {
@@ -468,6 +478,7 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 						if (groups.containsKey(device.deviceName) && groupInfo.askIsConnectionPossible(device.deviceName)) {
 							String hostname = device.getVirtIp();
 							game = new GameClient(hostname);
+                            game.join(username, player);
 
 							// Now it can proceed join the game.
 							final Button joinServer = (Button) findViewById(R.id.joinServer);

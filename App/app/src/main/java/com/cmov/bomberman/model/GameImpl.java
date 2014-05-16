@@ -38,7 +38,6 @@ public class GameImpl implements Game, Serializable {
 	private int numRoundsLeft;
 
 	public GameImpl() {
-		
 	}
 
 	/**

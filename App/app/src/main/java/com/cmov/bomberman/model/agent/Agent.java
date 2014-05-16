@@ -5,7 +5,9 @@ import com.cmov.bomberman.model.Event;
 import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 
-public abstract class Agent {
+import java.io.Serializable;
+
+public abstract class Agent implements Serializable{
 	public static final float WIDTH = 1f;
 	public static final float HEIGHT = 1f;
 

@@ -24,7 +24,7 @@ public class GameConnectionHandler implements Runnable {
 	private final GameServer game;
 	private final CommunicationChannel commChan;
 
-	public GameConnectionHandler(GameServer game, CommunicationChannel commChan) throws IOException {
+	public GameConnectionHandler(GameServer game, CommunicationChannel commChan) {
 		this.game = game;
 		this.commChan = commChan;
 	}
@@ -39,7 +39,7 @@ public class GameConnectionHandler implements Runnable {
 				ObjectInputStream in = commChan.getIn();
 				String commandType = in.readUTF();
 
-				Log.i(TAG, "Received command: " + commandType);
+				Log.v(TAG, "Received command: " + commandType);
 
 				GameCommand command = commandList.get(commandType);
 				if (command != null) {
@@ -49,11 +49,9 @@ public class GameConnectionHandler implements Runnable {
 		}
 		catch (SocketException e) {
 			// Socket was closed
-			e.printStackTrace();
 		}
 		catch (EOFException e) {
 			// Stream was closed
-			e.printStackTrace();
 		}
 		catch (IOException e) {
 			e.printStackTrace();

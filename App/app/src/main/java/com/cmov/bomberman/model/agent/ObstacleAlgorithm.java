@@ -2,7 +2,9 @@ package com.cmov.bomberman.model.agent;
 
 import com.cmov.bomberman.model.Event;
 
-public class ObstacleAlgorithm implements Algorithm {
+import java.io.Serializable;
+
+public class ObstacleAlgorithm implements Algorithm, Serializable {
 	private boolean destroyMode;
 
 	@Override

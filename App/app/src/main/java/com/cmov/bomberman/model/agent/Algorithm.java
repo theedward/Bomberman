@@ -6,7 +6,7 @@ import com.cmov.bomberman.model.Event;
  * This class allows to create algorithms or even to control any object that
  * depends on this interface.
  */
-public interface Algorithm {
+public interface Algorithm{
 	/**
 	 * @return the next action name
 	 */

@@ -48,7 +48,11 @@ public class CreateServerActivity extends Activity implements OnWifiP2pState {
 			Log.e(TAG, "Bundle is null");
 		}
 
+		// Listen to network updates
 		P2pApplication.getInstance().setOnWifiP2pState(this);
+
+		// Update group network if already exists
+		updateGroup();
 	}
 
 	public void startGame(final View view) {
@@ -85,24 +89,34 @@ public class CreateServerActivity extends Activity implements OnWifiP2pState {
 	public void onNetworkMembershipChanged(final SimWifiP2pInfo info) {
 		Toast.makeText(this, "Network membership changed", Toast.LENGTH_SHORT).show();
 
-		// get group info (device names and corresponding sockets)
-		P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
-			@Override
-			public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
-				deviceList = devices;
-			}
-		});
-
-		// update list view
-		devicesAdapter.clear();
-		devicesAdapter.addAll(info.getDevicesInNetwork());
-		devicesAdapter.notifyDataSetChanged();
+		updateGroup();
 	}
 
 	@Override
 	public void onGroupOwnershipChanged(final SimWifiP2pInfo info) {
 		Toast.makeText(this, "Group ownership changed", Toast.LENGTH_SHORT).show();
 
+		updateOwnership(info);
+	}
+
+	private void updateGroup() {
+		// get group info (device names and corresponding sockets)
+		P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
+			@Override
+			public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
+				deviceList = devices;
+
+				// update list view
+				devicesAdapter.clear();
+				devicesAdapter.addAll(groupInfo.getDevicesInNetwork());
+				devicesAdapter.notifyDataSetChanged();
+
+				updateOwnership(groupInfo);
+			}
+		});
+	}
+
+	private void updateOwnership(final SimWifiP2pInfo info) {
 		if (info.askIsGO()) {
 			startButton.setEnabled(true);
 		}

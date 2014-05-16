@@ -2,10 +2,11 @@ package com.cmov.bomberman.model;
 
 import com.cmov.bomberman.model.agent.Agent;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class State {
+public class State implements Serializable{
 	private char[][] map;
 	private List<Agent> agents;
 	private List<Agent> pausedCharacters;

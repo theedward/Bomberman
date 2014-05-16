@@ -52,7 +52,11 @@ public class JoinServerActivity extends Activity implements OnWifiP2pState {
 			Log.e(TAG, "Bundle is null");
 		}
 
+		// Listen to updated of the network
 		P2pApplication.getInstance().setOnWifiP2pState(this);
+
+		// Update group network if already exists
+		updateGroup();
     }
 
     public void joinServer(final View view) {
@@ -94,32 +98,8 @@ public class JoinServerActivity extends Activity implements OnWifiP2pState {
 	public void onNetworkMembershipChanged(final SimWifiP2pInfo info) {
 		Toast.makeText(this, "Network membership changed", Toast.LENGTH_SHORT).show();
 
-		serverAdapter.clear();
-
 		if (info.askIsClient()) {
-			// Joined a network. Request the group info to obtain the server address
-			P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
-				@Override
-				public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
-					Map<String, ArrayList<String>> groups = groupInfo.getExistingGroups();
-					for (SimWifiP2pDevice device : devices.getDeviceList()) {
-						// if the device is the group owner and it's connectable, it's a valid choice
-						if (groups.containsKey(device.deviceName) && groupInfo.askIsConnectionPossible(device.deviceName)) {
-							// Only show the devices in the network that are not me
-							if (!device.deviceName.equals(info.getDeviceName())) {
-								serverAdapter.add(device.deviceName);
-							}
-
-							// this is a valid device
-							groupOwner = device;
-
-							// Now it can proceed join the game.
-							final Button joinServer = (Button) findViewById(R.id.joinServer);
-							joinServer.setEnabled(true);
-						}
-					}
-				}
-			});
+			updateGroup();
 		}
 	}
 
@@ -127,5 +107,33 @@ public class JoinServerActivity extends Activity implements OnWifiP2pState {
 	public void onGroupOwnershipChanged(final SimWifiP2pInfo info) {
 		// Nothing to do here
 		Toast.makeText(this, "Group ownership changed", Toast.LENGTH_SHORT).show();
+	}
+
+	private void updateGroup() {
+		serverAdapter.clear();
+
+		// Joined a network. Request the group info to obtain the server address
+		P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
+			@Override
+			public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
+				Map<String, ArrayList<String>> groups = groupInfo.getExistingGroups();
+				for (SimWifiP2pDevice device : devices.getDeviceList()) {
+					// if the device is the group owner and it's connectable, it's a valid choice
+					if (groups.containsKey(device.deviceName) && groupInfo.askIsConnectionPossible(device.deviceName)) {
+						// Only show the devices in the network that are not me
+						if (!device.deviceName.equals(groupInfo.getDeviceName())) {
+							serverAdapter.add(device.deviceName);
+						}
+
+						// this is a valid device
+						groupOwner = device;
+
+						// Now it can proceed join the game.
+						final Button joinServer = (Button) findViewById(R.id.joinServer);
+						joinServer.setEnabled(true);
+					}
+				}
+			}
+		});
 	}
 }

@@ -2,7 +2,9 @@ package com.cmov.bomberman.model.agent;
 
 import com.cmov.bomberman.model.Event;
 
-public class RobotAlgorithm implements Algorithm {
+import java.io.Serializable;
+
+public class RobotAlgorithm implements Algorithm, Serializable {
 	private boolean destroyMode;
 	private MovableAgent.Actions move;
 	private boolean hasCollided;

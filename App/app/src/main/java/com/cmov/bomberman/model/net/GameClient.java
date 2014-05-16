@@ -34,6 +34,11 @@ public class GameClient implements Game {
 			catch (IOException e) {
 				// Server is still not available
 				Log.e(TAG, "Failed to join the game server");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ie) {
+					return;
+				}
 			}
 		}
 
@@ -100,12 +105,7 @@ public class GameClient implements Game {
 				localPlayer = player;
 
 				// handle game requests
-				try {
 					new Thread(new PlayerConnectionHandler(username, localPlayer, commChan)).start();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
 
 				try {
 					ObjectOutputStream out = commChan.getOut();

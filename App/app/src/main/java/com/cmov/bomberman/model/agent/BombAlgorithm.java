@@ -2,7 +2,9 @@ package com.cmov.bomberman.model.agent;
 
 import com.cmov.bomberman.model.Event;
 
-public class BombAlgorithm implements Algorithm {
+import java.io.Serializable;
+
+public class BombAlgorithm implements Algorithm, Serializable {
 	private float explosionTimeout;
 	private long initialTime;
 

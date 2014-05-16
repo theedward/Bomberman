@@ -15,19 +15,19 @@ import java.util.*;
 /**
  * This is where all the game will be processed.
  */
-public final class GameImpl implements Game, Serializable {
-	private final String TAG = this.getClass().getSimpleName();
+public class GameImpl implements Game, Serializable {
+	private String TAG = this.getClass().getSimpleName();
 
-	private final int level;
-	private final Map<String, Player> players;
-	private final Map<String, Player> playersOnPause;
-	private final Map<String, Bomberman> playersAgent;
-	private final Map<String, Integer> playerAgentIdx;
-	private final State gameState;
-	private final int bombermanIds[];
-	private final Position bombermanPos[];
-	private final boolean bombermanUsed[];
-	private final GameConfiguration gameConfiguration;
+	private int level;
+	private Map<String, Player> players;
+	private Map<String, Player> playersOnPause;
+	private Map<String, Bomberman> playersAgent;
+	private Map<String, Integer> playerAgentIdx;
+	private State gameState;
+	private int bombermanIds[];
+	private Position bombermanPos[];
+	private boolean bombermanUsed[];
+	private GameConfiguration gameConfiguration;
 
 	private boolean started;
 	private boolean isPaused;
@@ -37,13 +37,17 @@ public final class GameImpl implements Game, Serializable {
 	 */
 	private int numRoundsLeft;
 
+	public GameImpl() {
+		
+	}
+
 	/**
 	 * This constructor performs all the necessary steps to start the game right next.
 	 * However, the game would be without any player.
 	 *
 	 * @param level the level to be played in this game
 	 */
-	public GameImpl(final int level) {
+	public GameImpl(int level) {
 		this.level = level;
 		this.isPaused = false;
 		this.players = new HashMap<String, Player>();
@@ -119,25 +123,81 @@ public final class GameImpl implements Game, Serializable {
         return numRoundsLeft;
     }
 
-    /**
+	public void setLevel(final int level) {
+		this.level = level;
+	}
+
+	public void setPlayers(final Map<String, Player> players) {
+		this.players = players;
+	}
+
+	public void setPlayersOnPause(final Map<String, Player> playersOnPause) {
+		this.playersOnPause = playersOnPause;
+	}
+
+	public void setPlayersAgent(final Map<String, Bomberman> playersAgent) {
+		this.playersAgent = playersAgent;
+	}
+
+	public void setPlayerAgentIdx(final Map<String, Integer> playerAgentIdx) {
+		this.playerAgentIdx = playerAgentIdx;
+	}
+
+	public void setGameState(final State gameState) {
+		this.gameState = gameState;
+	}
+
+	public void setBombermanIds(final int[] bombermanIds) {
+		this.bombermanIds = bombermanIds;
+	}
+
+	public void setBombermanPos(final Position[] bombermanPos) {
+		this.bombermanPos = bombermanPos;
+	}
+
+	public void setBombermanUsed(final boolean[] bombermanUsed) {
+		this.bombermanUsed = bombermanUsed;
+	}
+
+	public void setGameConfiguration(final GameConfiguration gameConfiguration) {
+		this.gameConfiguration = gameConfiguration;
+	}
+
+	public void setStarted(final boolean started) {
+		this.started = started;
+	}
+
+	public void setPaused(final boolean isPaused) {
+		this.isPaused = isPaused;
+	}
+
+	public void setWallPositions(final List<Position> wallPositions) {
+		this.wallPositions = wallPositions;
+	}
+
+	public void setNumRoundsLeft(final int numRoundsLeft) {
+		this.numRoundsLeft = numRoundsLeft;
+	}
+
+	/**
 	 * Creates all the objects and populates the game state.
 	 * Attributes each player a Bomberman.
 	 */
 	private void populateGame() {
-		final String[] usernames = new String[players.size()];
-		final PlayerImpl[] characterOwners = new PlayerImpl[players.size()];
+		String[] usernames = new String[players.size()];
+		PlayerImpl[] characterOwners = new PlayerImpl[players.size()];
 		players.keySet().toArray(usernames);
 		players.values().toArray(characterOwners);
 
 		wallPositions = new LinkedList<Position>();
 
 		int idCounter = 0;
-		final char[][] map = gameState.getMap();
+		char[][] map = gameState.getMap();
 		for (int rowIdx = 0; rowIdx < map.length; rowIdx++) {
 			for (int colIdx = 0; colIdx < map[rowIdx].length; colIdx++) {
 				// the position will be right in the middle
-				final Position pos = new Position(colIdx + Agent.HEIGHT / 2, rowIdx + Agent.WIDTH / 2);
-				final char character = map[rowIdx][colIdx];
+				Position pos = new Position(colIdx + Agent.HEIGHT / 2, rowIdx + Agent.WIDTH / 2);
+				char character = map[rowIdx][colIdx];
 
 				if (character == State.DrawingType.OBSTACLE.toChar()) {
 					gameState.addAgent(new Obstacle(pos, idCounter));
@@ -151,7 +211,7 @@ public final class GameImpl implements Game, Serializable {
 					// Let's see if it's a Bomberman
 					try {
 						// starts at 1
-						final int bombermanId = Integer.parseInt(Character.toString(character)) - 1;
+						int bombermanId = Integer.parseInt(Character.toString(character)) - 1;
 
 						// save bomberman position for later use
 						bombermanPos[bombermanId] = pos;
@@ -181,7 +241,7 @@ public final class GameImpl implements Game, Serializable {
 	}
 
 	private void gameLoop() {
-		final int timeSleep = 1000 / gameConfiguration.getNumUpdatesPerSecond();
+		int timeSleep = 1000 / gameConfiguration.getNumUpdatesPerSecond();
 		long lastTime = System.currentTimeMillis();
 		while (!hasFinished()) {
 			try {
@@ -197,11 +257,11 @@ public final class GameImpl implements Game, Serializable {
 
 				Log.v(TAG, "Update:");
 
-				final long now = System.currentTimeMillis();
+				long now = System.currentTimeMillis();
 				update(now - lastTime);
 				lastTime = now;
 
-				final long dt = System.currentTimeMillis() - now;
+				long dt = System.currentTimeMillis() - now;
 				// suspend thread only when the time spent on update is smaller than the time it should
 				// spend on each update (1000 / numUpdates).
 				if (timeSleep > dt) {
@@ -307,9 +367,9 @@ public final class GameImpl implements Game, Serializable {
 				}
 			}
 
-			final int bombermanId = bombermanIds[bombermanIdx];
-			final Position pos = bombermanPos[bombermanIdx];
-			final char[][] map = gameState.getMap();
+			int bombermanId = bombermanIds[bombermanIdx];
+			Position pos = bombermanPos[bombermanIdx];
+			char[][] map = gameState.getMap();
 			map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
 			Bomberman bomberman = new Bomberman(pos, player.getController(), bombermanId, gameConfiguration.getbSpeed(),
 												gameConfiguration.getExplosionDuration(),
@@ -341,7 +401,7 @@ public final class GameImpl implements Game, Serializable {
 	}
 
 	/**
-	 * Calls method onGameEnd of every player. It sends the final scores of the game.
+	 * Calls method onGameEnd of every player. It sends the scores of the game.
 	 */
 	private synchronized void end() {
 		for (Player p : players.values()) {
@@ -350,7 +410,7 @@ public final class GameImpl implements Game, Serializable {
 	}
 
 	private Map<String, Integer> checkScores() {
-		final Map<String, Integer> scores = new TreeMap<String, Integer>();
+		Map<String, Integer> scores = new TreeMap<String, Integer>();
 		for (Map.Entry<String, Bomberman> entry : playersAgent.entrySet()) {
 			scores.put(entry.getKey(), entry.getValue().getScore());
 		}
@@ -363,11 +423,11 @@ public final class GameImpl implements Game, Serializable {
 	 */
 	private synchronized void update(long dt) {
 		// Update the state
-		final long timeBeforePlay = System.currentTimeMillis();
+		long timeBeforePlay = System.currentTimeMillis();
 		gameState.playAll(dt);
 		Log.v(TAG, "Playing took " + (System.currentTimeMillis() - timeBeforePlay) + " msec.");
 
-		final long timeBeforeUpdate = System.currentTimeMillis();
+		long timeBeforeUpdate = System.currentTimeMillis();
 		updatePlayers();
 		Log.v(TAG, "Updating players took " + (System.currentTimeMillis() - timeBeforeUpdate) + " msec.");
 
@@ -383,8 +443,8 @@ public final class GameImpl implements Game, Serializable {
 		// Update every player with the character positions
 		for (Map.Entry<String, Player> entry : players.entrySet()) {
 			// Get all the character positions
-			final StringWriter msg = new StringWriter();
-			final JsonWriter writer = new JsonWriter(msg);
+			StringWriter msg = new StringWriter();
+			JsonWriter writer = new JsonWriter(msg);
 
 			try {
 				writer.setIndent("  ");
@@ -408,27 +468,27 @@ public final class GameImpl implements Game, Serializable {
 		}
 	}
 
-	private void createAgentIdMsg(final JsonWriter wr, final String username) throws IOException {
-		final Bomberman playerAgent = playersAgent.get(username);
+	private void createAgentIdMsg(JsonWriter wr, String username) throws IOException {
+		Bomberman playerAgent = playersAgent.get(username);
 		wr.name("AgentId").value(playerAgent.getId());
 	}
 
-	private void createScoreMsg(final JsonWriter wr, final String username) throws IOException {
-		final Bomberman playerAgent = playersAgent.get(username);
+	private void createScoreMsg(JsonWriter wr, String username) throws IOException {
+		Bomberman playerAgent = playersAgent.get(username);
 		wr.name("Score").value(playerAgent.getScore());
 	}
 
-	private void createTimeMsg(final JsonWriter wr) throws IOException {
-		final int timeLeft = this.numRoundsLeft / this.gameConfiguration.getNumUpdatesPerSecond();
+	private void createTimeMsg(JsonWriter wr) throws IOException {
+		int timeLeft = this.numRoundsLeft / this.gameConfiguration.getNumUpdatesPerSecond();
 		wr.name("TimeLeft").value(timeLeft);
 	}
 
-	private void createNumPlayersMsg(final JsonWriter wr) throws IOException {
-		final int numPlayers = players.size() + playersOnPause.size();
+	private void createNumPlayersMsg(JsonWriter wr) throws IOException {
+		int numPlayers = players.size() + playersOnPause.size();
 		wr.name("NumPlayers").value(numPlayers);
 	}
 
-	private void createAgentsMsg(final JsonWriter wr) throws IOException {
+	private void createAgentsMsg(JsonWriter wr) throws IOException {
 		wr.name("Agents");
 		wr.beginArray();
 		for (Agent object : gameState.getObjects()) {
@@ -437,7 +497,7 @@ public final class GameImpl implements Game, Serializable {
 		wr.endArray();
 	}
 
-	private void createDeathMsg(final JsonWriter wr, final String username) throws IOException {
+	private void createDeathMsg(JsonWriter wr, String username) throws IOException {
 		wr.name("Dead").value(playersAgent.get(username).isDestroyed());
 	}
 

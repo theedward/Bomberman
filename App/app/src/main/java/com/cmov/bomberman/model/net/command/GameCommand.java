@@ -1,4 +1,6 @@
-package com.cmov.bomberman.model.net;
+package com.cmov.bomberman.model.net.command;
+
+import com.cmov.bomberman.model.net.GameServer;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

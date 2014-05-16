@@ -1,23 +1,17 @@
 package com.cmov.bomberman.model.net;
 
 import android.util.Log;
-
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.GameImpl;
 import com.cmov.bomberman.model.Player;
-
+import com.cmov.bomberman.model.net.dto.GameDto;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketServer;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
 public class GameServer implements Game {
     private static final int GAME_SERVER_PORT = 10001;
@@ -37,7 +31,32 @@ public class GameServer implements Game {
         acceptPlayers();
     }
 
-    private void acceptPlayers() {
+	public GameServer(GameDto gameDto) {
+		game = new GameImpl();
+		game.setLevel(gameDto.getLevel());
+		game.setPlayersAgent(gameDto.getPlayersAgent());
+		game.setPlayerAgentIdx(gameDto.getPlayerAgentIdx());
+		game.setGameState(gameDto.getGameState());
+		game.setBombermanIds(gameDto.getBombermanIds());
+		game.setBombermanPos(gameDto.getBombermanPos());
+		game.setBombermanUsed(gameDto.getBombermanUsed());
+		game.setGameConfiguration(gameDto.getGameConfiguration());
+		game.setStarted(gameDto.isStarted());
+		game.setPaused(gameDto.isPaused());
+		game.setWallPositions(gameDto.getWallPositions());
+		game.setNumRoundsLeft(gameDto.getNumRoundsLeft());
+
+		playerProxies = new TreeMap<String, PlayerProxy>();
+		commChannels = new LinkedList<CommunicationChannel>();
+
+		acceptPlayers();
+	}
+
+	public GameImpl getGame() {
+		return game;
+	}
+
+	private void acceptPlayers() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -129,38 +148,6 @@ public class GameServer implements Game {
                 }
             }
         }
-        //Enviar o state para o novo GO
-        try {
-            ObjectOutputStream newGOout = newGO.getOut();
-            Log.i(TAG, "Passing game to newGO");
-            newGOout.writeUTF("game");
-            newGOout.writeObject(game.getLevel());
-            newGOout.writeObject(game.getPlayersAgent());
-            newGOout.writeObject(game.getPlayerAgentIdx());
-            newGOout.writeObject(game.getGameState());
-            newGOout.writeObject(game.getBombermanIds());
-            newGOout.writeObject(game.getBombermanPos());
-            newGOout.writeObject(game.getBombermanUsed());
-            newGOout.writeObject(game.getGameConfiguration());
-            newGOout.writeObject(game.isStarted());
-            newGOout.writeObject(game.isPaused());
-            newGOout.writeObject(game.getWallPositions());
-            newGOout.writeObject(game.getNumRoundsLeft());
-
-            Map<String, Boolean> playersState = new TreeMap<String, Boolean>();
-            for (String s : game.getPlayers().keySet()) {
-                playersState.put(s, true);
-            }
-            for (String s : game.getPlayersOnPause().keySet()) {
-                playersState.put(s, false);
-            }
-            newGOout.writeObject(playersState);
-            newGOout.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     public void join(final String username, Player player) {

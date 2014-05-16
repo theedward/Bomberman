@@ -19,11 +19,17 @@ import com.cmov.bomberman.model.*;
 import com.cmov.bomberman.model.agent.Controllable;
 import com.cmov.bomberman.model.net.GameClient;
 import com.cmov.bomberman.model.net.GameServer;
+import com.cmov.bomberman.model.net.dto.GameDto;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pDevice;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pDeviceList;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener {
+public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.Callback, PlayerActionListener, OnWifiP2pState {
 	private final String TAG = this.getClass().getSimpleName();
 
 	private boolean gamePaused;
@@ -162,7 +168,6 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 		this.gameView.setScreen(screen);
 		this.player = new PlayerImpl(playerController, screen);
 		this.player.setPlayerActionListener(this);
-
 
 		if (isServer) {
 				game = new GameServer(level);
@@ -414,6 +419,63 @@ public class MultiPlayerGameActivity extends Activity implements SurfaceHolder.C
 			if (canvas != null) {
 				gameView.getHolder().unlockCanvasAndPost(canvas);
 			}
+		}
+	}
+
+	@Override
+	public void onWifiOn() {
+		// Empty on purpose
+	}
+
+	@Override
+	public void onWifiOff() {
+		// Empty on purpose
+	}
+
+	@Override
+	public void onPeersChanged() {
+		// Empty on purpose
+	}
+
+	@Override
+	public void onNetworkMembershipChanged(final SimWifiP2pInfo info) {
+		// Empty on purpose
+	}
+
+	@Override
+	public void onGroupOwnershipChanged(final SimWifiP2pInfo info) {
+		if (info.askIsGO()) {
+			// TODO create game server
+			GameClient gameClient = (GameClient) game;
+			GameDto gameDto = gameClient.onGameOwner();
+			GameServer gameServer = new GameServer(gameDto);
+			// TODO to continue
+		} else if (info.askIsClient()) {
+			// Give some time for the new game server to get the game state (gameDto)
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			// Request the group info to obtain the server address
+			P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
+				@Override
+				public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
+					Map<String, ArrayList<String>> groups = groupInfo.getExistingGroups();
+					for (SimWifiP2pDevice device : devices.getDeviceList()) {
+						// if the device is the group owner and it's connectable, it's a valid choice
+						if (groups.containsKey(device.deviceName) && groupInfo.askIsConnectionPossible(device.deviceName)) {
+							String hostname = device.getVirtIp();
+							game = new GameClient(hostname);
+
+							// Now it can proceed join the game.
+							final Button joinServer = (Button) findViewById(R.id.joinServer);
+							joinServer.setEnabled(true);
+						}
+					}
+				}
+			});
 		}
 	}
 }

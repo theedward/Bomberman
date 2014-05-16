@@ -1,6 +1,7 @@
 package com.cmov.bomberman.model.net;
 
 import android.util.Log;
+import com.cmov.bomberman.model.net.command.*;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class GameConnectionHandler implements Runnable {
 		put("unpause", new UnpauseCommand());
 		put("quit", new QuitCommand());
 		put("setNextActionName", new SetNextActionNameCommand());
+		put("getGameState", new GetGameStateCommand());
 	}};
 
 	private final GameServer game;

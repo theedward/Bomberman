@@ -3,6 +3,7 @@ package com.cmov.bomberman.model.net;
 import android.util.Log;
 import com.cmov.bomberman.model.Game;
 import com.cmov.bomberman.model.Player;
+import com.cmov.bomberman.model.net.dto.GameDto;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
 
 import java.io.IOException;
@@ -16,9 +17,9 @@ public class GameClient implements Game {
 
 	private final String TAG = getClass().getSimpleName();
 
-	private CommunicationChannel commChan;
-
 	private Player localPlayer;
+	private CommunicationChannel commChan;
+	private GameDto gameDto;
 
 	/**
 	 * Client constructor
@@ -45,7 +46,8 @@ public class GameClient implements Game {
 		Log.i(TAG, "Successfully joined the game server");
 	}
 
-	public void pause(final String username) {
+	@Override
+	public synchronized void pause(final String username) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -62,7 +64,8 @@ public class GameClient implements Game {
 		}).start();
 	}
 
-	public void unpause(final String username) {
+	@Override
+	public synchronized void unpause(final String username) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -79,7 +82,8 @@ public class GameClient implements Game {
 		}).start();
 	}
 
-	public void quit(final String username) {
+	@Override
+	public synchronized void quit(final String username) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -98,7 +102,8 @@ public class GameClient implements Game {
 		onDestroy();
 	}
 
-	public void join(final String username, final Player player) {
+	@Override
+	public synchronized void join(final String username, final Player player) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -122,11 +127,12 @@ public class GameClient implements Game {
 		}).start();
 	}
 
-	public void start() {
+	@Override
+	public synchronized void start() {
 		// Nothing to do here
 	}
 
-	public void onDestroy() {
+	public synchronized void onDestroy() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -140,5 +146,34 @@ public class GameClient implements Game {
 		}).start();
 
 		Log.i(TAG, "OnDestroy was successful");
+	}
+
+	/**
+	 * Called when this client becomes the owner of the game
+	 */
+	public synchronized GameDto onGameOwner() {
+		// Get game state
+		try {
+			ObjectOutputStream out = commChan.getOut();
+			out.writeUTF("getGameState");
+			out.flush();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Wait until the server replies with the set game state
+		try {
+			this.wait();
+		} catch (InterruptedException e) {
+			return null;
+		}
+
+		// Here the server has the dto, return it to the activity
+		return this.gameDto;
+	}
+
+	public void setGameDto(GameDto dto) {
+		this.gameDto = dto;
 	}
 }

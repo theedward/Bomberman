@@ -1,4 +1,4 @@
-package com.cmov.bomberman.model.net;
+package com.cmov.bomberman.model.net.command;
 
 import com.cmov.bomberman.model.Player;
 

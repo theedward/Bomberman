@@ -1,6 +1,8 @@
-package com.cmov.bomberman.model.net;
+package com.cmov.bomberman.model.net.command;
 
 import android.util.Log;
+import com.cmov.bomberman.model.net.GameServer;
+import com.cmov.bomberman.model.net.PlayerProxy;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

@@ -11,7 +11,7 @@ public abstract class Agent implements Serializable{
 	public static final float WIDTH = 1f;
 	public static final float HEIGHT = 1f;
 
-	private final Algorithm ai;
+	private Algorithm ai;
 	private Position position;
 	private String lastAction;
 	private String currentAction;
@@ -55,6 +55,10 @@ public abstract class Agent implements Serializable{
 	 */
 	protected Algorithm getAlgorithm() {
 		return ai;
+	}
+
+	public void setAlgorithm(Algorithm ai) {
+		this.ai = ai;
 	}
 
 	public int getId() {

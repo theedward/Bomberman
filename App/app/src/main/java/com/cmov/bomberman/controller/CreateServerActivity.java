@@ -56,8 +56,6 @@ public class CreateServerActivity extends Activity implements OnWifiP2pState {
 	}
 
 	public void startGame(final View view) {
-		Toast.makeText(this, "STARTING GAME CUARALHO", Toast.LENGTH_SHORT).show();
-
 		// jump to the game activity
 		Intent intent = new Intent(this, MultiPlayerGameActivity.class);
 		intent.putExtra("isServer", true);
@@ -104,12 +102,14 @@ public class CreateServerActivity extends Activity implements OnWifiP2pState {
 		P2pApplication.getInstance().requestInGroup(new SimWifiP2pManager.GroupInfoListener() {
 			@Override
 			public void onGroupInfoAvailable(final SimWifiP2pDeviceList devices, final SimWifiP2pInfo groupInfo) {
-				deviceList = devices;
+				if (groupInfo.askIsGO()) {
+					deviceList = devices;
 
-				// update list view
-				devicesAdapter.clear();
-				devicesAdapter.addAll(groupInfo.getDevicesInNetwork());
-				devicesAdapter.notifyDataSetChanged();
+					// update list view
+					devicesAdapter.clear();
+					devicesAdapter.addAll(groupInfo.getDevicesInNetwork());
+					devicesAdapter.notifyDataSetChanged();
+				}
 
 				updateOwnership(groupInfo);
 			}

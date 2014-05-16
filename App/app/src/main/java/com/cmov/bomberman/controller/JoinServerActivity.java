@@ -98,9 +98,7 @@ public class JoinServerActivity extends Activity implements OnWifiP2pState {
 	public void onNetworkMembershipChanged(final SimWifiP2pInfo info) {
 		Toast.makeText(this, "Network membership changed", Toast.LENGTH_SHORT).show();
 
-		if (info.askIsClient()) {
-			updateGroup();
-		}
+		updateGroup();
 	}
 
 	@Override

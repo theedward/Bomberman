@@ -5,10 +5,11 @@ import com.cmov.bomberman.model.Position;
 import com.cmov.bomberman.model.State;
 import com.cmov.bomberman.model.agent.Bomberman;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class GameDto {
+public class GameDto implements Serializable {
 	private int level;
 	private Map<String, Bomberman> playersAgent;
 	private Map<String, Integer> playerAgentIdx;

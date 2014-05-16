@@ -54,6 +54,8 @@ public class PlayerImpl implements Player {
 			actionListener.onMapSizeChange(config.getMapWidth(), config.getMapHeight());
 		}
 
+
+
 		for (Position pos : wallPositions) {
 			screen.createWallDrawing(pos);
 		}

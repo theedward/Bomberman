@@ -11,7 +11,10 @@ import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketServer;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class GameServer implements Game {
     private static final int GAME_SERVER_PORT = 10001;
@@ -123,31 +126,23 @@ public class GameServer implements Game {
             proxy.onDestroy();
             playerProxies.remove(username);
         } else {
-            // TODO send game state to another client
-            sendGame();
-            // local player is quitting
+			// local player is quitting
             onDestroy();
         }
 
     }
 
-    public void sendGame() {
-        Random random = new Random();
-        int channelChosen = random.nextInt(commChannels.size());
-        CommunicationChannel newGO = commChannels.get(channelChosen);
+    public void notifyPlayersOwnerChanged() {
+		Log.i(TAG, "notifying players that the group owner has changed");
 
-        for (CommunicationChannel c : commChannels) {
-            if (!c.equals(newGO)) {
-                //Enviar mensagem a dizer que o novo GO é o newGO
-                try {
-                    ObjectOutputStream out = c.getOut();
-                    out.writeUTF("groupOwnerChanged");
-                    out.flush();
-                    Log.i(TAG, "Telling player there is a new GO");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+		for (CommunicationChannel c : commChannels) {
+			try {
+				ObjectOutputStream out = c.getOut();
+				out.writeUTF("groupOwnerChanged");
+				out.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
     }
 

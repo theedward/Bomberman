@@ -352,37 +352,45 @@ public class GameImpl implements Game, Serializable {
 	 * @param username the player's username
 	 */
 	public synchronized void join(String username, Player player) {
-		if (playersAgent.size() < gameConfiguration.getMaxNumPlayers()) {
-			players.put(username, player);
+		if (!players.containsKey(username)) {
+			if (playersAgent.size() < gameConfiguration.getMaxNumPlayers()) {
+				players.put(username, player);
 
-			// Selecting the bomberman to be used by this player
-			int bombermanIdx = 0;
-			for (int i = 0; i < bombermanUsed.length; i++) {
-				if (!bombermanUsed[i]) {
-					bombermanIdx = i;
-					bombermanUsed[i] = true;
-					playerAgentIdx.put(username, i);
-					break;
+				// Selecting the bomberman to be used by this player
+				int bombermanIdx = 0;
+				for (int i = 0; i < bombermanUsed.length; i++) {
+					if (!bombermanUsed[i]) {
+						bombermanIdx = i;
+						bombermanUsed[i] = true;
+						playerAgentIdx.put(username, i);
+						break;
+					}
+				}
+
+				int bombermanId = bombermanIds[bombermanIdx];
+				Position pos = bombermanPos[bombermanIdx];
+				char[][] map = gameState.getMap();
+				map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
+				Bomberman bomberman = new Bomberman(pos, player.getController(), bombermanId, gameConfiguration.getbSpeed(),
+													gameConfiguration.getExplosionDuration(),
+													gameConfiguration.getTimeBetweenBombs(),
+													gameConfiguration.getExplosionRange(),
+													gameConfiguration.getTimeToExplode(),
+													gameConfiguration.getPointRobot(),
+													gameConfiguration.getPointOpponent());
+				gameState.addAgent(bomberman);
+				playersAgent.put(username, bomberman);
+
+				// Happens when the player joins during the game
+				if (started) {
+					player.onGameStart(level, wallPositions);
 				}
 			}
-
-			int bombermanId = bombermanIds[bombermanIdx];
-			Position pos = bombermanPos[bombermanIdx];
-			char[][] map = gameState.getMap();
-			map[pos.yToDiscrete()][pos.xToDiscrete()] = State.DrawingType.BOMBERMAN.toChar();
-			Bomberman bomberman = new Bomberman(pos, player.getController(), bombermanId, gameConfiguration.getbSpeed(),
-												gameConfiguration.getExplosionDuration(),
-												gameConfiguration.getTimeBetweenBombs(),
-												gameConfiguration.getExplosionRange(),
-												gameConfiguration.getTimeToExplode(),
-												gameConfiguration.getPointRobot(),
-												gameConfiguration.getPointOpponent());
-			gameState.addAgent(bomberman);
-			playersAgent.put(username, bomberman);
-
-			// Happens when the player joins during the game
-			if (started) {
-				player.onGameStart(level, wallPositions);
+		} else {
+			if (playersAgent.containsKey(username)) {
+				// reconnect controllable to agent
+				Bomberman playerAgent = playersAgent.get(username);
+				playerAgent.setAlgorithm(player.getController());
 			}
 		}
 	}

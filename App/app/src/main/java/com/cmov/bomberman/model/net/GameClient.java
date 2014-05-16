@@ -20,11 +20,15 @@ public class GameClient implements Game {
 	private Player localPlayer;
 	private CommunicationChannel commChan;
 	private GameDto gameDto;
+	private boolean becameOwner;
+	private OnGameOwnerChangedListener onGameOwnerChangedListener;
 
 	/**
 	 * Client constructor
 	 */
 	public GameClient(final String hostname) {
+		this.becameOwner = false;
+
 		// keeps trying to connect to the server until it successfully connects
 		while (true) {
 			try {
@@ -44,6 +48,10 @@ public class GameClient implements Game {
 		}
 
 		Log.i(TAG, "Successfully joined the game server");
+	}
+
+	public void setOnGameOwnerChangedListener(final OnGameOwnerChangedListener listener) {
+		this.onGameOwnerChangedListener = listener;
 	}
 
 	@Override
@@ -152,6 +160,8 @@ public class GameClient implements Game {
 	 * Called when this client becomes the owner of the game
 	 */
 	public synchronized GameDto onGameOwner() {
+		this.becameOwner = true;
+
 		// Get game state
 		try {
 			ObjectOutputStream out = commChan.getOut();
@@ -175,5 +185,12 @@ public class GameClient implements Game {
 
 	public void setGameDto(GameDto dto) {
 		this.gameDto = dto;
+	}
+
+	public void serverOwnerChanged() {
+		if (!this.becameOwner && onGameOwnerChangedListener != null) {
+			// alert listener
+			onGameOwnerChangedListener.onGameOwnerChange();
+		}
 	}
 }

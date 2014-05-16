@@ -67,6 +67,12 @@ public class P2pApplication extends Application implements OnWifiP2pState {
 		mBound = true;
 	}
 
+	@Override
+	public void onTerminate() {
+		super.onTerminate();
+		unbindService(mConnection);
+	}
+
 	public static P2pApplication getInstance() {
 		return instance;
 	}
@@ -93,21 +99,18 @@ public class P2pApplication extends Application implements OnWifiP2pState {
 	}
 
 	public void onPeersChanged() {
-		// TODO
 		if (onWifiP2pState != null) {
 			onWifiP2pState.onPeersChanged();
 		}
 	}
 
 	public void onNetworkMembershipChanged(SimWifiP2pInfo info) {
-		// TODO
 		if (onWifiP2pState != null) {
 			onWifiP2pState.onNetworkMembershipChanged(info);
 		}
 	}
 
 	public void onGroupOwnershipChanged(SimWifiP2pInfo info) {
-		// TODO
 		if (onWifiP2pState != null) {
 			onWifiP2pState.onGroupOwnershipChanged(info);
 		}

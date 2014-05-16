@@ -1,6 +1,8 @@
 package com.cmov.bomberman.model.net.command;
 
 import com.cmov.bomberman.model.GameImpl;
+import com.cmov.bomberman.model.agent.Bomberman;
+import com.cmov.bomberman.model.agent.NullAlgorithm;
 import com.cmov.bomberman.model.net.GameServer;
 import com.cmov.bomberman.model.net.dto.GameDto;
 
@@ -18,7 +20,13 @@ public class GetGameStateCommand implements GameCommand {
 			GameDto dto = new GameDto();
 
 			dto.setLevel(game.getLevel());
-			dto.setPlayersAgent(game.getPlayersAgent());
+			// clean possible controllable proxy
+			Map<String, Bomberman> playersAgent = game.getPlayersAgent();
+			for (Bomberman b : playersAgent.values()) {
+				b.setAlgorithm(new NullAlgorithm());
+			}
+
+			dto.setPlayersAgent(playersAgent);
 			dto.setPlayerAgentIdx(game.getPlayerAgentIdx());
 			dto.setGameState(game.getGameState());
 			dto.setBombermanIds(game.getBombermanIds());

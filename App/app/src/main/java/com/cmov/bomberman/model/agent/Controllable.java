@@ -2,10 +2,11 @@ package com.cmov.bomberman.model.agent;
 
 import com.cmov.bomberman.model.Event;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Controllable implements Algorithm {
+public class Controllable implements Algorithm, Serializable {
 	private final Map<Character, String> keymap;
 	private char lastKeyPressed;
 	private boolean destroyMode;

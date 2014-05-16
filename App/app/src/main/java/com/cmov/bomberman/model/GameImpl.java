@@ -185,15 +185,17 @@ public class GameImpl implements Game, Serializable {
 	 * @param username the player's username
 	 */
 	public synchronized void pause(String username) {
-		Player p = players.get(username);
-		playersOnPause.put(username, p);
-		players.remove(username);
+		if (players.containsKey(username)) {
+			Player p = players.get(username);
+			playersOnPause.put(username, p);
+			players.remove(username);
 
-		if (players.size() == 0) {
-			pause();
+			if (players.size() == 0) {
+				pause();
+			}
+
+			gameState.pauseAgent(playersAgent.get(username));
 		}
-
-		gameState.pauseAgent(playersAgent.get(username));
 	}
 
 	/**
@@ -202,15 +204,17 @@ public class GameImpl implements Game, Serializable {
 	 * @param username the player's username
 	 */
 	public synchronized void unpause(String username) {
-		Player p = playersOnPause.get(username);
-		playersOnPause.remove(username);
-		players.put(username, p);
+		if (playersOnPause.containsKey(username)) {
+			Player p = playersOnPause.get(username);
+			playersOnPause.remove(username);
+			players.put(username, p);
 
-		if (players.size() == 1) {
-			unpause();
+			if (players.size() == 1) {
+				unpause();
+			}
+
+			gameState.unpauseAgent(playersAgent.get(username));
 		}
-
-		gameState.unpauseAgent(playersAgent.get(username));
 	}
 
 	/**

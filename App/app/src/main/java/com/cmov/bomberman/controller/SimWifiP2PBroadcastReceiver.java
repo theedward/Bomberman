@@ -35,14 +35,12 @@ public class SimWifiP2pBroadcastReceiver extends BroadcastReceiver {
 			// callback on PeerListListener.onPeersAvailable()
 			mApplication.onPeersChanged();
 		} else if (SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION.equals(action)) {
-			SimWifiP2pInfo ginfo = (SimWifiP2pInfo) intent.getSerializableExtra(
-					SimWifiP2pBroadcast.EXTRA_GROUP_INFO);
+			SimWifiP2pInfo ginfo = (SimWifiP2pInfo) intent.getSerializableExtra(SimWifiP2pBroadcast.EXTRA_GROUP_INFO);
 			ginfo.print();
 
 			mApplication.onNetworkMembershipChanged(ginfo);
 		} else if (SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION.equals(action)) {
-			SimWifiP2pInfo ginfo = (SimWifiP2pInfo) intent.getSerializableExtra(
-					SimWifiP2pBroadcast.EXTRA_GROUP_INFO);
+			SimWifiP2pInfo ginfo = (SimWifiP2pInfo) intent.getSerializableExtra(SimWifiP2pBroadcast.EXTRA_GROUP_INFO);
 			ginfo.print();
 
 			mApplication.onGroupOwnershipChanged(ginfo);

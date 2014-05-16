@@ -17,10 +17,10 @@ public class Screen {
 	private final SparseArray<Drawing> drawings;
 	private final List<WallDrawing> wallDrawings; // contains all the walls
 
-    public Screen() {
-        drawings = new SparseArray<Drawing>();
+	public Screen() {
+		drawings = new SparseArray<Drawing>();
 		wallDrawings = new LinkedList<WallDrawing>();
-    }
+	}
 
 	public boolean hasDrawing(final int id) {
 		return drawings.get(id) != null;
@@ -30,7 +30,8 @@ public class Screen {
 	// if yes, updates it
 	// if not, creates it
 	public void updateDrawing(String type, int id, Position pos, String currentAction, String lastAction, int step,
-							  int lastStep, int rangeRight, int rangeLeft, int rangeUp, int rangeDown, boolean isDestroyed) {
+							  int lastStep, int rangeRight, int rangeLeft, int rangeUp, int rangeDown,
+							  boolean isDestroyed) {
 		final Drawing d = drawings.get(id);
 		if (drawings.get(id) != null) {
 			// update drawing
@@ -54,7 +55,8 @@ public class Screen {
 		}
 	}
 
-	public void createDrawing(boolean isMine, String type, int id, Position pos, int rangeRight, int rangeLeft, int rangeUp, int rangeDown) {
+	public void createDrawing(boolean isMine, String type, int id, Position pos, int rangeRight, int rangeLeft,
+							  int rangeUp, int rangeDown) {
 		final int initialStep = 0;
 		final String initialAction = "";
 
@@ -81,7 +83,7 @@ public class Screen {
 	}
 
 	public List<Integer> currentDrawingIds() {
-	    LinkedList<Integer> drawingIds = new LinkedList<Integer>();
+		LinkedList<Integer> drawingIds = new LinkedList<Integer>();
 		for (int i = 0; i < drawings.size(); i++) {
 			drawingIds.add(drawings.keyAt(i));
 		}
@@ -89,23 +91,23 @@ public class Screen {
 		return drawingIds;
 	}
 
-    /**
-     * Draws the walls after the rest of the objects because when an explosion occurs,
-     * it doesn't know what is in the other position.
-     *
-     * @param canvas the canvas where all the drawings are drawn
-     */
-    public void drawAll(Canvas canvas) {
-        // set background color
-        canvas.drawColor(Color.GREEN);
+	/**
+	 * Draws the walls after the rest of the objects because when an explosion occurs,
+	 * it doesn't know what is in the other position.
+	 *
+	 * @param canvas the canvas where all the drawings are drawn
+	 */
+	public void drawAll(Canvas canvas) {
+		// set background color
+		canvas.drawColor(Color.GREEN);
 
-        for (WallDrawing wall : wallDrawings) {
-            wall.draw(canvas);
-        }
+		for (WallDrawing wall : wallDrawings) {
+			wall.draw(canvas);
+		}
 
 		final int size = drawings.size();
-        for (int i = 0; i < size; i++) {
-            drawings.valueAt(i).draw(canvas);
-        }
-    }
+		for (int i = 0; i < size; i++) {
+			drawings.valueAt(i).draw(canvas);
+		}
+	}
 }

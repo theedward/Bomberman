@@ -2,7 +2,7 @@ package com.cmov.bomberman.model;
 
 import java.io.Serializable;
 
-public class GameConfiguration implements Serializable{
+public class GameConfiguration implements Serializable {
 	private int mapWidth;
 	private int mapHeight;
 	private int numUpdatesPerSecond;

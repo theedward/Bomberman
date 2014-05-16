@@ -14,10 +14,8 @@ import pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketManager;
 
 public class P2pApplication extends Application implements OnWifiP2pState {
-	private final String TAG = "P2pApplication";
-
 	private static P2pApplication instance;
-
+	private final String TAG = "P2pApplication";
 	private Messenger mService;
 	private SimWifiP2pManager mManager = null;
 	private SimWifiP2pManager.Channel mChannel = null;
@@ -43,6 +41,10 @@ public class P2pApplication extends Application implements OnWifiP2pState {
 			mBound = false;
 		}
 	};
+
+	public static P2pApplication getInstance() {
+		return instance;
+	}
 
 	public void onCreate() {
 		super.onCreate();
@@ -71,10 +73,6 @@ public class P2pApplication extends Application implements OnWifiP2pState {
 	public void onTerminate() {
 		super.onTerminate();
 		unbindService(mConnection);
-	}
-
-	public static P2pApplication getInstance() {
-		return instance;
 	}
 
 	public void setOnWifiP2pState(final OnWifiP2pState onWifiP2pState) {
@@ -128,8 +126,7 @@ public class P2pApplication extends Application implements OnWifiP2pState {
 		if (mBound) {
 			mManager.requestGroupInfo(mChannel, groupInfoListener);
 		} else {
-			Toast.makeText(getApplicationContext(), "Service not bound",
-						   Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Service not bound", Toast.LENGTH_SHORT).show();
 		}
 	}
 }

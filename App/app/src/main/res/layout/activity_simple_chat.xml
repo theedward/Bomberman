@@ -2,75 +2,75 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:orientation="vertical" >
+              android:orientation="vertical">
 
     <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
         <EditText
                 android:id="@+id/editText1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
-            <requestFocus />
+            <requestFocus/>
         </EditText>
 
         <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
             <Button
                     android:id="@+id/idSendButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sendButton" />
+                    android:text="@string/sendButton"/>
 
             <Button
                     android:id="@+id/idConnectButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/connectButton" />
+                    android:text="@string/connectButton"/>
 
             <Button
                     android:id="@+id/idDisconnectButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/disconnectButton" />
+                    android:text="@string/disconnectButton"/>
 
         </LinearLayout>
 
         <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
             <Button
                     android:id="@+id/idWifiOnButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/serviceButton" />
+                    android:text="@string/serviceButton"/>
 
             <Button
                     android:id="@+id/idWifiOffButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/cancelButton" />
+                    android:text="@string/cancelButton"/>
 
             <Button
                     android:id="@+id/idInRangeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/inRangeButton" />
+                    android:text="@string/inRangeButton"/>
 
             <Button
                     android:id="@+id/idInGroupButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/inGroupButton" />
+                    android:text="@string/inGroupButton"/>
 
         </LinearLayout>
 
@@ -80,6 +80,6 @@
             android:id="@+id/editText2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"/>
 
 </LinearLayout>

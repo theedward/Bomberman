@@ -7,7 +7,7 @@ import com.cmov.bomberman.model.State;
 
 import java.io.Serializable;
 
-public abstract class Agent implements Serializable{
+public abstract class Agent implements Serializable {
 	public static final float WIDTH = 1f;
 	public static final float HEIGHT = 1f;
 

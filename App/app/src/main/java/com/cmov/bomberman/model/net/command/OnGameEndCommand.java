@@ -10,7 +10,8 @@ import java.util.Map;
 public class OnGameEndCommand implements PlayerCommand {
 	@Override
 	@SuppressWarnings("unchecked")
-	public void execute(final String username, final Player player, final ObjectInputStream in, final ObjectOutputStream out) {
+	public void execute(final String username, final Player player, final ObjectInputStream in,
+						final ObjectOutputStream out) {
 		try {
 			Map<String, Integer> scores = (Map<String, Integer>) in.readObject();
 			player.onGameEnd(scores);

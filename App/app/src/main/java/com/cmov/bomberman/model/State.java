@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class State implements Serializable{
+public class State implements Serializable {
 	private char[][] map;
 	private List<Agent> agents;
 	private List<Agent> pausedCharacters;

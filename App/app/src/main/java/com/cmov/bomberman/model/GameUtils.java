@@ -179,7 +179,8 @@ public class GameUtils {
 	 * has 30px width and 30px height.
 	 */
 	private Bitmap getBitmap(final Bitmap src, final int row, final int column) {
-		Bitmap bitmap = Bitmap.createBitmap(src, (column - 1) * IMG_WIDTH, (row - 1) * IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT);
+		Bitmap bitmap = Bitmap
+				.createBitmap(src, (column - 1) * IMG_WIDTH, (row - 1) * IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT);
 		return Bitmap.createScaledBitmap(bitmap, imgCanvasWidth, imgCanvasHeight, true);
 	}
 

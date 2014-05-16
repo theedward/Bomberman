@@ -14,7 +14,8 @@ public class BombermanDrawing extends Drawing {
 
 	private final boolean isMine;
 
-	public BombermanDrawing(final boolean isMine, final Position position, final int step, final String currentAction) {
+	public BombermanDrawing(final boolean isMine, final Position position, final int step,
+							final String currentAction) {
 		super(position);
 		this.setStep(step);
 		this.setCurrentAction(currentAction);

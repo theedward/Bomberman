@@ -195,7 +195,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 			case KeyEvent.KEYCODE_DPAD_UP:
 			case KeyEvent.KEYCODE_DPAD_DOWN:
-					playerController.keyPressed(' ');
+				playerController.keyPressed(' ');
 				return true;
 			default:
 				return super.onKeyUp(keyCode, event);
@@ -324,7 +324,7 @@ public class SinglePlayerGameActivity extends Activity implements SurfaceHolder.
 						quitGame();
 					}
 				});
-                builder.setCancelable(false);
+				builder.setCancelable(false);
 				final Dialog dialog = builder.create();
 				dialog.show();
 			}

@@ -21,8 +21,8 @@ public class Controllable implements Algorithm, Serializable {
 			put('D', "MOVE_DOWN");
 			put('R', "MOVE_RIGHT");
 			put('B', "PUT_BOMB");
-            put(' ', "");
-        }};
+			put(' ', "");
+		}};
 	}
 
 	/**
@@ -48,8 +48,8 @@ public class Controllable implements Algorithm, Serializable {
 		}
 	}
 
-    /**
-     * @return the action name mapped from the last key pressed or an empty string
+	/**
+	 * @return the action name mapped from the last key pressed or an empty string
 	 * if no valid key was pressed.
 	 */
 	@Override

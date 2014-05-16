@@ -8,7 +8,8 @@ import java.io.ObjectOutputStream;
 
 public class GetNextActionNameCommand implements PlayerCommand {
 	@Override
-	public void execute(final String username, final Player player, final ObjectInputStream in, final ObjectOutputStream out) {
+	public void execute(final String username, final Player player, final ObjectInputStream in,
+						final ObjectOutputStream out) {
 		try {
 			out.writeUTF("setNextActionName");
 			out.writeUTF(username);

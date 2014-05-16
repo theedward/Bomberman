@@ -13,7 +13,8 @@ public class SetNextActionNameCommand implements GameCommand {
 			String username = in.readUTF();
 			String action = in.readUTF();
 			game.setNextActionName(username, action);
-		} catch (IOException e){
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

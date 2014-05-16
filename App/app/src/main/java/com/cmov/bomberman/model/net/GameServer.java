@@ -8,10 +8,13 @@ import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocket;
 import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketServer;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
 public class GameServer implements Game {
@@ -83,8 +86,37 @@ public class GameServer implements Game {
 	 */
 	public void quit(final String username) {
 		game.quit(username);
+
 		onDestroy();
 	}
+
+    public void sendGame() {
+        Random random = new Random();
+        int channelChosen = random.nextInt(commChannels.size());
+        CommunicationChannel newGO = commChannels.get(channelChosen);
+
+        for(CommunicationChannel c : commChannels){
+            if(!c.equals(newGO)){
+                //Enviar mensagem a dizer que o novo GO é o newGO
+               try {
+                   ObjectOutputStream out = c.getOut();
+                   out.writeUTF("TODO");
+                   Log.i(TAG, "Telling player there is a new GO");
+               } catch (IOException e){
+                   e.printStackTrace();
+               }
+            }
+        }
+        //Enviar o state para o novo GO
+        try {
+            ObjectOutputStream newGOout = newGO.getOut();
+            Log.i(TAG, "Passing game to newGO");
+            newGOout.writeObject(new Object());
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
 
 	public void join(final String username, Player player) {
 		game.join(username, player);
